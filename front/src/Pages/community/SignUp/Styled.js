@@ -66,24 +66,3 @@ color: #333;
 font-size: 13px;
 text-decoration: none;
 `
-
-export const DaysFilterContainer = styled.div`
-width: 210px;
-display: flex;
-align-items: center;
-border: solid 1px #0083e8;
-border-right: none;
-`
-
-export const DaysFilter = styled.div`
-width: 30px;
-height: 30px;
-display: flex;
-justify-content: center;
-align-items: center;
-box-sizing: border-box;
-border-right: solid 1px #0083e8;
-font-size: 12px;
-font-weight: 600;
-cursor: pointer;
-`
