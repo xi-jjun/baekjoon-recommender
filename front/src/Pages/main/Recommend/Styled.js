@@ -79,3 +79,24 @@ flex-direction: column;
 box-sizing: border-box;
 margin: 35px;
 `
+
+export const AdditionalQuestionButtonWrapper = styled.div`
+width: 100%;
+display: flex;
+justify-content: flex-end
+`
+
+export const AdditionalQuestionButtonContainer = styled.div`
+width: 100px;
+`
+
+export const FilterCheckBoxContainer = styled.div`
+width: 688px;
+display: flex;
+align-items: center;
+`
+
+export const FilterCheckBoxLabel = styled.span`
+color: #333;
+font-size: 13px;
+`

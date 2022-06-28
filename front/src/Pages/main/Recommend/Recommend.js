@@ -1,7 +1,13 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import * as Default from "../../../Default";
 import * as Styled from "./Styled"
 import Header from "../../../Components/Header";
+import SelectBox from "../../../Components/SelectBox";
+import Button from "../../../Components/Button";
+
+const questionTypeOptions = ["dp", "brute force", "sort"]
+const difficultyGradeOptions = ["bronze", "silver", "gold", "platinum", "diamond", "ruby"]
+const difficultyLevelOptions = [1, 2, 3, 4, 5]
 
 const Question = ({ number, title, solved }) => {
     const [dropBoxClicked, dropBoxOnClick] = useState(false)
@@ -11,7 +17,7 @@ const Question = ({ number, title, solved }) => {
     const ShortCut = () => {
         return (
             <Styled.Question>
-                <Styled.QuestionShortCut to="https://www.acmicpc.net/" target="_blank">10012번-다이나믹 프로그래밍 baekJoon 문제 바로 가기</Styled.QuestionShortCut>
+                <Styled.QuestionShortCut to="https://www.acmicpc.net/" target="_blank">{number}번-{title} baekJoon 문제 바로 가기</Styled.QuestionShortCut>
             </Styled.Question>
         )
     }
@@ -50,9 +56,37 @@ const AddQuestionButton = () => {
         buttonOnClick(prev => !prev)
     }
 
+    const [checkBoxClicked, checkBoxOnClick] = useState(true)
+    const clickCheckBox = () => {
+        checkBoxOnClick(prev => !prev)
+    }
+
     const AdditionalFilter = () => {
         return (
-            <div>this is additionalFilter</div>
+            <div>
+                <Styled.FilterCheckBoxContainer>
+                    <input type="checkbox"
+                        style={{ width: "12px", height: "12px", borderColor: "#e5e5e5" }} checked={checkBoxClicked} onClick={clickCheckBox} />
+                    <Styled.FilterCheckBoxLabel>필터 사용</Styled.FilterCheckBoxLabel>
+                </Styled.FilterCheckBoxContainer>
+                {checkBoxClicked ?
+                    <div>
+                        <Default.SelectBoxContainer>
+                            <Default.SelectBoxLabel>문제 유형</Default.SelectBoxLabel>
+                            <SelectBox selectTypo="문제 유형" options={questionTypeOptions} ></SelectBox>
+                        </Default.SelectBoxContainer>
+                        <Default.SelectBoxContainer>
+                            <Default.SelectBoxLabel>난이도</Default.SelectBoxLabel>
+                            <SelectBox selectTypo="등급" options={difficultyGradeOptions} ></SelectBox>
+                            <SelectBox selectTypo="레벨" options={difficultyLevelOptions} ></SelectBox>
+                        </Default.SelectBoxContainer>
+                        <Styled.AdditionalQuestionButtonWrapper>
+                            <Styled.AdditionalQuestionButtonContainer>
+                                <Button typo="Confirm" ID="additional_question" />
+                            </Styled.AdditionalQuestionButtonContainer>
+                        </Styled.AdditionalQuestionButtonWrapper>
+                    </div> : null}
+            </div >
         )
     }
 
@@ -72,6 +106,7 @@ const AddQuestionButton = () => {
                 color: mouseOver || buttonClicked ? "#fff" : "#ff0000",
                 fontSize: "20px",
                 fontWeight: "400",
+                transition: "all 0.5s ease-out",
                 cursor: "pointer"
             }}
                 onMouseOver={getMouseOver}
@@ -107,9 +142,11 @@ const Recommend = () => {
                         </div>
                     </Styled.QuestionTable>
                 </Styled.QuestionForm>
-                <Styled.AdditionalQuestionForm>
-                    <AddQuestionButton>+</AddQuestionButton>
-                </Styled.AdditionalQuestionForm>
+                <div>
+                    <Styled.AdditionalQuestionForm>
+                        <AddQuestionButton>+</AddQuestionButton>
+                    </Styled.AdditionalQuestionForm>
+                </div>
             </Styled.Container>
         </div>
     )
