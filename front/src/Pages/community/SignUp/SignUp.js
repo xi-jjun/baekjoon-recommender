@@ -8,6 +8,10 @@ import SelectBox from '../../../Components/SelectBox';
 import DaysFilter from '../../../Components/DaysFilter';
 import { useState } from 'react';
 
+const questionTypeOptions = ["dp", "brute force", "sort"]
+const difficultyGradeOptions = ["bronze", "silver", "gold", "platinum", "diamond", "ruby"]
+const difficultyLevelOptions = [1, 2, 3, 4, 5]
+
 const DailyFilter = () => {
     return (
         <div>
@@ -26,41 +30,9 @@ const DailyFilter = () => {
 
 const ScheduleFilter = () => {
     return (
-        <div>
-            <Styled.DaysFilterContainer>
-                <DaysFilter typo="월" />
-                <DaysFilter typo="화" />
-                <DaysFilter typo="수" />
-                <DaysFilter typo="목" />
-                <DaysFilter typo="금" />
-                <DaysFilter typo="토" />
-                <DaysFilter typo="일" />
-            </Styled.DaysFilterContainer>
-            <Default.SelectBoxContainer id="월" className='hidden'>
-                <Default.SelectBoxLabel>문제 유형</Default.SelectBoxLabel>
-            </Default.SelectBoxContainer>
-            <Default.SelectBoxContainer id="화" className='hidden'>
-                <Default.SelectBoxLabel>문제 유형</Default.SelectBoxLabel>
-            </Default.SelectBoxContainer>
-            <Default.SelectBoxContainer id="목" className='hidden'>
-                <Default.SelectBoxLabel>문제 유형</Default.SelectBoxLabel>
-            </Default.SelectBoxContainer>
-            <Default.SelectBoxContainer id="금" className='hidden'>
-                <Default.SelectBoxLabel>문제 유형</Default.SelectBoxLabel>
-            </Default.SelectBoxContainer>
-            <Default.SelectBoxContainer id="토" className='hidden'>
-                <Default.SelectBoxLabel>문제 유형</Default.SelectBoxLabel>
-            </Default.SelectBoxContainer>
-            <Default.SelectBoxContainer id="일" className='hidden'>
-                <Default.SelectBoxLabel>문제 유형</Default.SelectBoxLabel>
-            </Default.SelectBoxContainer>
-        </div>
+        <DaysFilter />
     )
 }
-
-const questionTypeOptions = ["dp", "brute force", "sort"]
-const difficultyGradeOptions = ["bronze", "silver", "gold", "platinum", "diamond", "ruby"]
-const difficultyLevelOptions = [1, 2, 3, 4, 5]
 
 function SignUp() {
     return (
@@ -90,6 +62,7 @@ function SignUp() {
                 <Styled.InfoContainerLabel>Filter</Styled.InfoContainerLabel>
                 <Toggle typo1="Daily" typo2="Schedule" element1={<DailyFilter />} element2={<ScheduleFilter />} />
             </Community.InputContainer>
+            <Default.StyledLink to="/recommend"><Button typo="Sign Up" /></Default.StyledLink>
         </Styled.Container>
     )
 }

@@ -7,6 +7,14 @@ const SelectBox = ({ selectTypo, options }) => {
         selectOnClick(selectClicked => !selectClicked)
     }
     const OptionElement = ({ optionTypo }) => {
+        const [onMouseOver, setMouseOver] = useState(false)
+        const getMouseOver = () => {
+            setMouseOver(true)
+        }
+        const getMouseOut = () => {
+            setMouseOver(false)
+        }
+
         const [optionClicked, optionOnClick] = useState(null)
         const clickOption = (value) => {
             optionOnClick(value);
@@ -20,15 +28,18 @@ const SelectBox = ({ selectTypo, options }) => {
                 height: "38px",
                 display: "flex",
                 alignItems: "center",
-                background: "#fff",
+                background: onMouseOver ? "#d5d5d5" : "#fff",
                 borderBottom: "solid 1px #666",
                 boxSizing: "border-box",
                 padding: "0 10px",
                 color: "#666",
                 cursor: "pointer",
+                transition: "all 0.3s ease-out",
                 zIndex: 1
             }}
                 onClick={clickOption}
+                onMouseOver={getMouseOver}
+                onMouseOut={getMouseOut}
                 name="option"
                 value={optionClicked}>
                 {optionTypo}</div>

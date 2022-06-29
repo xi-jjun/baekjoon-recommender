@@ -8,7 +8,7 @@ flex-direction: column;
 align-items: center;
 box-sizing: border-box;
 margin: auto;
-padding: 60px 30px 0px 30px;
+padding: 60px 30px 30px 30px;
 `
 
 export const SignUpTypo = styled.div`
