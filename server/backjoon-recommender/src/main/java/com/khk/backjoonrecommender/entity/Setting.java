@@ -1,13 +1,18 @@
 package com.khk.backjoonrecommender.entity;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Setting {
 
     @Id
     @GeneratedValue
-    private Long Id;
+    private Long id;
 
     @OneToOne
     private User user;
