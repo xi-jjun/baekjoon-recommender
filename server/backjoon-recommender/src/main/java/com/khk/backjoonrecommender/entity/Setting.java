@@ -5,7 +5,7 @@ import javax.persistence.*;
 @Entity
 public class Setting {
 
-    @javax.persistence.Id
+    @Id
     @GeneratedValue
     private Long Id;
 
