@@ -2,11 +2,10 @@ import * as Default from '../../../Default';
 import * as Community from '../Community';
 import * as Styled from './Styled';
 import Button from "../../../Components/Button";
-import SignUpButton from '../../../Components/SignUpButton';
+import CommunityButton from '../../../Components/CommunityButton';
 import Toggle from '../../../Components/Toggle';
 import SelectBox from '../../../Components/SelectBox';
 import DaysFilter from '../../../Components/DaysFilter';
-import { useState } from 'react';
 
 const questionTypeOptions = ["dp", "brute force", "sort"]
 const difficultyGradeOptions = ["bronze", "silver", "gold", "platinum", "diamond", "ruby"]
@@ -43,7 +42,7 @@ function SignUp() {
                 <Community.InputSubContainer>
                     <Styled.InfoLabel>ID</Styled.InfoLabel>
                     <Community.Input placeholder='id' id="new_id" type="text" />
-                    <SignUpButton typo="중복확인" />
+                    <CommunityButton typo="중복확인" />
                 </Community.InputSubContainer>
                 <Community.InputSubContainer>
                     <Styled.InfoLabel>PW</Styled.InfoLabel>
