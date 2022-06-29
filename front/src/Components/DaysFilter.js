@@ -41,8 +41,6 @@ const DaysFilter = () => {
     }
 
     const questionTypeOptions = ["dp", "brute force", "sort"]
-    const difficultyGradeOptions = ["bronze", "silver", "gold", "platinum", "diamond", "ruby"]
-    const difficultyLevelOptions = [1, 2, 3, 4, 5]
 
     const DropDown = ({ typo }) => {
 
@@ -65,7 +63,7 @@ const DaysFilter = () => {
     }
 
     return (
-        <div>
+        <div style={{ margin: "15px 0" }}>
             <Default.DaysFilterContainer>
                 {days.map(day => <DayFilterElement typo={day} />)}
             </Default.DaysFilterContainer>
