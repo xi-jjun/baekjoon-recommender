@@ -6,7 +6,7 @@ import Recommend from '../Pages/main/Recommend/Recommend';
 import Rival from "../Pages/main/Rival/Rival";
 import Donate from "../Pages/main/Donate/Donate";
 import Solved from "../Pages/main/Solved/Solved";
-import MyPage from '../Pages/main/MyPage/MyPage';
+import MyPage from '../Pages/community/MyPage/MyPage';
 
 function App() {
     return (
