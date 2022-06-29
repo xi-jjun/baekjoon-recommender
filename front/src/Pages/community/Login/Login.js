@@ -23,14 +23,14 @@ const Login = () => {
     return (
         <Styled.LoginForm>
             <Styled.LoginTypo>Login</Styled.LoginTypo>
-            <Community.InputContainer>
+            <Community.InfoContainer>
                 <Community.Input
                     placeholder='아이디'
                     id='login-id' />
                 <Community.Input
                     placeholder='PW'
                     id='login-pw' />
-            </Community.InputContainer>
+            </Community.InfoContainer>
             <Default.StyledLink to="/recommend"><Button typo={LoginInfo.typo} ID={LoginInfo.id} /></Default.StyledLink>
             <Styled.LoginFormFooter>
                 <Styled.LoginCheckboxWrapper>
