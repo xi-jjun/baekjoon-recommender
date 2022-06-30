@@ -12,7 +12,7 @@ public class Problem {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private Long id; 
 
     private String title;
     private int level;
