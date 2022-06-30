@@ -7,7 +7,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -27,6 +30,9 @@ public class User {
     private String baekJoonId;
 
     private int reloadCount;
+
+    @OneToMany(mappedBy = "user")
+    private List<SolvedProblem> solvedProblemList = new ArrayList<>();
 
     public User(String username, String password, String baekJoonId) {
         this.username = username;
