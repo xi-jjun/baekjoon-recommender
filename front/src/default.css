@@ -5,3 +5,7 @@
 .hidden {
     display: none;
 }
+
+.space {
+    visibility: hidden;
+}
