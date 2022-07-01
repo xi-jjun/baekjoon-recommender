@@ -1,4 +1,5 @@
 import { react, useState } from "react";
+import "../default.css";
 import * as Default from "../Default";
 
 const SelectBox = ({ selectTypo, options }) => {
@@ -66,7 +67,8 @@ const SelectBox = ({ selectTypo, options }) => {
             }}
                 onClick={clickSelectBox}>
                 <span>{selectTypo}</span>
-                <Default.SelectBoxArrow src="https://icon-library.com/images/dropdown-arrow-icon/dropdown-arrow-icon-16.jpg" />
+                <Default.SelectBoxArrow className={selectClicked ? "rotate" : ""}
+                    src="https://icon-library.com/images/dropdown-arrow-icon/dropdown-arrow-icon-16.jpg" />
             </div>
             {selectClicked ?
                 <div style={{
