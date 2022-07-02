@@ -63,15 +63,21 @@ display: flex;
 align-items: center;
 `
 
-export const Input = styled.input`
-width: 100%;
-max-width: 530px;
-height: 40px;
-box-sizing: border-box;
-border: solid 1px #bbb;
-padding: 0 24px;
-margin: 5px 0;
-`
+export const Input = ({ func }) => {
+    <input style={{
+        width: "100%",
+        maxWidth: "530px",
+        height: "40px",
+        boxSizing: "border-box",
+        border: "solid 1px #bbb",
+        padding: "0 24px",
+        margin: "5px 0",
+    }}
+        onChange={(e) => {
+            func(e.target.value)
+        }} />
+}
+
 export const ShortInput = styled.input`
 width: 395px;
 height: 40px;
