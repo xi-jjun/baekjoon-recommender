@@ -1,10 +1,4 @@
-import { react, useState } from "react";
-
-const SignUpButton = ({ typo, ID }) => {
-    const buttonClick = () => {
-        console.log("button in sign up page clicked")
-    }
-
+const CommunityButton = ({ typo, ID }) => {
     return (
         <button
             style={{
@@ -21,10 +15,10 @@ const SignUpButton = ({ typo, ID }) => {
                 color: "#fff",
                 cursor: "pointer",
             }}
-            onClick={buttonClick}>
+            id={ID}>
             {typo}
-        </button>
+        </button >
     )
 }
 
-export default SignUpButton;
+export default CommunityButton;
