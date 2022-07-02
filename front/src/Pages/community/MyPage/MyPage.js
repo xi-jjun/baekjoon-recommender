@@ -5,8 +5,28 @@ import * as Styled from "./Styled";
 import CommunityButton from "../../../Components/CommunityButton";
 import Toggle from "../../../Components/Toggle";
 import Button from "../../../Components/Button";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const MyPage = () => {
+    const [existingPw, setExistingPw] = useState("")
+    const [newPw, setNewPw] = useState("")
+
+    const handleInputExistingPw = (e) => {
+        setExistingPw(e.target.value)
+    }
+    const handleInputNewPw = (e) => {
+        setNewPw(e.target.value)
+    }
+
+    // useEffect(() => {
+    //     const getData = async () => {
+    //         const res = await axios.get("/user/my-page")
+    //         console.log(res.data)
+    //     }
+    //     getData()
+    // })
+
     return (
         <div>
             <Header />
@@ -19,11 +39,11 @@ const MyPage = () => {
                     </Community.InfoSubContainer>
                     <Community.InfoSubContainer>
                         <Community.InfoLabel>PW</Community.InfoLabel>
-                        <Community.Input placeholder="기존 pw" />
+                        <Community.Input placeholder="기존 pw" onChange={handleInputExistingPw} />
                     </Community.InfoSubContainer>
                     <Community.InfoSubContainer>
                         <Community.InfoLabel></Community.InfoLabel>
-                        <Community.ShortInput placeholder="새로운 pw" />
+                        <Community.ShortInput placeholder="새로운 pw" onChange={handleInputNewPw} />
                         <CommunityButton typo="수정" />
                     </Community.InfoSubContainer>
                 </Community.InfoContainer>

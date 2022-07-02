@@ -1,18 +1,9 @@
 import Button from "../../../Components/Button";
-import $ from 'jquery';
 import * as Default from "../../../Default";
 import * as Community from '../Community';
 import * as Styled from './Styled';
-import { Link } from "react-router-dom";
-
-$(function () {
-    $("#login").on("click", function () {
-        let loginInfo = {
-            ID: $('#login-id').val(),
-            PW: $('#login-pw').val()
-        }
-    })
-})
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const LoginInfo = {
     typo: "login",
@@ -20,18 +11,50 @@ const LoginInfo = {
 }
 
 const Login = () => {
+    let loginSuccess = false;
+    const [id, setId] = useState("")
+    const [pw, setPw] = useState("")
+
+    const handleInputId = (e) => {
+        setId(e.target.value)
+    }
+    const handleInputPw = (e) => {
+        setPw(e.target.value)
+    }
+
+    // useEffect(async () => {
+    //     const res = await axios.get("/user/login")
+    //     console.log(res)
+    //     if (res.data.id == id && res.data.pw == pw) {
+    //         console.log("login success")
+    //         loginSuccess = true
+    //     }
+    // }, [])
+
+    // 데이터 가져오기
+    // useEffect(() => {
+    //     const getData = async () => {
+    //         const res = await axios.get("https://solved.ac/api/v3/problem/show?problemId=1001")
+    //         console.log(res.data.titleKo)
+    //     }
+    //     getData()
+    // }, [])
+
     return (
         <Styled.LoginForm>
             <Styled.LoginTypo>Login</Styled.LoginTypo>
             <Community.InfoContainer>
                 <Community.Input
                     placeholder='아이디'
-                    id='login-id' />
+                    id='login-id'
+                    onChange={handleInputId} />
                 <Community.Input
                     placeholder='PW'
-                    id='login-pw' />
+                    id='login-pw'
+                    type="password"
+                    onChange={handleInputPw} />
             </Community.InfoContainer>
-            <Default.StyledLink to="/recommend"><Button typo={LoginInfo.typo} ID={LoginInfo.id} /></Default.StyledLink>
+            <Default.StyledLink id="login-button" to="/recommend"><Button typo={LoginInfo.typo} ID={LoginInfo.id} /></Default.StyledLink>
             <Styled.LoginFormFooter>
                 <Styled.LoginCheckboxWrapper>
                     <input type="checkbox"
