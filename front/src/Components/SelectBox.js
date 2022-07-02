@@ -3,10 +3,14 @@ import "../default.css";
 import * as Default from "../Default";
 
 const SelectBox = ({ selectTypo, options }) => {
+    // id 값을 정해야 할 것 같다
     const [selectClicked, selectOnClick] = useState(false);
     const clickSelectBox = () => {
-        selectOnClick(selectClicked => !selectClicked)
+        selectOnClick(prev => !prev)
     }
+
+    const [optionClicked, optionOnClick] = useState("")
+
     const OptionElement = ({ optionTypo }) => {
         const [onMouseOver, setMouseOver] = useState(false)
         const getMouseOver = () => {
@@ -16,11 +20,9 @@ const SelectBox = ({ selectTypo, options }) => {
             setMouseOver(false)
         }
 
-        const [optionClicked, optionOnClick] = useState(null)
-        const clickOption = (value) => {
-            optionOnClick(value);
-            selectOnClick()
-            console.log(optionClicked)
+        const clickOption = () => {
+            optionOnClick(optionTypo);
+            clickSelectBox()
         }
 
         return (
@@ -42,7 +44,7 @@ const SelectBox = ({ selectTypo, options }) => {
                 onMouseOver={getMouseOver}
                 onMouseOut={getMouseOut}
                 name="option"
-                value={optionClicked}>
+                value={optionTypo}>
                 {optionTypo}</div>
         )
     }
@@ -65,8 +67,9 @@ const SelectBox = ({ selectTypo, options }) => {
                 fontSize: "14px",
                 cursor: "pointer"
             }}
+                value={optionClicked}
                 onClick={clickSelectBox}>
-                <span>{selectTypo}</span>
+                <span>{optionClicked ? optionClicked : selectTypo}</span>
                 <Default.SelectBoxArrow className={selectClicked ? "rotate" : ""}
                     src="https://icon-library.com/images/dropdown-arrow-icon/dropdown-arrow-icon-16.jpg" />
             </div>
