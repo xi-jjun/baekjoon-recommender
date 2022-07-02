@@ -24,6 +24,7 @@ const DaysFilter = () => {
             if (dayFilter) dropdown.classList.add("hidden")
             else dropdown.classList.remove("hidden")
         }
+        // dayFilter 값이 바뀐 다음에 dropdown을 가져오도록 async, await 사용
 
         return (
             <Default.DaysFilter
