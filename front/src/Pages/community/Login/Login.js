@@ -35,6 +35,11 @@ const Login = () => {
     // useEffect(() => {
     //     const getData = async () => {
     //         const res = await axios.get("https://solved.ac/api/v3/problem/show?problemId=1001")
+    //         const res = await axios.post("https://solved.ac/api/v3/problem/show?problemId=1001", {
+    //       username: 
+    // })
+    // //login 여부를 나타내는 변수 값 수정
+
     //         console.log(res.data.titleKo)
     //     }
     //     getData()
