@@ -3,10 +3,13 @@ package com.khk.backjoonrecommender.controller.api;
 import com.khk.backjoonrecommender.controller.dto.response.BasicResponseDto;
 import com.khk.backjoonrecommender.service.RecommendationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/recommendation")
@@ -16,8 +19,8 @@ public class RecommendationApiController {
     private final RecommendationService recommendationService;
 
     @GetMapping
-    public BasicResponseDto<?> problemDetails() {
-        return recommendationService.recommendProblem();
+    public BasicResponseDto<?> problemDetails(Authentication authentication) throws IOException {
+        return recommendationService.recommendProblem(authentication);
     }
 
     @PostMapping
