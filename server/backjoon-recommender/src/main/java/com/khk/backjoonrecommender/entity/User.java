@@ -7,6 +7,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Getter
@@ -27,6 +29,14 @@ public class User {
     private String baekJoonId;
 
     private int reloadCount;
+
+    @OneToOne
+    @JoinColumn(name = "setting_id")
+    private Setting setting;
+
+    public void setProblemFilterSetting(Setting setting) {
+        this.setting = setting;
+    }
 
     public User(String username, String password, String baekJoonId) {
         this.username = username;
