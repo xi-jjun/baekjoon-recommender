@@ -17,7 +17,7 @@ public class RecommendationApiController {
 
     @GetMapping
     public BasicResponseDto<?> problemDetails() {
-        return recommendationService.findProblem();
+        return recommendationService.recommendProblem();
     }
 
     @PostMapping

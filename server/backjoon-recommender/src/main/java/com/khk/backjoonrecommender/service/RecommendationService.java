@@ -4,20 +4,12 @@ import com.khk.backjoonrecommender.controller.dto.response.BasicResponseDto;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RecommendationService {
-    public BasicResponseDto<?> findProblem() {
-        return null;
-    }
+public interface RecommendationService {
+    public BasicResponseDto<?> recommendProblem();
 
-    public BasicResponseDto<?> checkProblemIfSolved() {
-        return null;
-    }
+    public BasicResponseDto<?> checkProblemIfSolved();
 
-    public BasicResponseDto<?> findAdditionalProblem() {
-        return null;
-    }
+    public BasicResponseDto<?> findAdditionalProblem();
 
-    public BasicResponseDto<?> reloadProblem() {
-        return null;
-    }
+    public BasicResponseDto<?> reloadProblem();
 }
