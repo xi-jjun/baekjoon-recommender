@@ -20,23 +20,25 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class BaekJoonProblemBasicCollector implements BaekJoonProblemCollector {
 	private final ProblemRepository problemRepository;
-	static final String BASIC_BAEKJOON_PROBLEM_LIST_URL = "https://www.acmicpc.net/problemset/";
-	static final String PROBLEM_LIST_CLASS = "list_problem_id";
-	static final String NEXT_PAGE_ID = "next_page";
-	static final String BASIC_DETAIL_PROBLEM_URL = "https://www.acmicpc.net/problem/";
+	private static final String BASIC_BAEKJOON_PROBLEM_LIST_URL = "https://www.acmicpc.net/problemset/";
+	private static final String PROBLEM_LIST_CLASS = "list_problem_id";
+	private static final String NEXT_PAGE_ID = "next_page";
+	private static final String BASIC_DETAIL_PROBLEM_URL = "https://www.acmicpc.net/problem/";
 
-	static final String TITLE = "titleKo";
-	static final String LEVEL = "level";
-	static final String TAGS = "tags";
-	static final String TAG_KEY = "key";
-	static final String PROBLEM_INFO_API = "https://solved.ac/api/v3/problem/show?problemId=";
+	private static final String TITLE = "titleKo";
+	private static final String LEVEL = "level";
+	private static final String TAGS = "tags";
+	private static final String TAG_KEY = "key";
+	private static final String PROBLEM_INFO_API = "https://solved.ac/api/v3/problem/show?problemId=";
 
 	@Override
 	public List<Problem> getAllProblemList() throws IOException, ParseException, InterruptedException {
@@ -56,7 +58,7 @@ public class BaekJoonProblemBasicCollector implements BaekJoonProblemCollector {
 				log.info("problem Id={}, title={}", problem.getId(), problem.getTitle());
 
 				problemList.add(problem);
-				Thread.sleep(1000); // 1 초까지는 괜찮아 보였음. 그러나 너무 느려서 중간에 테스트 중단
+				Thread.sleep(400); // 1 초까지는 괜찮아 보였음. 그러나 너무 느려서 중간에 테스트 중단
 			}
 
 			hasNext = document.getElementById(NEXT_PAGE_ID);
@@ -100,18 +102,21 @@ public class BaekJoonProblemBasicCollector implements BaekJoonProblemCollector {
 	}
 
 	@Override
-	public void updateProblemList() throws IOException {
-//		if (isDifferent()) {
-//			// DB 에 크롤링 데이터를 DB 에 반영시켜야 함
-//		}
-	}
+	public void updateProblemList() throws IOException, ParseException, InterruptedException {
+		List<Problem> remainedProblemList = problemRepository.findAll();
+		Set<Long> existed = new HashSet<>();
+		for (Problem problem : remainedProblemList) {
+			existed.add(problem.getId());
+		}
 
-	private boolean isDifferent() throws IOException, ParseException, InterruptedException {
-		List<Problem> allProblemList = problemRepository.findAll();
-		int databaseProblemListSize = allProblemList.size();
-		int presentProblemListSize = getAllProblemList().size();
-
-		return databaseProblemListSize != presentProblemListSize;
+		List<Problem> baekJoonProblemList = getAllProblemList();
+		for (Problem problem : baekJoonProblemList) {
+			Long id = problem.getId();
+			if (!existed.contains(id)) {
+				problemRepository.save(problem);
+				log.info("{} is inserted in database", id);
+			}
+		}
 	}
 
 	private JSONObject getProblemInfoFromSolvedAPI(Long problemId) throws IOException, ParseException {

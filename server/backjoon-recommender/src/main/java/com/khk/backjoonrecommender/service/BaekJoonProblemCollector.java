@@ -11,5 +11,5 @@ public interface BaekJoonProblemCollector {
 
 	public Problem getProblemInfoByProblemId(Long problemId) throws IOException, ParseException;
 
-	public void updateProblemList() throws IOException;
+	public void updateProblemList() throws IOException, ParseException, InterruptedException;
 }
