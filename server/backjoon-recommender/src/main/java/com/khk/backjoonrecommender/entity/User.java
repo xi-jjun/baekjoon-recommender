@@ -16,6 +16,7 @@ import javax.persistence.Table;
 @Table(name = "Users")
 @Entity
 public class User {
+    private final int INIT_RELOAD_COUNT = 3;
 
     @Id
     @GeneratedValue
@@ -42,5 +43,9 @@ public class User {
         this.username = username;
         this.password = password;
         this.baekJoonId = baekJoonId;
+    }
+
+    public void resetReloadCount() {
+        this.reloadCount = INIT_RELOAD_COUNT;
     }
 }
