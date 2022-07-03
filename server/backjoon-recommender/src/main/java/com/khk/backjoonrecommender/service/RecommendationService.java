@@ -1,11 +1,12 @@
 package com.khk.backjoonrecommender.service;
 
 import com.khk.backjoonrecommender.controller.dto.response.BasicResponseDto;
-import org.springframework.stereotype.Service;
+import org.springframework.security.core.Authentication;
 
-@Service
+import java.io.IOException;
+
 public interface RecommendationService {
-    public BasicResponseDto<?> recommendProblem();
+    public BasicResponseDto<?> recommendProblem(Authentication authentication) throws IOException;
 
     public BasicResponseDto<?> checkProblemIfSolved();
 
