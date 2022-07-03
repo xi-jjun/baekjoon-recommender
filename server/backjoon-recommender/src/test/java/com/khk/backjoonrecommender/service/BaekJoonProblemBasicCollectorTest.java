@@ -31,7 +31,7 @@ class BaekJoonProblemBasicCollectorTest {
 	}
 
 	@Test
-	void solvedAPITest() throws IOException {
+	void insertBaekJoonProblemListToServerDB() throws IOException, ParseException, InterruptedException {
 		baekJoonProblemCollector.updateProblemList();
 	}
 }
