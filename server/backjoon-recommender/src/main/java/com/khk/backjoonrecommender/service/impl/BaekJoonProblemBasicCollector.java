@@ -1,7 +1,8 @@
-package com.khk.backjoonrecommender.service;
+package com.khk.backjoonrecommender.service.impl;
 
 import com.khk.backjoonrecommender.entity.Problem;
 import com.khk.backjoonrecommender.repository.ProblemRepository;
+import com.khk.backjoonrecommender.service.BaekJoonProblemCollector;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
