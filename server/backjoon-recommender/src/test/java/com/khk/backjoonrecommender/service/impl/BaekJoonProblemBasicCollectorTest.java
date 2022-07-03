@@ -1,6 +1,7 @@
-package com.khk.backjoonrecommender.service;
+package com.khk.backjoonrecommender.service.impl;
 
 import com.khk.backjoonrecommender.entity.Problem;
+import com.khk.backjoonrecommender.service.BaekJoonProblemCollector;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,5 +34,15 @@ class BaekJoonProblemBasicCollectorTest {
 	@Test
 	void insertBaekJoonProblemListToServerDB() throws IOException, ParseException, InterruptedException {
 		baekJoonProblemCollector.updateProblemList();
+	}
+
+	@Test
+	void getUserSolvedProblemIdList() throws IOException {
+		final String baekJoonId = "rlawowns000";
+		List<Long> problemIdList = baekJoonProblemCollector.getProblemIdListByBaekJoonId(baekJoonId);
+		System.out.println("total solved problem count = " + problemIdList.size());
+		for (Long id : problemIdList) {
+			System.out.println("id = " + id);
+		}
 	}
 }
