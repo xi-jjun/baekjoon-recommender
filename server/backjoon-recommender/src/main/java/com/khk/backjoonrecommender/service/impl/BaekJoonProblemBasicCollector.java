@@ -21,9 +21,11 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -40,6 +42,8 @@ public class BaekJoonProblemBasicCollector implements BaekJoonProblemCollector {
 	private static final String TAGS = "tags";
 	private static final String TAG_KEY = "key";
 	private static final String PROBLEM_INFO_API = "https://solved.ac/api/v3/problem/show?problemId=";
+
+	private static final String USER_SOLVED_PROBLEM_LIST_URL = "https://www.acmicpc.net/user/";
 
 	@Override
 	public List<Problem> getAllProblemList() throws IOException, ParseException, InterruptedException {
@@ -118,6 +122,17 @@ public class BaekJoonProblemBasicCollector implements BaekJoonProblemCollector {
 				log.info("{} is inserted in database", id);
 			}
 		}
+	}
+
+	@Override
+	public List<Long> getProblemIdListByBaekJoonId(String baekJoonId) throws IOException {
+		Document document = Jsoup.connect(USER_SOLVED_PROBLEM_LIST_URL + baekJoonId).get();
+		Element solvedElements = document.getElementsByClass("problem-list").get(0);
+		String[] solvedIdList = solvedElements.text().split(" ");
+
+		return Arrays.stream(solvedIdList)
+				.map(Long::parseLong)
+				.collect(Collectors.toList());
 	}
 
 	private JSONObject getProblemInfoFromSolvedAPI(Long problemId) throws IOException, ParseException {
