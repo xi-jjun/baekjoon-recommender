@@ -26,7 +26,7 @@ public class Setting {
     private String tags;
 
     @Enumerated(value = EnumType.STRING)
-    private OfferedType offeredType;
+    private Option option;
 
     private String sun;
     private String mon;

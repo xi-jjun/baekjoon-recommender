@@ -1,6 +1,6 @@
 package com.khk.backjoonrecommender.repository;
 
-import com.khk.backjoonrecommender.entity.OfferedType;
+import com.khk.backjoonrecommender.entity.Option;
 import com.khk.backjoonrecommender.entity.Setting;
 import com.khk.backjoonrecommender.entity.User;
 import org.junit.jupiter.api.BeforeAll;
@@ -44,7 +44,7 @@ class SettingRepositoryTest {
 		User user = userRepository.findByUsername("kjj97");
 
 		Setting setting = Setting.builder()
-				.offeredType(OfferedType.TODAY)
+				.option(Option.TODAY)
 				.levels(LEVEL)
 				.tags(TAGS)
 				.build();
@@ -60,7 +60,7 @@ class SettingRepositoryTest {
 		User findUser = userRepository.findByUsername("kjj97");
 		Setting userSetting = findUser.getSetting();
 
-		assertThat(userSetting.getOfferedType()).isEqualTo(OfferedType.TODAY);
+		assertThat(userSetting.getOption()).isEqualTo(Option.TODAY);
 		assertThat(userSetting.getLevels()).isEqualTo(LEVEL);
 		assertThat(userSetting.getTags()).isEqualTo(TAGS);
 	}
