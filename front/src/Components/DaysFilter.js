@@ -41,7 +41,7 @@ const DaysFilter = () => {
         )
     }
 
-    const questionTypeOptions = ["dp", "brute force", "sort"]
+    const questionTypeOptions = ["유형1", "유형2"]
 
     const DropDown = ({ typo }) => {
 
