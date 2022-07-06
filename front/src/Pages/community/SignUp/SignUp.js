@@ -22,10 +22,13 @@ function SignUp() {
         setBaekjoonId(e.target.value)
     }
 
-    // useEffect(async () => {
+    // useEffect(() => {
     //     const getData = async () => {
-    //         const res = await axios.get("/user/register")
-    //         console.log(res.data)
+    //         const res = await axios.post("/user/register", {
+    //             username,
+    //             password,
+    //             option
+    //         })
     //     }
     //     getData()
     // })
