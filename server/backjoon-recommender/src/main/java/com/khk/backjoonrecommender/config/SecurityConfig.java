@@ -16,7 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.filter.CorsFilter;
 
 @RequiredArgsConstructor
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private final JwtProperties jwtProperties;
 	private final UserRepository userRepository;
@@ -48,7 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.authorizeRequests()
 				// login api
 				.antMatchers("/login").permitAll()
-				.antMatchers("/members/sign-up").permitAll() // sign-up
+				.antMatchers("/api/v1/user").permitAll() // sign-up
 				.anyRequest().authenticated();
 	}
 
@@ -56,7 +56,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public void configure(WebSecurity web) throws Exception {
 		web.ignoring().antMatchers("/user/**", "/");
 		web.ignoring().antMatchers(HttpMethod.POST, "/api/v1/user");
-		web.ignoring().antMatchers("/api/v1/user/login");
-		web.ignoring().antMatchers("/api/v1/user/logout");
+		web.ignoring().antMatchers("/logout");
 	}
 }
