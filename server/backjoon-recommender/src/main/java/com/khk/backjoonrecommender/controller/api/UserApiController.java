@@ -5,6 +5,7 @@ import com.khk.backjoonrecommender.controller.dto.response.BasicResponseDto;
 import com.khk.backjoonrecommender.controller.dto.response.MyPageResponseDto;
 import com.khk.backjoonrecommender.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -17,8 +18,8 @@ public class UserApiController {
 	private final UserService userService;
 
 	@GetMapping
-	public BasicResponseDto<MyPageResponseDto> userDetails() {
-		return userService.findUser();
+	public BasicResponseDto<MyPageResponseDto> userDetails(Authentication authentication) {
+		return userService.findUser(authentication);
 	}
 
 	@PostMapping

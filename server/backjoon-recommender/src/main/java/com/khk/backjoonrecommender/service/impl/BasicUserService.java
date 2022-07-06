@@ -13,6 +13,7 @@ import com.khk.backjoonrecommender.service.UserService;
 import com.khk.backjoonrecommender.service.ValidationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,8 +30,18 @@ public class BasicUserService implements UserService {
     private final SettingRepository settingRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public BasicResponseDto<MyPageResponseDto> findUser() {
-        return null;
+    public BasicResponseDto<MyPageResponseDto> findUser(Authentication authentication) {
+        String username = authentication.getName();
+        User loginUser = userRepository.findByUsername(username);
+        Setting userSetting = loginUser.getSetting();
+
+        MyPageResponseDto myPageResponseDto = new MyPageResponseDto(loginUser, userSetting);
+        BasicResponseDto<MyPageResponseDto> response = new BasicResponseDto<>();
+        response.setData(myPageResponseDto);
+        response.setMessage("success to find username = " + loginUser.getUsername());
+        response.setCode(200);
+
+        return response;
     }
 
     @Transactional
