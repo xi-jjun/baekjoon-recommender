@@ -1,7 +1,7 @@
 package com.khk.backjoonrecommender.service.impl;
 
 import com.khk.backjoonrecommender.controller.dto.response.BasicResponseDto;
-import com.khk.backjoonrecommender.entity.OfferedType;
+import com.khk.backjoonrecommender.entity.Option;
 import com.khk.backjoonrecommender.entity.Problem;
 import com.khk.backjoonrecommender.entity.Setting;
 import com.khk.backjoonrecommender.entity.User;
@@ -84,9 +84,9 @@ public class RecommendationBasicService implements RecommendationService {
 	}
 
 	private Set<String> getTagFilter() {
-		OfferedType recommendationMode = userSetting.getOfferedType();
+		Option userRecommendationOption = userSetting.getOption();
 		String[] tags;
-		if (recommendationMode.equals(OfferedType.TODAY)) {
+		if (userRecommendationOption.equals(Option.TODAY)) {
 			tags = userSetting.getTags().split(",");
 		} else {
 			// 오늘의 요일에 따른 추천을 해야 함.
