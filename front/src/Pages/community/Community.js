@@ -12,29 +12,6 @@ const difficultyLevelOptions = [1, 2, 3, 4, 5]
 
 export const DailyFilter = () => {
 
-    const FilterElement = () => {
-        const [XButtonClicked, onClickXButton] = useState(false)
-        const clickXButton = () => {
-            onClickXButton(prev => !prev)
-        }
-        return (
-            <div className={XButtonClicked ? "hidden" : ""}>
-                <Default.SelectBoxContainer>
-                    <Default.SelectBoxLabel>문제 유형</Default.SelectBoxLabel>
-                    <SelectBox selectTypo="문제 유형" options={questionTypeOptions} ></SelectBox>
-                </Default.SelectBoxContainer>
-                <Default.SelectBoxContainer>
-                    <Default.SelectBoxLabel>난이도</Default.SelectBoxLabel>
-                    <SelectBox selectTypo="등급" options={difficultyGradeOptions} ></SelectBox>
-                    <SelectBox selectTypo="레벨" options={difficultyLevelOptions} ></SelectBox>
-                    <img src="https://icons-for-free.com/download-icon-x-1321215629555778185_512.png"
-                        style={{ width: "12px", height: "12px", margin: "15px 0 15px 30px", cursor: "pointer" }}
-                        onClick={clickXButton} />
-                </Default.SelectBoxContainer>
-            </div>
-        )
-    }
-
     const [onMouseOver, setMouseOver] = useState(false)
     const getMouseOver = () => {
         setMouseOver(true)
@@ -43,32 +20,102 @@ export const DailyFilter = () => {
         setMouseOver(false)
     }
 
-    const [elements, setElements] = useState([])
-    const clickPlusButton = () => {
-        setElements(elements.concat(<FilterElement />))
-    }
+    const FilterElement = ({ typo }) => {
 
-    return (
-        <div id="filter-container">
+        const [filterClicked, onClickFilter] = useState(false)
+        const clickFilter = () => {
+            onClickFilter(prev => !prev)
+        }
+
+        return (
             <div style={{
-                width: "30px",
-                height: "30px",
+                minWidth: "32px",
+                height: "32px",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                background: onMouseOver ? "#0083e8" : "#fff",
-                border: "solid 1px #0083e8",
-                color: onMouseOver ? "#fff" : "#0083e8",
+                background: filterClicked ? "#0083e8" : "#b8b8b8",
+                border: filterClicked ? "solid 1px #0083e8" : null,
+                borderRadius: "3px",
+                color: "#fff",
+                fontSize: "14px",
+                boxSizing: "border-box",
+                margin: "0 4px",
+                padding: "0 4px",
                 cursor: "pointer",
                 transition: "all 0.1s ease-out"
             }}
-                onMouseOver={getMouseOver}
-                onMouseOut={getMouseOut}
-                onClick={clickPlusButton}>
-                +
+                onClick={clickFilter}>
+                <div>{typo}</div>
+                <div style={{
+                    fontSize: "12.8px",
+                    margin: "0 0 0 8px"
+                }}
+                    className={filterClicked ? "" : "hidden"}>
+                    x
+                </div>
             </div>
-            {elements}
-        </div >
+        )
+    }
+
+    return (
+        <div>
+            <div style={{ display: "flex", margin: "5px 0" }}>
+                <FilterElement typo="유형1" />
+                <FilterElement typo="유형2" />
+            </div >
+            <div style={{ display: "flex", margin: "5px 0" }}>
+                <FilterElement typo="Unranked" />
+            </div>
+            <div style={{ display: "flex", margin: "5px 0" }}>
+                <FilterElement typo="Bronze" />
+                <FilterElement typo="1" />
+                <FilterElement typo="2" />
+                <FilterElement typo="3" />
+                <FilterElement typo="4" />
+                <FilterElement typo="5" />
+            </div >
+            <div style={{ display: "flex", margin: "5px 0" }}>
+                <FilterElement typo="Silver" />
+                <FilterElement typo="1" />
+                <FilterElement typo="2" />
+                <FilterElement typo="3" />
+                <FilterElement typo="4" />
+                <FilterElement typo="5" />
+            </div >
+            <div style={{ display: "flex", margin: "5px 0" }}>
+                <FilterElement typo="Gold" />
+                <FilterElement typo="1" />
+                <FilterElement typo="2" />
+                <FilterElement typo="3" />
+                <FilterElement typo="4" />
+                <FilterElement typo="5" />
+            </div >
+            <div style={{ display: "flex", margin: "5px 0" }}>
+                <FilterElement typo="Platinum" />
+                <FilterElement typo="1" />
+                <FilterElement typo="2" />
+                <FilterElement typo="3" />
+                <FilterElement typo="4" />
+                <FilterElement typo="5" />
+            </div >
+            <div style={{ display: "flex", margin: "5px 0" }}>
+                <FilterElement typo="Diamond" />
+                <FilterElement typo="1" />
+                <FilterElement typo="2" />
+                <FilterElement typo="3" />
+                <FilterElement typo="4" />
+                <FilterElement typo="5" />
+            </div >
+            <div style={{ display: "flex", margin: "5px 0" }}>
+                <FilterElement typo="Ruby" />
+                <FilterElement typo="1" />
+                <FilterElement typo="2" />
+                <FilterElement typo="3" />
+                <FilterElement typo="4" />
+                <FilterElement typo="5" />
+            </div >
+        </div>
     )
 }
 
