@@ -1,9 +1,10 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as Default from "../../../Default";
 import * as Styled from "./Styled"
 import Header from "../../../Components/Header";
 import SelectBox from "../../../Components/SelectBox";
 import Button from "../../../Components/Button";
+import axios from "axios";
 
 const questionTypeOptions = ["dp", "brute force", "sort"]
 const difficultyGradeOptions = ["bronze", "silver", "gold", "platinum", "diamond", "ruby"]
@@ -120,6 +121,14 @@ const AddQuestionButton = () => {
 }
 
 const Recommend = () => {
+
+    // useEffect = () => {
+    //     const getData = async () => {
+    //         const res = await axios.get("/")
+    //     }
+    //     getData()
+    // }
+
     return (
         <div>
             <Header />
