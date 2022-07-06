@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 const MyPage = () => {
+    const [ID, setId] = useState("")
     const [existingPw, setExistingPw] = useState("")
     const [newPw, setNewPw] = useState("")
 
@@ -18,11 +19,17 @@ const MyPage = () => {
     const handleInputNewPw = (e) => {
         setNewPw(e.target.value)
     }
+    const handleInputId = (e) => {
+        setId(e.target.value)
+    }
 
     // useEffect(() => {
     //     const getData = async () => {
-    //         const res = await axios.get("/user/my-page")
-    //         console.log(res.data)
+    //         const res = await axios.patch("/user/my-page", {
+    //             username,
+    //             password,
+    //             option
+    //         })
     //     }
     //     getData()
     // })
@@ -35,7 +42,8 @@ const MyPage = () => {
                     <Community.InfoContainerLabel>Membership Info</Community.InfoContainerLabel>
                     <Community.InfoSubContainer>
                         <Community.InfoLabel>ID</Community.InfoLabel>
-                        <Styled.Info>baekjoonRecommender</Styled.Info>
+                        <Community.ShortInput placeholder="새로운 ID" onChange={handleInputId} />
+                        <CommunityButton typo="수정" />
                     </Community.InfoSubContainer>
                     <Community.InfoSubContainer>
                         <Community.InfoLabel>PW</Community.InfoLabel>
