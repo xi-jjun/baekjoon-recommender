@@ -7,113 +7,71 @@ import { useState } from "react";
 
 
 const questionTypeOptions = ["유형1", "유형2"]
-const difficultyGradeOptions = ["bronze", "silver", "gold", "platinum", "diamond", "ruby"]
+const difficultyGradeOptions = ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Ruby"]
 const difficultyLevelOptions = [1, 2, 3, 4, 5]
 
-export const DailyFilter = () => {
+const FilterElement = ({ typo }) => {
 
-    const [onMouseOver, setMouseOver] = useState(false)
-    const getMouseOver = () => {
-        setMouseOver(true)
-    }
-    const getMouseOut = () => {
-        setMouseOver(false)
+    const [filterClicked, onClickFilter] = useState(false)
+    const clickFilter = () => {
+        onClickFilter(prev => !prev)
     }
 
-    const FilterElement = ({ typo }) => {
-
-        const [filterClicked, onClickFilter] = useState(false)
-        const clickFilter = () => {
-            onClickFilter(prev => !prev)
-        }
-
-        return (
+    return (
+        <div style={{
+            minWidth: "32px",
+            height: "32px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            background: filterClicked ? "#0083e8" : "#b8b8b8",
+            border: filterClicked ? "solid 1px #0083e8" : null,
+            borderRadius: "3px",
+            color: "#fff",
+            fontSize: "14px",
+            boxSizing: "border-box",
+            margin: "0 4px",
+            padding: "0 4px",
+            cursor: "pointer",
+            transition: "all 0.1s ease-out"
+        }}
+            onClick={clickFilter}>
+            <div>{typo}</div>
             <div style={{
-                minWidth: "32px",
-                height: "32px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                background: filterClicked ? "#0083e8" : "#b8b8b8",
-                border: filterClicked ? "solid 1px #0083e8" : null,
-                borderRadius: "3px",
-                color: "#fff",
-                fontSize: "14px",
-                boxSizing: "border-box",
-                margin: "0 4px",
-                padding: "0 4px",
-                cursor: "pointer",
-                transition: "all 0.1s ease-out"
+                fontSize: "12.8px",
+                margin: "0 0 0 8px"
             }}
-                onClick={clickFilter}>
-                <div>{typo}</div>
-                <div style={{
-                    fontSize: "12.8px",
-                    margin: "0 0 0 8px"
-                }}
-                    className={filterClicked ? "" : "hidden"}>
-                    x
-                </div>
+                className={filterClicked ? "" : "hidden"}>
+                x
             </div>
-        )
-    }
+        </div>
+    )
+}
+
+export const DifficultyFilter = () => {
+    return (
+        <div>
+            <div style={{ display: "flex", margin: "5px 0" }}>
+                <FilterElement typo="Unranked" />
+            </div>
+            {difficultyGradeOptions.map(grade => {
+                return (
+                    <div style={{ display: "flex", margin: "5px 0" }}>
+                        <FilterElement typo={grade} />
+                        {difficultyLevelOptions.map(op => <FilterElement typo={op} />)}
+                    </div >
+                )
+            })}
+        </div>
+    )
+}
+
+export const DailyFilter = () => {
 
     return (
         <div>
             <div style={{ display: "flex", margin: "5px 0" }}>
-                <FilterElement typo="유형1" />
-                <FilterElement typo="유형2" />
-            </div >
-            <div style={{ display: "flex", margin: "5px 0" }}>
-                <FilterElement typo="Unranked" />
-            </div>
-            <div style={{ display: "flex", margin: "5px 0" }}>
-                <FilterElement typo="Bronze" />
-                <FilterElement typo="1" />
-                <FilterElement typo="2" />
-                <FilterElement typo="3" />
-                <FilterElement typo="4" />
-                <FilterElement typo="5" />
-            </div >
-            <div style={{ display: "flex", margin: "5px 0" }}>
-                <FilterElement typo="Silver" />
-                <FilterElement typo="1" />
-                <FilterElement typo="2" />
-                <FilterElement typo="3" />
-                <FilterElement typo="4" />
-                <FilterElement typo="5" />
-            </div >
-            <div style={{ display: "flex", margin: "5px 0" }}>
-                <FilterElement typo="Gold" />
-                <FilterElement typo="1" />
-                <FilterElement typo="2" />
-                <FilterElement typo="3" />
-                <FilterElement typo="4" />
-                <FilterElement typo="5" />
-            </div >
-            <div style={{ display: "flex", margin: "5px 0" }}>
-                <FilterElement typo="Platinum" />
-                <FilterElement typo="1" />
-                <FilterElement typo="2" />
-                <FilterElement typo="3" />
-                <FilterElement typo="4" />
-                <FilterElement typo="5" />
-            </div >
-            <div style={{ display: "flex", margin: "5px 0" }}>
-                <FilterElement typo="Diamond" />
-                <FilterElement typo="1" />
-                <FilterElement typo="2" />
-                <FilterElement typo="3" />
-                <FilterElement typo="4" />
-                <FilterElement typo="5" />
-            </div >
-            <div style={{ display: "flex", margin: "5px 0" }}>
-                <FilterElement typo="Ruby" />
-                <FilterElement typo="1" />
-                <FilterElement typo="2" />
-                <FilterElement typo="3" />
-                <FilterElement typo="4" />
-                <FilterElement typo="5" />
+                {questionTypeOptions.map(op => <FilterElement typo={op} />)}
             </div >
         </div>
     )

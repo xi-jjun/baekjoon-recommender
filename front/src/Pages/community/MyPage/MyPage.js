@@ -57,6 +57,7 @@ const MyPage = () => {
                 </Community.InfoContainer>
                 <Community.InfoContainer>
                     <Community.InfoContainerLabel>Filter</Community.InfoContainerLabel>
+                    <Community.DifficultyFilter />
                     <Toggle typo1="Daily" typo2="Schedule" element1={<Community.DailyFilter />} element2={<Community.ScheduleFilter />} />
                     <div style={{ display: "flex", justifyContent: "center" }}>
                         <Default.StyledLink to="/recommend"><Button typo="Confirm" /></Default.StyledLink>
