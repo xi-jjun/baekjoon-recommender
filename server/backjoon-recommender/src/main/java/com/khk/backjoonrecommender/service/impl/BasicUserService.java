@@ -5,6 +5,7 @@ import com.khk.backjoonrecommender.controller.dto.request.SignUpRequestDTO;
 import com.khk.backjoonrecommender.controller.dto.request.UserRequestDTO;
 import com.khk.backjoonrecommender.controller.dto.response.BasicResponseDto;
 import com.khk.backjoonrecommender.controller.dto.response.MyPageResponseDto;
+import com.khk.backjoonrecommender.controller.dto.response.RivalListDto;
 import com.khk.backjoonrecommender.entity.Setting;
 import com.khk.backjoonrecommender.entity.User;
 import com.khk.backjoonrecommender.repository.SettingRepository;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -79,6 +82,16 @@ public class BasicUserService implements UserService {
         log.info("user {} is created", user.getUsername());
 
         return responseDto;
+    }
+
+    @Override
+    public BasicResponseDto<List<RivalListDto>> findRivals(Authentication authentication) {
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username);
+        List<RivalListDto> results = user.getRivals().stream()
+                .map(rival -> new RivalListDto(rival.getSelectedUser().getUsername()))
+                .collect(Collectors.toList());
+        return new BasicResponseDto<>(200, "RIVAL", results);
     }
 
     private void encodingUserPassword(UserRequestDTO userRequestDTO) {
