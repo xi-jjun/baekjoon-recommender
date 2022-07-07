@@ -4,13 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-public class BasicResponseDto<T> {
+public class RivalListResponseDto {
 
-    private int code;
-    private String message;
-
-    private T data;
+    private String username;
 }

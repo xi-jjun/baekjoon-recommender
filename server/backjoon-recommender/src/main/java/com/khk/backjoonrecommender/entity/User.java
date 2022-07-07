@@ -39,6 +39,9 @@ public class User {
 
     private int reloadCount;
 
+    @OneToMany(mappedBy = "selectedUser")
+    private List<Rival> rivals = new ArrayList<>();
+
     @OneToOne
     @JoinColumn(name = "setting_id")
     private Setting setting;
