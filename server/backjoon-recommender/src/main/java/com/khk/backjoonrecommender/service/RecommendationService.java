@@ -12,5 +12,5 @@ public interface RecommendationService {
 
     public BasicResponseDto<?> findAdditionalProblem();
 
-    public BasicResponseDto<?> reloadProblem();
+    public BasicResponseDto<?> reloadProblem(Authentication authentication) throws IOException;
 }

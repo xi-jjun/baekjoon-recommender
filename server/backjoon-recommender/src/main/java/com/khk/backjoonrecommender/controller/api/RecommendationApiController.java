@@ -34,8 +34,8 @@ public class RecommendationApiController {
     }
 
     @GetMapping("/reload")
-    public BasicResponseDto<?> problemReload() {
-        return recommendationService.reloadProblem();
+    public BasicResponseDto<?> problemReload(Authentication authentication) throws IOException {
+        return recommendationService.reloadProblem(authentication);
     }
 
 }
