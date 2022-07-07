@@ -28,6 +28,18 @@
       <h3>GET - /api/v1/recommendation 문제 1개 추천받기</h3>
       <button id="recommendation" v-on:click="recommendation" class="mt-0 btn btn-secondary">문제 하나 추천</button>
     </div>
+
+    <div>
+      <h3>GET - /api/v1/recommendation/reload 문제 1개 다시 추천받기</h3>
+      <button id="recommendationAgain" v-on:click="recommendationAgain" class="mt-0 btn btn-secondary">문제 하나 다시 추천</button>
+    </div>
+
+    <h1>System API - ADMIN만 사용이 가능</h1>
+
+    <div>
+      <h3>GET - /api/v1/system/{userId}/reload [user id] 에 해당하는 사용자의 reloadCount 초기화</h3>
+      <button id="resetSpecificUserReloadCount" v-on:click="reloadCountReset" class="mt-0 btn btn-secondary">user 한 명 reload count reset</button>
+    </div>
   </div>
 </template>
 
@@ -45,6 +57,35 @@ export default {
     }
   },
   methods: {
+    reloadCountReset() {
+      const token = localStorage.getItem('Authorization')
+      const headers = {
+        'Authorization': token
+      };
+
+      const userId = 2;
+      axios({
+        method: 'PATCH',
+        url: `http://localhost:8080/api/v1/system/${userId}/reloadCount`,
+        headers: headers
+      }).then(function (response) {
+        console.log(response);
+      })
+    },
+    recommendationAgain() {
+      const token = localStorage.getItem('Authorization')
+      const headers = {
+        'Authorization': token
+      };
+
+      axios({
+        method: 'GET',
+        url: 'http://localhost:8080/api/v1/recommendation/reload',
+        headers: headers
+      }).then(function (response) {
+        console.log(response);
+      })
+    },
     recommendation() {
       const token = localStorage.getItem('Authorization')
       const headers = {
