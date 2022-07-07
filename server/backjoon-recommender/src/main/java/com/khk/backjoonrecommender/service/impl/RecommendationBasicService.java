@@ -7,7 +7,7 @@ import com.khk.backjoonrecommender.entity.Setting;
 import com.khk.backjoonrecommender.entity.User;
 import com.khk.backjoonrecommender.repository.ProblemRepository;
 import com.khk.backjoonrecommender.repository.UserRepository;
-import com.khk.backjoonrecommender.service.BaekJoonProblemCollector;
+import com.khk.backjoonrecommender.service.BaekJoonApiService;
 import com.khk.backjoonrecommender.service.RecommendationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 public class RecommendationBasicService implements RecommendationService {
 	private final UserRepository userRepository;
 	private final ProblemRepository problemRepository;
-	private final BaekJoonProblemCollector baekJoonProblemCollector;
+	private final BaekJoonApiService baekJoonApiService;
 
 	private Setting userSetting = new Setting();
 
@@ -79,7 +79,7 @@ public class RecommendationBasicService implements RecommendationService {
 	}
 
 	private HashSet<Long> getUserSolvedFilter(String userBaekJoonId) throws IOException {
-		List<Long> userSolvedProblemIdList = baekJoonProblemCollector.getSolvedProblemIdListByBaekJoonId(userBaekJoonId);
+		List<Long> userSolvedProblemIdList = baekJoonApiService.getSolvedProblemIdListByBaekJoonId(userBaekJoonId);
 		return new HashSet<>(userSolvedProblemIdList);
 	}
 

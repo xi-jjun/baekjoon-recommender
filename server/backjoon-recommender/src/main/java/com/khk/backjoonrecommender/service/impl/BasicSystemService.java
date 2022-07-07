@@ -5,7 +5,7 @@ import com.khk.backjoonrecommender.entity.Problem;
 import com.khk.backjoonrecommender.entity.User;
 import com.khk.backjoonrecommender.repository.ProblemRepository;
 import com.khk.backjoonrecommender.repository.UserRepository;
-import com.khk.backjoonrecommender.service.BaekJoonProblemCollector;
+import com.khk.backjoonrecommender.service.BaekJoonApiService;
 import com.khk.backjoonrecommender.service.SystemService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class BasicSystemService implements SystemService {
-	private final BaekJoonProblemCollector baekJoonProblemCollector;
+	private final BaekJoonApiService baekJoonApiService;
 	private final ProblemRepository problemRepository;
 	private final UserRepository userRepository;
 
@@ -39,10 +39,10 @@ public class BasicSystemService implements SystemService {
 				.collect(Collectors.toSet());
 
 		List<Long> responseData = new ArrayList<>();
-		List<Long> latestProblemIdList = baekJoonProblemCollector.getAllProblemIdListFromBaekJoon();
+		List<Long> latestProblemIdList = baekJoonApiService.getAllProblemIdListFromBaekJoon();
 		for (Long problemId : latestProblemIdList) {
 			if (!existedProblemIdList.contains(problemId)) {
-				Problem problem = baekJoonProblemCollector.getProblemByProblemId(problemId);
+				Problem problem = baekJoonApiService.getProblemByProblemId(problemId);
 				problemRepository.save(problem);
 				responseData.add(problemId);
 				log.info("Problem no.{} is added to server", problemId);
