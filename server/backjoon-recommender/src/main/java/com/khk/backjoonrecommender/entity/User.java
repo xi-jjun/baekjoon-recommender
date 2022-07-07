@@ -61,6 +61,12 @@ public class User {
         this.baekJoonId = baekJoonId;
     }
 
+    public void decreaseReloadCount() {
+        if (this.reloadCount > 0) {
+            --this.reloadCount;
+        }
+    }
+
     public void resetReloadCount() {
         this.reloadCount = INIT_RELOAD_COUNT;
     }
