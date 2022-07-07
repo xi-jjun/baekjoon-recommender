@@ -34,6 +34,12 @@
       <button id="recommendationAgain" v-on:click="recommendationAgain" class="mt-0 btn btn-secondary">문제 하나 다시 추천</button>
     </div>
 
+    <div>
+      <h3>POST - /api/v1/recommendation/additional 그 날 추천된 첫 문제를 풀었기에 추가적인 문제 추천받는 기능</h3>
+      <button id="nextProblem" v-on:click="nextProblem" class="mt-0 btn btn-secondary">다음 문제 추천</button>
+    </div>
+
+    <hr>
     <h1>System API - ADMIN만 사용이 가능</h1>
 
     <div>
@@ -57,6 +63,36 @@ export default {
     }
   },
   methods: {
+    nextProblem() {
+      const token = localStorage.getItem('Authorization')
+      const headers = {
+        'Authorization': token
+      };
+
+      // 1회용 임시필터를 만약에 사용자가 사용했다면, option="TEMP" 로 줘야 함. 아니라면 option="TODAY"
+      const settingRequestDTO = {
+          option : "TEMP", // 여기가 무조건 'TEMP' 로 입력되어 요청해야 함
+          levels : "1,2,3,4,5,6,7", // 여기에는 사용자가 일회용으로 설정할 난이도 정보
+          tags : "math,recursion,geometry,dp", // 여기는 사용자가 일회용으로 설정할 문제유형 정보
+          // 아래는 안쓰는 데이터이다.
+          sun : "",
+          mon : "",
+          tue : "",
+          wed : "",
+          thu : "",
+          fri : "",
+          sat : ""
+      }
+
+      axios({
+        method: 'POST',
+        url: 'http://localhost:8080/api/v1/recommendation/additional',
+        headers: headers,
+        data: settingRequestDTO
+      }).then(function (response) {
+        console.log(response);
+      })
+    },
     reloadCountReset() {
       const token = localStorage.getItem('Authorization')
       const headers = {
