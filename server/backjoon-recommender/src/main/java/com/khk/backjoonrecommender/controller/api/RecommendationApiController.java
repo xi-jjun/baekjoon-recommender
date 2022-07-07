@@ -1,11 +1,13 @@
 package com.khk.backjoonrecommender.controller.api;
 
+import com.khk.backjoonrecommender.controller.dto.request.SettingRequestDTO;
 import com.khk.backjoonrecommender.controller.dto.response.BasicResponseDto;
 import com.khk.backjoonrecommender.service.RecommendationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,8 +31,8 @@ public class RecommendationApiController {
     }
 
     @GetMapping("/additional")
-    public BasicResponseDto<?> additionalProblemDetails() {
-        return recommendationService.findAdditionalProblem();
+    public BasicResponseDto<?> additionalProblemDetails(Authentication authentication, @RequestBody SettingRequestDTO settingRequestDTO) throws IOException {
+        return recommendationService.findAdditionalProblem(authentication, settingRequestDTO);
     }
 
     @GetMapping("/reload")

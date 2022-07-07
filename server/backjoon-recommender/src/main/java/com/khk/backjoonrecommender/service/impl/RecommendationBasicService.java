@@ -1,5 +1,6 @@
 package com.khk.backjoonrecommender.service.impl;
 
+import com.khk.backjoonrecommender.controller.dto.request.SettingRequestDTO;
 import com.khk.backjoonrecommender.controller.dto.response.BasicResponseDto;
 import com.khk.backjoonrecommender.entity.Option;
 import com.khk.backjoonrecommender.entity.Problem;
@@ -36,8 +37,7 @@ public class RecommendationBasicService implements RecommendationService {
 
 	@Override
 	public BasicResponseDto<?> recommendProblem(Authentication authentication) throws IOException {
-		String loginUsername = authentication.getName();
-		User loginUser = userRepository.findByUsername(loginUsername);
+		User loginUser = getLoginUser(authentication);
 		int remainedTrialCnt = loginUser.getReloadCount();
 		if (remainedTrialCnt <= 0) {
 			BasicResponseDto<?> responseDto = new BasicResponseDto<>();
@@ -47,20 +47,15 @@ public class RecommendationBasicService implements RecommendationService {
 			return responseDto;
 		}
 
-		userSetting = loginUser.getSetting();
-		String userBaekJoonId = loginUser.getBaekJoonId();
+		Option userOption = userSetting.getOption();
+		userSetting = userOption.equals(Option.TEMP) ? userSetting : loginUser.getSetting();
 
+		String userBaekJoonId = loginUser.getBaekJoonId();
 		Set<Integer> levelFilter = getLevelFilter(); // 사용자가 설정한 난이도 필터
 		Set<String> tagFilter = getTagFilter(); // 사용자가 설정한 문제유형 필터
 		Set<Long> userSolvedFilter = getUserSolvedFilter(userBaekJoonId); // 사용자가 이미 해결한 문제 번호 핕터
 
-		List<Problem> problemList = problemRepository.findAll();
-
-		List<Problem> filteredProblemList = problemList.stream()
-				.filter(p -> levelFilter.contains(p.getLevel())) // 난이도로 필터링
-				.filter(p -> tagFiltering(p.getTags(), tagFilter)) // 문제 유형으로 필터링
-				.filter(Predicate.not(p -> userSolvedFilter.contains(p.getId()))) // 풀었던 문제는 제거
-				.collect(Collectors.toList());
+		List<Problem> filteredProblemList = getFilteredProblemList(levelFilter, tagFilter, userSolvedFilter);
 
 		Problem recommendedProblem = getRandomProblem(filteredProblemList);
 		BasicResponseDto<Problem> result = new BasicResponseDto<>();
@@ -78,7 +73,7 @@ public class RecommendationBasicService implements RecommendationService {
 		return filteredProblemList.get(randomPickedNumber);
 	}
 
-	private HashSet<Long> getUserSolvedFilter(String userBaekJoonId) throws IOException {
+	private Set<Long> getUserSolvedFilter(String userBaekJoonId) throws IOException {
 		List<Long> userSolvedProblemIdList = baekJoonApiService.getSolvedProblemIdListByBaekJoonId(userBaekJoonId);
 		return new HashSet<>(userSolvedProblemIdList);
 	}
@@ -90,13 +85,13 @@ public class RecommendationBasicService implements RecommendationService {
 	}
 
 	private Set<String> getTagFilter() {
-		Option userRecommendationOption = userSetting.getOption();
+		Option option = userSetting.getOption();
 		String[] tags;
-		if (userRecommendationOption.equals(Option.TODAY)) {
-			tags = userSetting.getTags().split(",");
-		} else {
+		if (option.equals(Option.WEEKLY)) {
 			// 오늘의 요일에 따른 추천을 해야 함.
 			tags = getTodayTags();
+		} else {
+			tags = userSetting.getTags().split(",");
 		}
 		return new HashSet<>(Arrays.asList(tags));
 	}
@@ -149,15 +144,32 @@ public class RecommendationBasicService implements RecommendationService {
 	}
 
 	@Override
-	public BasicResponseDto<?> findAdditionalProblem() {
-		return null;
+	public BasicResponseDto<?> findAdditionalProblem(Authentication authentication, SettingRequestDTO settingRequestDTO) throws IOException {
+		Setting tempSetting = settingRequestDTO.toEntity();
+		userSetting = tempSetting;
+
+		return recommendProblem(authentication);
+	}
+
+	private User getLoginUser(Authentication authentication) {
+		String loginUsername = authentication.getName();
+		return userRepository.findByUsername(loginUsername);
+	}
+
+	private List<Problem> getFilteredProblemList(Set<Integer> levelFilter, Set<String> tagFilter, Set<Long> userSolvedFilter) {
+		List<Problem> problemList = problemRepository.findAll();
+
+		return problemList.stream()
+				.filter(p -> levelFilter.contains(p.getLevel())) // 난이도로 필터링
+				.filter(p -> tagFiltering(p.getTags(), tagFilter)) // 문제 유형으로 필터링
+				.filter(Predicate.not(p -> userSolvedFilter.contains(p.getId()))) // 풀었던 문제는 제거
+				.collect(Collectors.toList());
 	}
 
 	@Transactional
 	@Override
 	public BasicResponseDto<?> reloadProblem(Authentication authentication) throws IOException {
-		String loginUsername = authentication.getName();
-		User loginUser = userRepository.findByUsername(loginUsername);
+		User loginUser = getLoginUser(authentication);
 		loginUser.decreaseReloadCount();
 
 		return recommendProblem(authentication);
