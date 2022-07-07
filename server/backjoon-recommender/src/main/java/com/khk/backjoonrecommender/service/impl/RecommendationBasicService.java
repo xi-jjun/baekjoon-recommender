@@ -12,6 +12,7 @@ import com.khk.backjoonrecommender.service.RecommendationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -19,9 +20,11 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class RecommendationBasicService implements RecommendationService {
@@ -32,12 +35,16 @@ public class RecommendationBasicService implements RecommendationService {
 	private Setting userSetting = new Setting();
 
 	@Override
-	public BasicResponseDto<Problem> recommendProblem(Authentication authentication) throws IOException {
+	public BasicResponseDto<?> recommendProblem(Authentication authentication) throws IOException {
 		String loginUsername = authentication.getName();
 		User loginUser = userRepository.findByUsername(loginUsername);
 		int remainedTrialCnt = loginUser.getReloadCount();
 		if (remainedTrialCnt <= 0) {
-			// ***못하게 막아야 함.
+			BasicResponseDto<?> responseDto = new BasicResponseDto<>();
+			responseDto.setCode(400);
+			responseDto.setMessage("user reload count is zero");
+
+			return responseDto;
 		}
 
 		userSetting = loginUser.getSetting();
@@ -55,11 +62,20 @@ public class RecommendationBasicService implements RecommendationService {
 				.filter(Predicate.not(p -> userSolvedFilter.contains(p.getId()))) // 풀었던 문제는 제거
 				.collect(Collectors.toList());
 
-		Problem recommendedProblem = filteredProblemList.get(0); // ***random 적용 해야함. 아직 안한 상태
+		Problem recommendedProblem = getRandomProblem(filteredProblemList);
 		BasicResponseDto<Problem> result = new BasicResponseDto<>();
+		result.setCode(200);
+		result.setMessage("success to recommend baek joon problem");
 		result.setData(recommendedProblem);
-		
+
 		return result;
+	}
+
+	private Problem getRandomProblem(List<Problem> filteredProblemList) {
+		ThreadLocalRandom random = ThreadLocalRandom.current();
+		int randomPickedNumber = random.nextInt(filteredProblemList.size());
+
+		return filteredProblemList.get(randomPickedNumber);
 	}
 
 	private HashSet<Long> getUserSolvedFilter(String userBaekJoonId) throws IOException {
@@ -137,8 +153,13 @@ public class RecommendationBasicService implements RecommendationService {
 		return null;
 	}
 
+	@Transactional
 	@Override
-	public BasicResponseDto<?> reloadProblem() {
-		return null;
+	public BasicResponseDto<?> reloadProblem(Authentication authentication) throws IOException {
+		String loginUsername = authentication.getName();
+		User loginUser = userRepository.findByUsername(loginUsername);
+		loginUser.decreaseReloadCount();
+
+		return recommendProblem(authentication);
 	}
 }
