@@ -56,6 +56,7 @@ public class BaekJoonProblemBasicCollector implements BaekJoonProblemCollector {
 			}
 			hasNext = document.getElementById(NEXT_PAGE_ID);
 			++pageNumber;
+			if (pageNumber == 3) break; // 일단 2페이지(총 200문제) 분량만 테스트로 저장하기 했습니다
 		} while (hasNext != null);
 
 		return problemIdList;
