@@ -30,7 +30,7 @@ public class RecommendationApiController {
         return recommendationService.checkProblemIfSolved();
     }
 
-    @GetMapping("/additional")
+    @PostMapping("/additional")
     public BasicResponseDto<?> additionalProblemDetails(Authentication authentication, @RequestBody SettingRequestDTO settingRequestDTO) throws IOException {
         return recommendationService.findAdditionalProblem(authentication, settingRequestDTO);
     }

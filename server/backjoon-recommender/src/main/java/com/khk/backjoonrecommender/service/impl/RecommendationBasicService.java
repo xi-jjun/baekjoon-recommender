@@ -38,17 +38,11 @@ public class RecommendationBasicService implements RecommendationService {
 	@Override
 	public BasicResponseDto<?> recommendProblem(Authentication authentication) throws IOException {
 		User loginUser = getLoginUser(authentication);
-		int remainedTrialCnt = loginUser.getReloadCount();
-		if (remainedTrialCnt <= 0) {
-			BasicResponseDto<?> responseDto = new BasicResponseDto<>();
-			responseDto.setCode(400);
-			responseDto.setMessage("user reload count is zero");
-
-			return responseDto;
-		}
 
 		Option userOption = userSetting.getOption();
-		userSetting = userOption.equals(Option.TEMP) ? userSetting : loginUser.getSetting();
+		if (userOption == null || !userOption.equals(Option.TEMP)) {
+			userSetting = loginUser.getSetting();
+		}
 
 		String userBaekJoonId = loginUser.getBaekJoonId();
 		Set<Integer> levelFilter = getLevelFilter(); // 사용자가 설정한 난이도 필터
@@ -170,6 +164,14 @@ public class RecommendationBasicService implements RecommendationService {
 	@Override
 	public BasicResponseDto<?> reloadProblem(Authentication authentication) throws IOException {
 		User loginUser = getLoginUser(authentication);
+		int remainedTrialCnt = loginUser.getReloadCount();
+		if (remainedTrialCnt <= 0) {
+			BasicResponseDto<?> responseDto = new BasicResponseDto<>();
+			responseDto.setCode(400);
+			responseDto.setMessage("user reload count is zero");
+
+			return responseDto;
+		}
 		loginUser.decreaseReloadCount();
 
 		return recommendProblem(authentication);
