@@ -1,7 +1,6 @@
 package com.khk.backjoonrecommender.service.impl;
 
 import com.khk.backjoonrecommender.entity.Problem;
-import com.khk.backjoonrecommender.repository.ProblemRepository;
 import com.khk.backjoonrecommender.service.BaekJoonProblemCollector;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,16 +21,13 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class BaekJoonProblemBasicCollector implements BaekJoonProblemCollector {
-	private final ProblemRepository problemRepository;
 	private static final String BASIC_BAEKJOON_PROBLEM_LIST_URL = "https://www.acmicpc.net/problemset/";
 	private static final String PROBLEM_LIST_CLASS = "list_problem_id";
 	private static final String NEXT_PAGE_ID = "next_page";
@@ -46,36 +42,27 @@ public class BaekJoonProblemBasicCollector implements BaekJoonProblemCollector {
 	private static final String USER_SOLVED_PROBLEM_LIST_URL = "https://www.acmicpc.net/user/";
 
 	@Override
-	public List<Problem> getAllProblemList() throws IOException, ParseException, InterruptedException {
-		List<Problem> problemList = new ArrayList<>();
+	public List<Long> getAllProblemIdListFromBaekJoon() throws IOException {
+		List<Long> problemIdList = new ArrayList<>();
 		int pageNumber = 1;
-		Document document = null;
-		Element hasNext = null;
+		Document document;
+		Element hasNext;
 		do {
 			document = Jsoup.connect(BASIC_BAEKJOON_PROBLEM_LIST_URL + pageNumber).get();
-			Elements problemIdElements = document.getElementsByClass(PROBLEM_LIST_CLASS);
-
-			for (Element problemIdElement : problemIdElements) {
-				String problemIdText = problemIdElement.html();
-				Long problemId = Long.parseLong(problemIdText);
-
-				Problem problem = getProblemInfoByProblemId(problemId);
-				log.info("problem Id={}, title={}", problem.getId(), problem.getTitle());
-
-				problemList.add(problem);
-				Thread.sleep(400); // 1 초까지는 괜찮아 보였음. 그러나 너무 느려서 중간에 테스트 중단
+			Elements thisPageProblemIdElements = document.getElementsByClass(PROBLEM_LIST_CLASS);
+			for (Element problemIdElement : thisPageProblemIdElements) {
+				Long problemId = Long.parseLong(problemIdElement.html());
+				problemIdList.add(problemId);
 			}
-
 			hasNext = document.getElementById(NEXT_PAGE_ID);
-
 			++pageNumber;
 		} while (hasNext != null);
 
-		return problemList;
+		return problemIdList;
 	}
 
 	@Override
-	public Problem getProblemInfoByProblemId(Long problemId) throws IOException, ParseException {
+	public Problem getProblemByProblemId(Long problemId) throws IOException, ParseException {
 		JSONObject problemObj = getProblemInfoFromSolvedAPI(problemId);
 
 		String title = problemObj.get(TITLE).toString();
@@ -107,25 +94,7 @@ public class BaekJoonProblemBasicCollector implements BaekJoonProblemCollector {
 	}
 
 	@Override
-	public void updateProblemList() throws IOException, ParseException, InterruptedException {
-		List<Problem> remainedProblemList = problemRepository.findAll();
-		Set<Long> existed = new HashSet<>();
-		for (Problem problem : remainedProblemList) {
-			existed.add(problem.getId());
-		}
-
-		List<Problem> baekJoonProblemList = getAllProblemList();
-		for (Problem problem : baekJoonProblemList) {
-			Long id = problem.getId();
-			if (!existed.contains(id)) {
-				problemRepository.save(problem);
-				log.info("{} is inserted in database", id);
-			}
-		}
-	}
-
-	@Override
-	public List<Long> getProblemIdListByBaekJoonId(String baekJoonId) throws IOException {
+	public List<Long> getSolvedProblemIdListByBaekJoonId(String baekJoonId) throws IOException {
 		Document document = Jsoup.connect(USER_SOLVED_PROBLEM_LIST_URL + baekJoonId).get();
 		Element solvedElements = document.getElementsByClass("problem-list").get(0);
 		String[] solvedIdList = solvedElements.text().split(" ");
