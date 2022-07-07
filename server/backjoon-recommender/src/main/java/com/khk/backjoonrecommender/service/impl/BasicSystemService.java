@@ -72,6 +72,7 @@ public class BasicSystemService implements SystemService {
 		return responseDto;
 	}
 
+	@Transactional
 	@Override
 	public BasicResponseDto<?> resetUserReloadCount(Long userId) {
 		Optional<User> findUser = userRepository.findById(userId);
@@ -81,7 +82,7 @@ public class BasicSystemService implements SystemService {
 
 			BasicResponseDto<?> responseDto = new BasicResponseDto<>();
 			responseDto.setCode(200);
-			responseDto.setMessage("success to reset reload count user id={}" + userId);
+			responseDto.setMessage("success to reset reload count user id=" + userId);
 
 			return responseDto;
 		}
