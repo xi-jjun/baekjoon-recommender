@@ -21,6 +21,5 @@ public class Problem {
     private String title;
     private int level;
     private String tags;
-    private Double answerRate;
     private String problemUrl;
 }

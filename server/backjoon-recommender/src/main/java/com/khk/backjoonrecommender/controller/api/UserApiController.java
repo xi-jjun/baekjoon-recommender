@@ -3,12 +3,14 @@ package com.khk.backjoonrecommender.controller.api;
 import com.khk.backjoonrecommender.controller.dto.request.SignUpRequestDTO;
 import com.khk.backjoonrecommender.controller.dto.response.BasicResponseDto;
 import com.khk.backjoonrecommender.controller.dto.response.MyPageResponseDto;
+import com.khk.backjoonrecommender.controller.dto.response.RivalListResponseDto;
 import com.khk.backjoonrecommender.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/user")
@@ -20,6 +22,11 @@ public class UserApiController {
 	@GetMapping
 	public BasicResponseDto<MyPageResponseDto> userDetails(Authentication authentication) {
 		return userService.findUser(authentication);
+	}
+
+	@GetMapping("/rivals")
+	public BasicResponseDto<List<RivalListResponseDto>> userRivals(Authentication authentication) {
+		return userService.findRivals(authentication);
 	}
 
 	@PostMapping

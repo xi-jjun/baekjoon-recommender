@@ -7,11 +7,9 @@ import java.io.IOException;
 import java.util.List;
 
 public interface BaekJoonProblemCollector {
-	public List<Problem> getAllProblemList() throws IOException, ParseException, InterruptedException;
+	public List<Long> getAllProblemIdListFromBaekJoon() throws IOException;
 
-	public Problem getProblemInfoByProblemId(Long problemId) throws IOException, ParseException;
+	public Problem getProblemByProblemId(Long problemId) throws IOException, ParseException;
 
-	public void updateProblemList() throws IOException, ParseException, InterruptedException;
-
-	public List<Long> getProblemIdListByBaekJoonId(String baekJoonId) throws IOException;
+	public List<Long> getSolvedProblemIdListByBaekJoonId(String baekJoonId) throws IOException;
 }

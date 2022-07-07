@@ -58,22 +58,12 @@ public class RecommendationBasicService implements RecommendationService {
 		Problem recommendedProblem = filteredProblemList.get(0); // ***random 적용 해야함. 아직 안한 상태
 		BasicResponseDto<Problem> result = new BasicResponseDto<>();
 		result.setData(recommendedProblem);
-//		List<Problem> levelFilteredProblemList = problemList.stream()
-//				.filter(p -> levelFilter.contains(p.getLevel()))
-//				.collect(Collectors.toList());
-//
-//		List<Problem> tagFilteredProblemList = levelFilteredProblemList.stream()
-//				.filter(p -> tagFiltering(p.getTags(), tagFilter))
-//				.collect(Collectors.toList());
-//
-//		List<Problem> eraseSolvedProblemList = tagFilteredProblemList.stream()
-//				.filter(p -> !userSolvedFilter.contains(p.getId()))
-//				.collect(Collectors.toList());
+		
 		return result;
 	}
 
 	private HashSet<Long> getUserSolvedFilter(String userBaekJoonId) throws IOException {
-		List<Long> userSolvedProblemIdList = baekJoonProblemCollector.getProblemIdListByBaekJoonId(userBaekJoonId);
+		List<Long> userSolvedProblemIdList = baekJoonProblemCollector.getSolvedProblemIdListByBaekJoonId(userBaekJoonId);
 		return new HashSet<>(userSolvedProblemIdList);
 	}
 
