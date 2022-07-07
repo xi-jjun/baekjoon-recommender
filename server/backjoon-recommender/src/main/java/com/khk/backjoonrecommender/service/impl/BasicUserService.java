@@ -5,7 +5,7 @@ import com.khk.backjoonrecommender.controller.dto.request.SignUpRequestDTO;
 import com.khk.backjoonrecommender.controller.dto.request.UserRequestDTO;
 import com.khk.backjoonrecommender.controller.dto.response.BasicResponseDto;
 import com.khk.backjoonrecommender.controller.dto.response.MyPageResponseDto;
-import com.khk.backjoonrecommender.controller.dto.response.RivalListDto;
+import com.khk.backjoonrecommender.controller.dto.response.RivalListResponseDto;
 import com.khk.backjoonrecommender.entity.Setting;
 import com.khk.backjoonrecommender.entity.User;
 import com.khk.backjoonrecommender.repository.SettingRepository;
@@ -85,11 +85,11 @@ public class BasicUserService implements UserService {
     }
 
     @Override
-    public BasicResponseDto<List<RivalListDto>> findRivals(Authentication authentication) {
+    public BasicResponseDto<List<RivalListResponseDto>> findRivals(Authentication authentication) {
         String username = authentication.getName();
         User user = userRepository.findByUsername(username);
-        List<RivalListDto> results = user.getRivals().stream()
-                .map(rival -> new RivalListDto(rival.getSelectedUser().getUsername()))
+        List<RivalListResponseDto> results = user.getRivals().stream()
+                .map(rival -> new RivalListResponseDto(rival.getSelectedUser().getUsername()))
                 .collect(Collectors.toList());
         return new BasicResponseDto<>(200, "RIVAL", results);
     }
