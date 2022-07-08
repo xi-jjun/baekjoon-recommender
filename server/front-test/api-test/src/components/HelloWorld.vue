@@ -20,11 +20,6 @@
     </div>
 
     <div>
-      <h3>POST - /api/v1/system/problem-list DB에 백준 최신 문제 저장하기</h3>
-      <button id="migration" v-on:click="updateProblemList" class="mt-0 btn btn-secondary">백준문제 최신사항 반영</button>
-    </div>
-
-    <div>
       <h3>GET - /api/v1/recommendation 문제 1개 추천받기</h3>
       <button id="recommendation" v-on:click="recommendation" class="mt-0 btn btn-secondary">문제 하나 추천</button>
     </div>
@@ -39,12 +34,27 @@
       <button id="nextProblem" v-on:click="nextProblem" class="mt-0 btn btn-secondary">다음 문제 추천</button>
     </div>
 
+    <div>
+      <h3>POST - /api/v1/recommendation 추천받은 문제를 풀었는지 판단해주고, 풀었다면 사용자가 푼 문제 리스트에 해당 문제를 추가하는 API</h3>
+      <button id="checkIfSolved" v-on:click="checkIfSolved" class="mt-0 btn btn-secondary">풀었나?</button>
+    </div>
+
     <hr>
     <h1>System API - ADMIN만 사용이 가능</h1>
 
     <div>
-      <h3>GET - /api/v1/system/{userId}/reload [user id] 에 해당하는 사용자의 reloadCount 초기화</h3>
+      <h3>POST - /api/v1/system/problem-list DB에 백준 최신 문제 저장하기</h3>
+      <button id="migration" v-on:click="updateProblemList" class="mt-0 btn btn-secondary">백준문제 최신사항 반영</button>
+    </div>
+
+    <div>
+      <h3>GET - /api/v1/system/{userId}/reloadCount [user id] 에 해당하는 사용자의 reloadCount 초기화</h3>
       <button id="resetSpecificUserReloadCount" v-on:click="reloadCountReset" class="mt-0 btn btn-secondary">user 한 명 reload count reset</button>
+    </div>
+
+    <div>
+      <h3>GET - /api/v1/system/reloadCount 모든 사용자의 reloadCount 초기화</h3>
+      <button id="resetAllUsersReloadCount" v-on:click="resetAllUsersReloadCount" class="mt-0 btn btn-secondary">user 전체 reload count reset</button>
     </div>
   </div>
 </template>
@@ -63,6 +73,39 @@ export default {
     }
   },
   methods: {
+    resetAllUsersReloadCount() {
+      const token = localStorage.getItem('Authorization')
+      const headers = {
+        'Authorization': token
+      };
+
+      axios({
+        method: 'PATCH',
+        url: `http://localhost:8080/api/v1/system/reloadCount`,
+        headers: headers
+      }).then(function (response) {
+        console.log(response);
+      })
+    },
+    checkIfSolved() {
+      const token = localStorage.getItem('Authorization')
+      const headers = {
+        'Content-type': 'application/json; charset=UTF-8',
+        'Authorization': token
+      };
+
+      const problemId = 1002; // 1002 번 문제를 풀었는지 확인하기 위함
+      // => 이 값은 당연하게도 추천받은 문제 번호를 가져와야 하는 것.
+
+      axios({
+        method: 'POST',
+        url: 'http://localhost:8080/api/v1/recommendation',
+        headers: headers,
+        data: problemId
+      }).then(function (response) {
+        console.log(response);
+      })
+    },
     nextProblem() {
       const token = localStorage.getItem('Authorization')
       const headers = {
@@ -195,6 +238,7 @@ export default {
         }
       }).then(function (response) {
         // console.log(response.headers.authorization);
+        console.log("login success");
         const token = response.headers.authorization;
         localStorage.setItem('Authorization', token);
       });
