@@ -5,8 +5,11 @@ import com.khk.backjoonrecommender.controller.dto.response.BasicResponseDto;
 import com.khk.backjoonrecommender.entity.Option;
 import com.khk.backjoonrecommender.entity.Problem;
 import com.khk.backjoonrecommender.entity.Setting;
+import com.khk.backjoonrecommender.entity.SolveType;
+import com.khk.backjoonrecommender.entity.TriedProblem;
 import com.khk.backjoonrecommender.entity.User;
 import com.khk.backjoonrecommender.repository.ProblemRepository;
+import com.khk.backjoonrecommender.repository.TriedProblemRepository;
 import com.khk.backjoonrecommender.repository.UserRepository;
 import com.khk.backjoonrecommender.service.BaekJoonApiService;
 import com.khk.backjoonrecommender.service.RecommendationService;
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashSet;
@@ -32,6 +36,7 @@ public class RecommendationBasicService implements RecommendationService {
 	private final UserRepository userRepository;
 	private final ProblemRepository problemRepository;
 	private final BaekJoonApiService baekJoonApiService;
+	private final TriedProblemRepository triedProblemRepository;
 
 	private Setting userSetting = new Setting();
 
@@ -130,11 +135,35 @@ public class RecommendationBasicService implements RecommendationService {
 				.collect(Collectors.toSet());
 	}
 
+	@Transactional
 	@Override
-	public BasicResponseDto<?> checkProblemIfSolved() {
-		// ***getUserSolvedFilter 로 set 자료구조 반환 받은 후,
-		// parameter 로 들어온 판단하고 싶은 문제번호와 비교하면 된다.
-		return null;
+	public BasicResponseDto<?> checkProblemIfSolved(Authentication authentication, Long problemId) throws IOException {
+		User loginUser = getLoginUser(authentication);
+		String userBaekJoonId = loginUser.getBaekJoonId();
+		List<Long> solvedProblemIdList = baekJoonApiService.getSolvedProblemIdListByBaekJoonId(userBaekJoonId);
+		Problem problem = problemRepository.findById(problemId).orElse(null);
+
+		if (solvedProblemIdList.contains(problemId)) {
+			TriedProblem triedProblem = TriedProblem.builder()
+					.problem(problem)
+					.user(loginUser)
+					.solvedDate(LocalDateTime.now())
+					.isSolved(SolveType.PASS)
+					.build();
+			triedProblemRepository.save(triedProblem);
+
+			BasicResponseDto<?> responseDto = new BasicResponseDto<>();
+			responseDto.setCode(200);
+			responseDto.setMessage(userBaekJoonId + " solved problem id=" + problemId);
+
+			return responseDto;
+		}
+
+		BasicResponseDto<?> responseDto = new BasicResponseDto<>();
+		responseDto.setCode(400);
+		responseDto.setMessage(userBaekJoonId + " didn't solve problem id=" + problemId);
+
+		return responseDto;
 	}
 
 	@Override

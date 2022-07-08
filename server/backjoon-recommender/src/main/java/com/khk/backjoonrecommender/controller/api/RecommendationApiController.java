@@ -26,8 +26,8 @@ public class RecommendationApiController {
     }
 
     @PostMapping
-    public BasicResponseDto<?> problemCheck() {
-        return recommendationService.checkProblemIfSolved();
+    public BasicResponseDto<?> problemCheck(Authentication authentication, @RequestBody Long problemId) throws IOException {
+        return recommendationService.checkProblemIfSolved(authentication, problemId);
     }
 
     @PostMapping("/additional")

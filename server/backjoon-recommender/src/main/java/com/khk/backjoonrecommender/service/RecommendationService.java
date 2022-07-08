@@ -9,7 +9,7 @@ import java.io.IOException;
 public interface RecommendationService {
     public BasicResponseDto<?> recommendProblem(Authentication authentication) throws IOException;
 
-    public BasicResponseDto<?> checkProblemIfSolved();
+    public BasicResponseDto<?> checkProblemIfSolved(Authentication authentication, Long problemId) throws IOException;
 
     public BasicResponseDto<?> findAdditionalProblem(Authentication authentication, SettingRequestDTO settingRequestDTO) throws IOException;
 
