@@ -6,8 +6,11 @@ import com.khk.backjoonrecommender.controller.dto.request.UserRequestDTO;
 import com.khk.backjoonrecommender.controller.dto.response.BasicResponseDto;
 import com.khk.backjoonrecommender.controller.dto.response.MyPageResponseDto;
 import com.khk.backjoonrecommender.controller.dto.response.RivalListResponseDto;
+import com.khk.backjoonrecommender.controller.dto.response.RivalResponseDto;
+import com.khk.backjoonrecommender.entity.Rival;
 import com.khk.backjoonrecommender.entity.Setting;
 import com.khk.backjoonrecommender.entity.User;
+import com.khk.backjoonrecommender.repository.RivalRepository;
 import com.khk.backjoonrecommender.repository.SettingRepository;
 import com.khk.backjoonrecommender.repository.UserRepository;
 import com.khk.backjoonrecommender.service.UserService;
@@ -15,12 +18,14 @@ import com.khk.backjoonrecommender.service.ValidationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -30,6 +35,7 @@ import java.util.stream.Collectors;
 public class BasicUserService implements UserService {
     private final ValidationService validationService;
     private final UserRepository userRepository;
+    private final RivalRepository rivalRepository;
     private final SettingRepository settingRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
@@ -88,10 +94,34 @@ public class BasicUserService implements UserService {
     public BasicResponseDto<List<RivalListResponseDto>> findRivals(Authentication authentication) {
         String username = authentication.getName();
         User user = userRepository.findByUsername(username);
-        List<RivalListResponseDto> results = user.getRivals().stream()
-                .map(rival -> new RivalListResponseDto(rival.getSelectedUser().getUsername()))
+        List<Rival> rivals = rivalRepository.findAllBySelectingUser(user);
+        List<RivalListResponseDto> results = rivals.stream()
+                .map(rival -> new RivalListResponseDto(rival.getId(), rival.getSelectedUser().getUsername()))
                 .collect(Collectors.toList());
         return new BasicResponseDto<>(200, "RIVAL", results);
+    }
+
+    @Transactional
+    @Override
+    public BasicResponseDto<RivalResponseDto> addRival(Long rivalId) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username);
+        Optional<User> optional = userRepository.findById(rivalId);
+        Rival savedRival;
+        if (optional.isPresent()) {
+            Rival rival = new Rival(user, optional.get());
+            rival.setUser(user);
+            savedRival = rivalRepository.save(rival);
+            return new BasicResponseDto<>(200, "RIVAL", new RivalResponseDto(savedRival.getId(), savedRival.getSelectedUser().getUsername()));
+        }
+        return new BasicResponseDto<>(400, "RIVAL", null);
+    }
+
+    @Override
+    @Transactional
+    public BasicResponseDto<?> deleteRival(Long rivalId) {
+        rivalRepository.deleteById(rivalId);
+        return new BasicResponseDto<>(200, "RIVAL DELETE", null);
     }
 
     private void encodingUserPassword(UserRequestDTO userRequestDTO) {

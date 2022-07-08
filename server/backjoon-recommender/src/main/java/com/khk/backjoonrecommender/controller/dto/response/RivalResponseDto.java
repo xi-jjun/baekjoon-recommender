@@ -1,13 +1,12 @@
 package com.khk.backjoonrecommender.controller.dto.response;
 
+import com.khk.backjoonrecommender.entity.Rival;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class RivalListResponseDto {
+public class RivalResponseDto {
 
     private Long id;
     private String username;
