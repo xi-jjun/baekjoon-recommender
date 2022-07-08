@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +25,8 @@ import java.util.List;
 @Table(name = "Users")
 @Entity
 public class User {
-    private final int INIT_RELOAD_COUNT = 3;
+    @Transient
+    private static final int INIT_RELOAD_COUNT = 3;
 
     @Id
     @GeneratedValue
@@ -57,6 +59,12 @@ public class User {
         this.username = username;
         this.password = password;
         this.baekJoonId = baekJoonId;
+    }
+
+    public void decreaseReloadCount() {
+        if (this.reloadCount > 0) {
+            --this.reloadCount;
+        }
     }
 
     public void resetReloadCount() {

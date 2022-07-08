@@ -79,6 +79,7 @@ public class BasicUserService implements UserService {
         encodingUserPassword(userRequestDTO);
         User user = userRequestDTO.toEntity();
         user.setProblemFilterSetting(setting);
+        user.resetReloadCount();
         userRepository.save(user);
 
         BasicResponseDto<User> responseDto = new BasicResponseDto<>();
