@@ -1,7 +1,7 @@
 package com.khk.backjoonrecommender.service.impl;
 
 import com.khk.backjoonrecommender.entity.Problem;
-import com.khk.backjoonrecommender.service.BaekJoonProblemCollector;
+import com.khk.backjoonrecommender.service.BaekJoonApiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class BaekJoonProblemBasicCollector implements BaekJoonProblemCollector {
+public class BasicBaekJoonApiService implements BaekJoonApiService {
 	private static final String BASIC_BAEKJOON_PROBLEM_LIST_URL = "https://www.acmicpc.net/problemset/";
 	private static final String PROBLEM_LIST_CLASS = "list_problem_id";
 	private static final String NEXT_PAGE_ID = "next_page";

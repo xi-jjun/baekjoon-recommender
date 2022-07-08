@@ -4,6 +4,7 @@ import com.khk.backjoonrecommender.controller.dto.request.SignUpRequestDTO;
 import com.khk.backjoonrecommender.controller.dto.response.BasicResponseDto;
 import com.khk.backjoonrecommender.controller.dto.response.MyPageResponseDto;
 import com.khk.backjoonrecommender.controller.dto.response.RivalListResponseDto;
+import com.khk.backjoonrecommender.controller.dto.response.RivalResponseDto;
 import com.khk.backjoonrecommender.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -27,6 +28,16 @@ public class UserApiController {
 	@GetMapping("/rivals")
 	public BasicResponseDto<List<RivalListResponseDto>> userRivals(Authentication authentication) {
 		return userService.findRivals(authentication);
+	}
+
+	@PostMapping("/rivals/{rivalId}")
+	public BasicResponseDto<RivalResponseDto> rivalAdd(@PathVariable Long rivalId) {
+		return userService.addRival(rivalId);
+	}
+
+	@DeleteMapping("/rivals/{rivalId}")
+	public BasicResponseDto<?> rivalDelete(@PathVariable Long rivalId) {
+		return userService.deleteRival(rivalId);
 	}
 
 	@PostMapping
