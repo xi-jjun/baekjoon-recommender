@@ -6,7 +6,7 @@ import org.json.simple.parser.ParseException;
 import java.io.IOException;
 import java.util.List;
 
-public interface BaekJoonProblemCollector {
+public interface BaekJoonApiService {
 	public List<Long> getAllProblemIdListFromBaekJoon() throws IOException;
 
 	public Problem getProblemByProblemId(Long problemId) throws IOException, ParseException;
