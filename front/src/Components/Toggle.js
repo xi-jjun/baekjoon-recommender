@@ -1,12 +1,14 @@
 import { react, useState } from "react";
 
-const Toggle = ({ typo1, typo2, element1, element2 }) => {
+const Toggle = ({ typo1, typo2, element1, element2, id }) => {
     const [toggle, setToggle] = useState(true);
     const clickedToggle = () => {
         setToggle((prev) => !prev);
     }
     return (
-        <div style={{ width: "100%" }}>
+        <div style={{ width: "100%" }}
+            option={toggle ? "TODAY" : "WEEKLY"}
+            id={id}>
             <div style={{
                 maxWidth: "163px",
                 height: "30px",
