@@ -36,8 +36,8 @@ const Header = () => {
                 <Styled.HeaderTypoContainer>
                     <Styled.StyledLink to="/rival"><HeaderTypo name="Rival" /></Styled.StyledLink>
                     <Styled.StyledLink to="/solved"><HeaderTypo name="Solved" /></Styled.StyledLink>
-                    <Styled.StyledLink to="/"><HeaderTypo name="Logout" /></Styled.StyledLink>
-                    <Styled.StyledLink to="/myPage"><HeaderTypo name="MyPage" /></Styled.StyledLink>
+                    <Styled.StyledLink to="/user/login"><HeaderTypo name="Logout" /></Styled.StyledLink>
+                    <Styled.StyledLink to="user/my-page"><HeaderTypo name="MyPage" /></Styled.StyledLink>
                 </Styled.HeaderTypoContainer>
             </Styled.HeaderContainer>
         </div>
