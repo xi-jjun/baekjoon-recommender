@@ -1,15 +1,15 @@
 package com.khk.backjoonrecommender.service.impl;
 
+import com.khk.backjoonrecommender.common.ResponseCodeMessage;
 import com.khk.backjoonrecommender.controller.dto.request.SettingRequestDTO;
 import com.khk.backjoonrecommender.controller.dto.request.SignUpRequestDTO;
 import com.khk.backjoonrecommender.controller.dto.request.UserRequestDTO;
-import com.khk.backjoonrecommender.controller.dto.response.BasicResponseDto;
-import com.khk.backjoonrecommender.controller.dto.response.MyPageResponseDto;
-import com.khk.backjoonrecommender.controller.dto.response.RivalListResponseDto;
-import com.khk.backjoonrecommender.controller.dto.response.RivalResponseDto;
+import com.khk.backjoonrecommender.controller.dto.response.*;
 import com.khk.backjoonrecommender.entity.Rival;
 import com.khk.backjoonrecommender.entity.Setting;
 import com.khk.backjoonrecommender.entity.User;
+import com.khk.backjoonrecommender.exception.BaekJoonIdNotFoundException;
+import com.khk.backjoonrecommender.exception.handler.AlreadyRegisteredException;
 import com.khk.backjoonrecommender.repository.RivalRepository;
 import com.khk.backjoonrecommender.repository.SettingRepository;
 import com.khk.backjoonrecommender.repository.UserRepository;
@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.khk.backjoonrecommender.common.ResponseCodeMessage.*;
+
 @Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -45,12 +47,7 @@ public class BasicUserService implements UserService {
         Setting userSetting = loginUser.getSetting();
 
         MyPageResponseDto myPageResponseDto = new MyPageResponseDto(loginUser, userSetting);
-        BasicResponseDto<MyPageResponseDto> response = new BasicResponseDto<>();
-        response.setData(myPageResponseDto);
-        response.setMessage("success to find username = " + loginUser.getUsername());
-        response.setCode(200);
-
-        return response;
+        return new BasicResponseDto<>(SUCCESS, SUCCESS_USER_DETAIL, myPageResponseDto);
     }
 
     @Transactional
@@ -60,10 +57,7 @@ public class BasicUserService implements UserService {
 
         String baekJoonId = userRequestDTO.getBaekJoonId();
         if (!validationService.validateBaekJoonId(baekJoonId)) {
-            BasicResponseDto<?> failToRegisterResponse = new BasicResponseDto<>();
-            failToRegisterResponse.setMessage("baekJoonId = " + baekJoonId + " is not exited");
-            failToRegisterResponse.setCode(400);
-            return failToRegisterResponse;
+            throw new BaekJoonIdNotFoundException();
         } else if (!validationService.validateUserRequestInfo(userRequestDTO)) {
             /**
              * ***검증 필요. → validationService.validateUserRequestInfo(userRequestDTO)
@@ -77,15 +71,20 @@ public class BasicUserService implements UserService {
         settingRepository.save(setting);
 
         encodingUserPassword(userRequestDTO);
+        String username = userRequestDTO.getUsername();
+        User findUser = userRepository.findByUsername(username);
+        if (findUser != null) {
+            throw new AlreadyRegisteredException();
+        }
         User user = userRequestDTO.toEntity();
         user.setProblemFilterSetting(setting);
         user.resetReloadCount();
         userRepository.save(user);
 
         BasicResponseDto<User> responseDto = new BasicResponseDto<>();
-        responseDto.setCode(200);
-        responseDto.setMessage("success to register user");
-        responseDto.setData(user);
+        responseDto.setCode(SUCCESS);
+        responseDto.setMessage(REGISTER_SUCCESS);
+        responseDto.setData(null);
         log.info("user {} is created", user.getUsername());
 
         return responseDto;
