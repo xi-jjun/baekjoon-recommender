@@ -3,7 +3,6 @@ import "../default.css";
 import * as Default from "../Default";
 
 const SelectBox = ({ selectTypo, options }) => {
-    // id 값을 정해야 할 것 같다
     const [selectClicked, selectOnClick] = useState(false);
     const clickSelectBox = () => {
         selectOnClick(prev => !prev)
