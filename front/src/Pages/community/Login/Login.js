@@ -2,7 +2,7 @@ import Button from "../../../Components/Button";
 import * as Default from "../../../Default";
 import * as Community from '../Community';
 import * as Styled from './Styled';
-import { useEffect, useState } from "react";
+import { useEffect, useState, } from "react";
 import axios from "axios";
 
 const LoginInfo = {
@@ -11,7 +11,6 @@ const LoginInfo = {
 }
 
 const Login = () => {
-    let loginSuccess = false;
     const [id, setId] = useState("")
     const [pw, setPw] = useState("")
 
@@ -22,17 +21,28 @@ const Login = () => {
         setPw(e.target.value)
     }
 
-    // useEffect(() => {
-    //     const getData = async () => {
-    //         const res = await axios.post("https://solved.ac/api/v3/problem/show?problemId=1001", {
-    //             username,
-    //             password
-    //         })
-    //         //login 여부를 나타내는 변수 값 수정
-    //         console.log(res.data.titleKo)
-    //     }
-    //     getData()
-    // }, [])
+    const [token, setToken] = useState("");
+
+    const tryLogin = (e) => {
+
+        const data = {
+            username: id,
+            password: pw,
+        };
+
+        axios.post("http://localhost:8080/login", data)
+            .then((res) => {
+                console.log("Data: ", data);
+                console.log("res.data: ", res.data);
+                localStorage.setItem('Authorization', res.headers.authorization);
+                setToken(localStorage.getItem("Authorization"));
+
+            }).catch((e) => {
+                console.log("err: ", e);
+                alert("login failed");
+                console.log(localStorage.getItem("Authorization"));
+            })
+    }
 
     return (
         <Styled.LoginForm>
@@ -48,14 +58,14 @@ const Login = () => {
                     type="password"
                     onChange={handleInputPw} />
             </Community.InfoContainer>
-            <Default.StyledLink id="login-button" to="/recommend"><Button typo={LoginInfo.typo} ID={LoginInfo.id} /></Default.StyledLink>
+            <Default.StyledLink id="login-button" replace to={token ? "/" : "/user/login"} onClick={tryLogin}><Button typo={LoginInfo.typo} ID={LoginInfo.id} /></Default.StyledLink>
             <Styled.LoginFormFooter>
                 <Styled.LoginCheckboxWrapper>
                     <input type="checkbox"
                         style={{ width: "12px", height: "12px", borderColor: "#e5e5e5" }} />
                     <Styled.LoginFormFooterTypo>로그인 상태 유지</Styled.LoginFormFooterTypo>
                 </Styled.LoginCheckboxWrapper>
-                <Styled.SignUpLink to="/signUp">회원 가입</Styled.SignUpLink>
+                <Styled.SignUpLink to="../user/register">회원 가입</Styled.SignUpLink>
             </Styled.LoginFormFooter>
         </Styled.LoginForm>
     )
