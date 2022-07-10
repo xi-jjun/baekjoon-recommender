@@ -1,11 +1,12 @@
 package com.khk.backjoonrecommender.service.impl;
 
-import com.khk.backjoonrecommender.common.ResponseCodeMessage;
 import com.khk.backjoonrecommender.controller.dto.request.SettingRequestDTO;
 import com.khk.backjoonrecommender.controller.dto.request.SignUpRequestDTO;
 import com.khk.backjoonrecommender.controller.dto.request.UserRequestDTO;
 import com.khk.backjoonrecommender.controller.dto.response.*;
+import com.khk.backjoonrecommender.entity.Option;
 import com.khk.backjoonrecommender.entity.Rival;
+import com.khk.backjoonrecommender.entity.Role;
 import com.khk.backjoonrecommender.entity.Setting;
 import com.khk.backjoonrecommender.entity.User;
 import com.khk.backjoonrecommender.exception.BaekJoonIdNotFoundException;
@@ -23,6 +24,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +42,34 @@ public class BasicUserService implements UserService {
     private final RivalRepository rivalRepository;
     private final SettingRepository settingRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+
+    @Transactional
+    @PostConstruct
+    public void initAdmin() {
+        Setting setting = Setting.builder()
+                .option(Option.TODAY)
+                .tags("dp,math,dfs,bfs")
+                .levels("1,2,3,4,5,6,7")
+                .sun("")
+                .mon("")
+                .tue("")
+                .wed("")
+                .thu("")
+                .fri("")
+                .sat("").build();
+
+        User admin = User.builder()
+                .username("admin")
+                .baekJoonId("rlawowns000")
+                .password(passwordEncoder.encode("1234"))
+                .role(Role.ADMIN)
+                .setting(setting)
+                .reloadCount(3)
+                .build();
+
+        settingRepository.save(setting);
+        userRepository.save(admin);
+    }
 
     public BasicResponseDto<MyPageResponseDto> findUser(Authentication authentication) {
         String username = authentication.getName();
