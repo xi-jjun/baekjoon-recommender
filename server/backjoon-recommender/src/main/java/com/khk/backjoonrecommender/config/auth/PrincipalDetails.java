@@ -1,8 +1,10 @@
 package com.khk.backjoonrecommender.config.auth;
 
+import com.khk.backjoonrecommender.entity.Role;
 import com.khk.backjoonrecommender.entity.User;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
@@ -22,6 +24,9 @@ public class PrincipalDetails implements UserDetails {
 		/**
 		 * USER 에 설정한 ROLE 이 없어서 객체만 반환함
 		 */
+		Role role = user.getRole();
+		authorities.add(new SimpleGrantedAuthority(role.toString()));
+
 		return authorities;
 	}
 
