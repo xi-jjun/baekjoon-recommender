@@ -43,6 +43,11 @@
     <h1>System API - ADMIN만 사용이 가능</h1>
 
     <div>
+      <h3>POST - /login admin계정으로 로그인</h3>
+      <button id="adminLogin" v-on:click="adminLogin" class="mt-0 btn btn-secondary">admin login</button>
+    </div>
+
+    <div>
       <h3>POST - /api/v1/system/problem-list DB에 백준 최신 문제 저장하기</h3>
       <button id="migration" v-on:click="updateProblemList" class="mt-0 btn btn-secondary">백준문제 최신사항 반영</button>
     </div>
@@ -73,6 +78,25 @@ export default {
     }
   },
   methods: {
+    adminLogin() {
+      /**
+       * system api는 admin 권한을 가진 사용자만이 요청을 할 수 있다. 따라서 일반 사용자는 /api/v1/system/** api를 사용 못한다.
+       * 따라서 아래 계정은 server에서 미리 프로그램이 실행될 때 마다 생성되는 관리자 계정이다.
+       */
+      axios({
+        method: 'post',
+        url: 'http://localhost:8080/login',
+        data: {
+          username: 'admin', // admin 계정 id,pw를 내가 이렇게 설정함. setting 도 대충 설정.
+          password: '1234' // server/backjoon-recommender/src/main/java/com/khk/backjoonrecommender/service/impl/BasicUserService.java 에 가면 볼 수 있음.
+        }
+      }).then(function (response) {
+        // console.log(response.headers.authorization);
+        console.log("admin login success");
+        const token = response.headers.authorization;
+        localStorage.setItem('Authorization', token);
+      });
+    },
     resetAllUsersReloadCount() {
       const token = localStorage.getItem('Authorization')
       const headers = {
@@ -142,7 +166,8 @@ export default {
         'Authorization': token
       };
 
-      const userId = 2;
+      const userId = 2; // 만약 이 부분에서 오류가 난다면, 해당 로그인된 계정을 H2 DB에서 
+      // select * from users 로 찾아서 id가 몇번인지 확인한 후, 존재하는지 확인한다.
       axios({
         method: 'PATCH',
         url: `http://localhost:8080/api/v1/system/${userId}/reloadCount`,
