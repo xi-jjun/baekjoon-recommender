@@ -51,6 +51,7 @@ public class BasicUserService implements UserService {
     }
 
     @Transactional
+	@Override
     public BasicResponseDto<?> registerUser(SignUpRequestDTO signUpRequestDTO) throws IOException {
         UserRequestDTO userRequestDTO = signUpRequestDTO.getUserRequestDTO();
         SettingRequestDTO settingRequestDTO = signUpRequestDTO.getSettingRequestDTO();
@@ -131,6 +132,7 @@ public class BasicUserService implements UserService {
     }
 
     @Transactional
+	@Override
     public BasicResponseDto<?> modifyUser() {
         return null;
     }
