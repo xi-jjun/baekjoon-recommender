@@ -1,5 +1,6 @@
 package com.khk.backjoonrecommender.controller.dto.request;
 
+import com.khk.backjoonrecommender.entity.Role;
 import com.khk.backjoonrecommender.entity.User;
 import lombok.Data;
 
@@ -14,6 +15,7 @@ public class UserRequestDTO {
 				.username(username)
 				.baekJoonId(baekJoonId)
 				.password(password)
+				.role(Role.USER)
 				.build();
 	}
 }
