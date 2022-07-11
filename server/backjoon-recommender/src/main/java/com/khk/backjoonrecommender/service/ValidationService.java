@@ -1,11 +1,12 @@
 package com.khk.backjoonrecommender.service;
 
 import com.khk.backjoonrecommender.controller.dto.request.UserRequestDTO;
+import com.khk.backjoonrecommender.entity.User;
 
 import java.io.IOException;
 
 public interface ValidationService {
-	public boolean validateBaekJoonId(String baekJoonId) throws IOException;
+	boolean validateBaekJoonId(String baekJoonId) throws IOException;
 
-	public boolean validateUserRequestInfo(UserRequestDTO userRequestDTO);
+	boolean validateUserRequestInfo(UserRequestDTO userRequestDTO);
 }

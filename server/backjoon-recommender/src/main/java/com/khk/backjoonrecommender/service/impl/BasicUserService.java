@@ -2,6 +2,7 @@ package com.khk.backjoonrecommender.service.impl;
 
 import com.khk.backjoonrecommender.controller.dto.request.SettingRequestDTO;
 import com.khk.backjoonrecommender.controller.dto.request.SignUpRequestDTO;
+import com.khk.backjoonrecommender.controller.dto.request.UserRegisterRequestDto;
 import com.khk.backjoonrecommender.controller.dto.request.UserRequestDTO;
 import com.khk.backjoonrecommender.controller.dto.response.*;
 import com.khk.backjoonrecommender.entity.Option;
@@ -23,6 +24,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -80,11 +82,19 @@ public class BasicUserService implements UserService {
         return new BasicResponseDto<>(SUCCESS, SUCCESS_USER_DETAIL, myPageResponseDto);
     }
 
+    @Override
+    public BasicResponseDto<?> registerUser(UserRegisterRequestDto userRegisterRequestDto, BindingResult bindingResult) throws IOException {
+        if (bindingResult.hasErrors()) {
+            throw new IllegalArgumentException("값 잘못 입력");
+        }
+        return registerUser(userRegisterRequestDto);
+    }
+
     @Transactional
 	@Override
-    public BasicResponseDto<?> registerUser(SignUpRequestDTO signUpRequestDTO) throws IOException {
-        UserRequestDTO userRequestDTO = signUpRequestDTO.getUserRequestDTO();
-        SettingRequestDTO settingRequestDTO = signUpRequestDTO.getSettingRequestDTO();
+    public BasicResponseDto<?> registerUser(UserRegisterRequestDto userRegisterRequestDto) throws IOException {
+        UserRequestDTO userRequestDTO = userRegisterRequestDto.toUserDto();
+        SettingRequestDTO settingRequestDTO = userRegisterRequestDto.toSettingDto();
 
         String baekJoonId = userRequestDTO.getBaekJoonId();
         if (!validationService.validateBaekJoonId(baekJoonId)) {
