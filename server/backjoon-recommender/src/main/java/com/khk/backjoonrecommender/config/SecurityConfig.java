@@ -46,16 +46,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.addFilter(jwtAuthenticationFilter())
 				.addFilter(new JwtAuthorizationFilter(authenticationManager(), userRepository, jwtProperties))
 				.authorizeRequests()
-				// login api
-				.antMatchers("/login").permitAll()
-				.antMatchers("/api/v1/user").permitAll() // sign-up
+				.antMatchers("/api/v1/system/**").hasAuthority("ADMIN")
 				.anyRequest().authenticated();
 	}
 
 	@Override
-	public void configure(WebSecurity web) throws Exception {
-		web.ignoring().antMatchers("/user/**", "/");
-		web.ignoring().antMatchers(HttpMethod.POST, "/api/v1/user");
-		web.ignoring().antMatchers("/logout");
+	public void configure(WebSecurity web) {
+		web.ignoring().antMatchers(HttpMethod.POST, "/api/v1/user"); // sign-up
+		web.ignoring().antMatchers("/login", "/logout");
 	}
 }
