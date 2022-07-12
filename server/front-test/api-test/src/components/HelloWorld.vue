@@ -15,6 +15,11 @@
     </div>
 
     <div>
+      <h3>PATCH - /api/v1/user 현재 로그인된 사용자 정보 수정</h3>
+      <button id="modifyUser" v-on:click="modifyUser" class="mt-0 btn btn-secondary">사용자 정보 수정</button>
+    </div>
+
+    <div>
       <h3>GET - /api/v1/user 현재 로그인된 사용자 정보 상세조회</h3>
       <button id="get-user-info" v-on:click="findUser" class="mt-0 btn btn-secondary">Get user info test btn</button>
     </div>
@@ -78,6 +83,39 @@ export default {
     }
   },
   methods: {
+    modifyUser() {
+      const token = localStorage.getItem('Authorization')
+      const headers = {
+        'Authorization': token
+      };
+
+      const userModifyRequestInfo = {
+          username: "kjj123", // ID는 변경되면 안되는 사항
+          baekJoonId: "rlawowns000", // 회원가입 PW 조건 : 8 ~ 20자 범위
+          password: "1234567890",
+          option : "TODAY",
+          levels : "1,2,3,4,5",
+          tags : "recursion,math,dp",
+          sun : "Math,DFS",
+          mon : "",
+          tue : "",
+          wed : "Math,BFS",
+          thu : "Math,DFS,BFS",
+          fri : "Math,DFS,BFS",
+          sat : ""
+      };
+
+      console.log(userModifyRequestInfo);
+
+      axios({
+        method: 'PATCH',
+        url: 'http://localhost:8080/api/v1/user',
+        headers: headers,
+        data: userModifyRequestInfo,
+      }).then(function (response) {
+        console.log(response);
+      })
+    },
     adminLogin() {
       /**
        * system api는 admin 권한을 가진 사용자만이 요청을 할 수 있다. 따라서 일반 사용자는 /api/v1/system/** api를 사용 못한다.

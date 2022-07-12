@@ -1,6 +1,5 @@
 package com.khk.backjoonrecommender.service;
 
-import com.khk.backjoonrecommender.controller.dto.request.SignUpRequestDTO;
 import com.khk.backjoonrecommender.controller.dto.request.UserRegisterRequestDto;
 import com.khk.backjoonrecommender.controller.dto.response.BasicResponseDto;
 import com.khk.backjoonrecommender.controller.dto.response.MyPageResponseDto;
@@ -18,7 +17,7 @@ public interface UserService {
 	BasicResponseDto<?> registerUser(UserRegisterRequestDto userRegisterRequestDto) throws IOException;
 	BasicResponseDto<?> registerUser(UserRegisterRequestDto userRegisterRequestDto, BindingResult bindingResult) throws IOException;
 
-	BasicResponseDto<?> modifyUser();
+	BasicResponseDto<?> modifyUser(Authentication authentication, UserRegisterRequestDto userRegisterRequestDto, BindingResult bindingResult);
 
 	BasicResponseDto<List<RivalListResponseDto>> findRivals(Authentication authentication);
 

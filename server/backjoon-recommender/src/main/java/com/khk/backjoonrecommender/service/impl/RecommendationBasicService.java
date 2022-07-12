@@ -1,6 +1,6 @@
 package com.khk.backjoonrecommender.service.impl;
 
-import com.khk.backjoonrecommender.controller.dto.request.SettingRequestDTO;
+import com.khk.backjoonrecommender.controller.dto.request.SettingRequestDto;
 import com.khk.backjoonrecommender.controller.dto.response.BasicResponseDto;
 import com.khk.backjoonrecommender.entity.Option;
 import com.khk.backjoonrecommender.entity.Problem;
@@ -167,8 +167,8 @@ public class RecommendationBasicService implements RecommendationService {
 	}
 
 	@Override
-	public BasicResponseDto<?> findAdditionalProblem(Authentication authentication, SettingRequestDTO settingRequestDTO) throws IOException {
-		Setting tempSetting = settingRequestDTO.toEntity();
+	public BasicResponseDto<?> findAdditionalProblem(Authentication authentication, SettingRequestDto settingRequestDto) throws IOException {
+		Setting tempSetting = settingRequestDto.toEntity();
 		userSetting = tempSetting;
 
 		return recommendProblem(authentication);

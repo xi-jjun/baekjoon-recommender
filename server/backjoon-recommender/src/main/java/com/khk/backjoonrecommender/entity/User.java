@@ -1,5 +1,6 @@
 package com.khk.backjoonrecommender.entity;
 
+import com.khk.backjoonrecommender.controller.dto.request.UserRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -53,6 +54,10 @@ public class User {
         this.username = username;
         this.password = password;
         this.baekJoonId = baekJoonId;
+    }
+
+    public void updateUserInfo(UserRequestDto userRequestDTO) {
+        this.baekJoonId = userRequestDTO.getBaekJoonId();
     }
 
     public void decreaseReloadCount() {
