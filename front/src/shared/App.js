@@ -8,15 +8,6 @@ import Solved from "../Pages/main/Solved/Solved";
 import MyPage from '../Pages/community/MyPage/MyPage';
 
 function App() {
-    const navigate = useNavigate();
-    const toLogin = () => {
-        navigate("/user/login", { replace: true });
-    }
-
-    if (!localStorage.getItem("Authorization")) {
-        // console.log("navigate to login");
-        // toLogin();
-    }
 
     return (
         <Routes>
