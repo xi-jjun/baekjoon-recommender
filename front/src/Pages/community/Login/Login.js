@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 
 const Login = () => {
     const navigate = useNavigate();
-    const toMain = useCallback(() => navigate("/", { replace: true }), [navigate]);
 
     const [id, setId] = useState("")
     const [pw, setPw] = useState("")
@@ -27,16 +26,30 @@ const Login = () => {
             password: pw,
         };
 
-        axios.post("http://localhost:8080/login", data)
-            .then((res) => {
-                localStorage.setItem('Authorization', res.headers.authorization);
-                console.log("login success");
-                console.log("res data: ", res.data);
-                toMain();
-            }).catch((e) => {
-                console.log("err: ", e);
-                alert("login failed");
-            })
+        if (id == "admin" && pw == "1234") {
+            axios.post("http://localhost:8080/login", data)
+                .then((res) => {
+                    localStorage.setItem('Authorization', res.headers.authorization);
+                    console.log("admin login success");
+                    console.log("res data: ", res.data);
+                    navigate("/admin", { replace: true });
+                }).catch((e) => {
+                    console.log("err: ", e);
+                    alert("login failed");
+                })
+        }
+        else {
+            axios.post("http://localhost:8080/login", data)
+                .then((res) => {
+                    localStorage.setItem('Authorization', res.headers.authorization);
+                    console.log("login success");
+                    console.log("res data: ", res.data);
+                    navigate("/", { replace: true });
+                }).catch((e) => {
+                    console.log("err: ", e);
+                    alert("login failed");
+                })
+        }
     }
 
     return (
