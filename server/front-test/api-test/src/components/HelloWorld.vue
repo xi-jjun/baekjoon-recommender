@@ -7,6 +7,7 @@
     <div>
       <h3>POST - /api/v1/user 회원가입</h3>
       <button id="join--submit" v-on:click="makeOneUser" class="mt-0 btn btn-secondary">SIGN UP</button>
+      <button id="join--submit" v-on:click="makeFiveUser" class="mt-0 btn btn-secondary">SIGN UP 5 more users</button>
     </div>
 
     <div>
@@ -255,6 +256,39 @@ export default {
       }).then(function (response) {
         console.log(response);
       })
+    },
+    makeFiveUser() {
+      const baekJoonIdList = ['hsj4665', 'kkimbj18', 'qwerty1434', 'abc1234', 'abc12345'];
+      const usernameList = ['hsjId96', 'kimMinRifle18', 'changHyo1434', 'whowho1234', 'ohwohw12345'];
+
+      for(let i = 0; i < 5; i++) {
+        const userRegisterRequestDto = {
+          username: usernameList[i],
+          baekJoonId: baekJoonIdList[i],
+          password: "12345678",
+          option : "TODAY",
+          levels : "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15",
+          tags : "recursion,dfs,bfs,greedy,math,dp",
+          sun : "Math,DFS,BFS",
+          mon : "",
+          tue : "",
+          wed : "Math,DFS,BFS",
+          thu : "Math,DFS,BFS",
+          fri : "Math,DFS,BFS",
+          sat : ""
+        };
+
+        console.log(userRegisterRequestDto);
+
+        axios({
+          method: 'post',
+          url: 'http://localhost:8080/api/v1/user',
+          data: userRegisterRequestDto,
+        }).then(function (response) {
+          console.log(response);
+        })
+      }
+      
     },
     makeOneUser() {
       const userRegisterRequestDto = {
