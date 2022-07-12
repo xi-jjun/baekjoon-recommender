@@ -44,33 +44,33 @@ public class BasicUserService implements UserService {
 	private final SettingRepository settingRepository;
 	private final BCryptPasswordEncoder passwordEncoder;
 
-	@Transactional
-	@PostConstruct
-	public void initAdmin() {
-		Setting setting = Setting.builder()
-				.option(Option.TODAY)
-				.tags("dp,math,dfs,bfs")
-				.levels("1,2,3,4,5,6,7")
-				.sun("")
-				.mon("")
-				.tue("")
-				.wed("")
-				.thu("")
-				.fri("")
-				.sat("").build();
-
-		User admin = User.builder()
-				.username("admin")
-				.baekJoonId("rlawowns000")
-				.password(passwordEncoder.encode("1234"))
-				.role(Role.ADMIN)
-				.setting(setting)
-				.reloadCount(3)
-				.build();
-
-		settingRepository.save(setting);
-		userRepository.save(admin);
-	}
+//	@Transactional
+//	@PostConstruct
+//	public void initAdmin() {
+//		Setting setting = Setting.builder()
+//				.option(Option.TODAY)
+//				.tags("dp,math,dfs,bfs")
+//				.levels("1,2,3,4,5,6,7")
+//				.sun("")
+//				.mon("")
+//				.tue("")
+//				.wed("")
+//				.thu("")
+//				.fri("")
+//				.sat("").build();
+//
+//		User admin = User.builder()
+//				.username("admin")
+//				.baekJoonId("rlawowns000")
+//				.password(passwordEncoder.encode("1234"))
+//				.role(Role.ADMIN)
+//				.setting(setting)
+//				.reloadCount(3)
+//				.build();
+//
+//		settingRepository.save(setting);
+//		userRepository.save(admin);
+//	}
 
 	@Override
 	public BasicResponseDto<MyPageResponseDto> findUser(Authentication authentication) {
