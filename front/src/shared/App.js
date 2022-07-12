@@ -1,5 +1,5 @@
-import { React } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { React, useCallback } from 'react';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import Login from '../Pages/community/Login/Login';
 import SignUp from '../Pages/community/SignUp/SignUp';
 import Recommend from '../Pages/main/Recommend/Recommend';
@@ -8,12 +8,19 @@ import Solved from "../Pages/main/Solved/Solved";
 import MyPage from '../Pages/community/MyPage/MyPage';
 
 function App() {
+    const navigate = useNavigate();
+    const toLogin = () => {
+        navigate("/user/login", { replace: true });
+    }
+
+    if (!localStorage.getItem("Authorization")) {
+        // console.log("navigate to login");
+        // toLogin();
+    }
 
     return (
         <Routes>
-            {localStorage.getItem("Authorization") &&
-                <Route path="/" element={<Recommend />} />
-            }
+            <Route path="/" element={<Recommend />} />
             <Route path="/user/login" element={<Login />} />
             <Route path="/user/register" element={<SignUp />} />
             {localStorage.getItem("Authorization") &&

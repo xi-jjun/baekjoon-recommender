@@ -53,7 +53,7 @@ const Login = () => {
                     type="password"
                     onChange={handleInputPw} />
             </Community.InfoContainer>
-            <Default.StyledLink id="login-button" to="/" onClick={tryLogin}><Button typo="login" ID="login" /></Default.StyledLink>
+            <Button onClick={tryLogin} typo="login" ID="login" />
             <Styled.LoginFormFooter>
                 <Styled.LoginCheckboxWrapper>
                     <input type="checkbox"
@@ -62,7 +62,7 @@ const Login = () => {
                 </Styled.LoginCheckboxWrapper>
                 <Styled.SignUpLink to="../user/register">회원 가입</Styled.SignUpLink>
             </Styled.LoginFormFooter>
-        </Styled.LoginForm>
+        </Styled.LoginForm >
     )
 }
 
