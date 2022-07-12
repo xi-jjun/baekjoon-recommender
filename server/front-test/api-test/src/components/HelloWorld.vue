@@ -143,7 +143,7 @@ export default {
 
       axios({
         method: 'PATCH',
-        url: `http://localhost:8080/api/v1/system/reloadCount`,
+        url: `http://localhost:8080/api/v1/system/reload-count`,
         headers: headers
       }).then(function (response) {
         console.log(response);
@@ -208,7 +208,7 @@ export default {
       // select * from users 로 찾아서 id가 몇번인지 확인한 후, 존재하는지 확인한다.
       axios({
         method: 'PATCH',
-        url: `http://localhost:8080/api/v1/system/${userId}/reloadCount`,
+        url: `http://localhost:8080/api/v1/system/${userId}/reload-count`,
         headers: headers
       }).then(function (response) {
         console.log(response);
