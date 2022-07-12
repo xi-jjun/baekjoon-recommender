@@ -1,15 +1,14 @@
 import styled from "styled-components";
 import "../../default.css";
 import * as Default from "../../Default";
-import SelectBox from "../../Components/SelectBox";
 import { useState } from "react";
 
 
-const questionTypeOptions = ["유형1", "유형2"]
+const questionTypeOptions = ["dp", "brute force", "sort"]
 const difficultyGradeOptions = ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Ruby"]
 const difficultyLevelOptions = [1, 2, 3, 4, 5]
 
-const FilterElement = ({ typo, id }) => {
+export const FilterElement = ({ typo, id }) => {
 
     const [filterClicked, onClickFilter] = useState(false)
     const clickFilter = () => {
@@ -50,18 +49,18 @@ const FilterElement = ({ typo, id }) => {
     )
 }
 
-export const DifficultyFilter = () => {
+export const DifficultyFilter = ({ page }) => {
     return (
         <div>
             <div style={{ display: "flex", margin: "5px 0" }}>
                 <div style={{ width: "130px" }}>Unranked</div>
-                <FilterElement typo="Unranked" id="sign-up-0" />
+                <FilterElement typo="Unranked" id={`${page}-0`} />
             </div>
             {difficultyGradeOptions.map((grade, i) => {
                 return (
                     <div style={{ display: "flex", margin: "5px 0" }}>
                         <div style={{ width: "130px" }}>{grade}</div>
-                        {difficultyLevelOptions.map((op, j) => <FilterElement typo={op} id={`sign-up-${5 * i + j + 1}`} />)}
+                        {difficultyLevelOptions.map((op, j) => <FilterElement typo={op} id={`${page}-${5 * i + j + 1}`} />)}
                     </div >
                 )
             })}
