@@ -1,4 +1,3 @@
-import * as Default from '../../../Default';
 import * as Community from '../Community';
 import * as Styled from './Styled';
 import Button from "../../../Components/Button";
@@ -6,8 +5,20 @@ import CommunityButton from '../../../Components/CommunityButton';
 import Toggle from '../../../Components/Toggle';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
 function SignUp() {
+
+    const navigate = useNavigate();
+
+    const toLogin = () => {
+        navigate("/user/login", { replace: true });
+    }
+
+    const toMain = () => {
+        navigate("/", { replace: true });
+    }
+
     const [id, setId] = useState("")
     const [pw, setPw] = useState("")
     const [baekjoonId, setBaekjoonId] = useState("")
@@ -22,12 +33,7 @@ function SignUp() {
         setBaekjoonId(e.target.value)
     }
 
-    const trySignUp = (e) => {
-        const userRequestDTO = {
-            username: id,
-            baekJoonId: baekjoonId,
-            password: pw
-        };
+    const trySignUp = () => {
 
         const levels = [];
         for (let i = 0; i < 31; i++) {
@@ -65,8 +71,10 @@ function SignUp() {
             }
         }
 
-
-        const settingRequestDTO = {
+        const signUpRequestDTO = {
+            username: id,
+            baekJoonId: baekjoonId,
+            password: pw,
             option: document.querySelector("#sign-up-toggle").getAttribute("option"),
             levels: levels.join(),
             tags: tags.join(),
@@ -79,17 +87,17 @@ function SignUp() {
             sat: daysSelected["sat"].join()
         };
 
-        const signUpRequestDTO = {
-            userRequestDTO: userRequestDTO,
-            settingRequestDTO: settingRequestDTO
-        };
-
         axios.post('http://localhost:8080/api/v1/user', signUpRequestDTO)
             .then(res => {
                 console.log("data: ", res.data);
                 console.log("sign up success");
+                toMain();
             })
-            .catch(e => console.log("err: ", e));
+            .catch(e => {
+                console.log("err: ", e);
+                alert("sign up failed");
+                toLogin();
+            });
     }
 
     return (
@@ -117,11 +125,11 @@ function SignUp() {
             </Community.InfoContainer>
             <Community.InfoContainer>
                 <Community.InfoContainerLabel>Filter</Community.InfoContainerLabel>
-                <Community.DifficultyFilter />
+                <Community.DifficultyFilter page="sign-up" />
                 <Toggle id="sign-up-toggle" typo1="Daily" typo2="Schedule" element1={<Community.DailyFilter id="sign-up-daily" />} element2={<Community.ScheduleFilter id="sign-up-schedule" />} />
             </Community.InfoContainer>
-            <Default.StyledLink to="/" onClick={trySignUp}><Button typo="Sign Up" /></Default.StyledLink>
-        </Styled.Container>
+            <Button onClick={trySignUp} typo="Sign Up" />
+        </Styled.Container >
     )
 }
 
