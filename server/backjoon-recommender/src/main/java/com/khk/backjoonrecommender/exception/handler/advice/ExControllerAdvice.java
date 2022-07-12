@@ -26,4 +26,11 @@ public class ExControllerAdvice {
     public ErrorResult alreadyUserExHandler(AlreadyRegisteredException e) {
         return new ErrorResult(FAIL, REGISTER_ALREADY_EXIST);
     }
+
+    // TODO : 회원가입 잘못 입력했을 경우인데 좀 더 세분화 하기
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ErrorResult somethingWrongExHandler(IllegalArgumentException e) {
+        return new ErrorResult(FAIL, e.getMessage());
+    }
 }

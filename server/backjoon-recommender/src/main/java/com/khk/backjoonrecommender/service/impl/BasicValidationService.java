@@ -1,6 +1,7 @@
 package com.khk.backjoonrecommender.service.impl;
 
 import com.khk.backjoonrecommender.controller.dto.request.UserRequestDTO;
+import com.khk.backjoonrecommender.entity.User;
 import com.khk.backjoonrecommender.service.ValidationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

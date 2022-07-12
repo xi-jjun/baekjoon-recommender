@@ -219,13 +219,10 @@ export default {
       })
     },
     makeOneUser() {
-      const userRequestDTO = {
-          username: "kjj",
-          baekJoonId: "rlawowns000",
-          password: "123"
-      };
-
-      const settingRequestDTO = {
+      const userRegisterRequestDto = {
+          username: "kjj123", // 회원가입 ID 조건 : 4 ~ 20자 범위
+          baekJoonId: "rlawowns000", // 회원가입 PW 조건 : 8 ~ 20자 범위
+          password: "12345678",
           option : "TODAY",
           levels : "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15",
           tags : "recursion,dfs,bfs,greedy,math,dp",
@@ -238,17 +235,12 @@ export default {
           sat : ""
       };
 
-      const signUpRequestDTO = {
-          userRequestDTO : userRequestDTO,
-          settingRequestDTO : settingRequestDTO
-      };
-
-      console.log(signUpRequestDTO);
+      console.log(userRegisterRequestDto);
 
       axios({
         method: 'post',
         url: 'http://localhost:8080/api/v1/user',
-        data: signUpRequestDTO,
+        data: userRegisterRequestDto,
       }).then(function (response) {
         console.log(response);
       })
@@ -258,8 +250,8 @@ export default {
         method: 'post',
         url: 'http://localhost:8080/login',
         data: {
-          username: 'kjj',
-          password: '123'
+          username: 'kjj123',
+          password: '12345678'
         }
       }).then(function (response) {
         // console.log(response.headers.authorization);
