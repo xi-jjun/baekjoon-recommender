@@ -1,7 +1,6 @@
 package com.khk.backjoonrecommender.service.impl;
 
-import com.khk.backjoonrecommender.controller.dto.request.UserRequestDTO;
-import com.khk.backjoonrecommender.entity.User;
+import com.khk.backjoonrecommender.controller.dto.request.UserRequestDto;
 import com.khk.backjoonrecommender.service.ValidationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,14 +25,6 @@ public class BasicValidationService implements ValidationService {
 			return false;
 		}
 
-		return true;
-	}
-
-	@Override
-	public boolean validateUserRequestInfo(UserRequestDTO userRequestDTO) {
-		/**
-		 * 사용자가 회원가입할 때 해당 정보가 플랫폼의 정책에 잘 따랐는지 검증하기 위한 코드가 필요.
-		 */
 		return true;
 	}
 }
