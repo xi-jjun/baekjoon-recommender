@@ -23,12 +23,12 @@ public class SystemController {
 		return systemService.migrateBaekJoonProblems(authentication);
 	}
 
-	@PatchMapping("/reloadCount")
+	@PatchMapping("/reload-count")
 	public BasicResponseDto<?> resetAllUsersReloadCount() {
 		return systemService.resetUsersReloadCount();
 	}
 
-	@PatchMapping("/{userId}/reloadCount")
+	@PatchMapping("/{userId}/reload-count")
 	public BasicResponseDto<?> resetUserReloadCount(@PathVariable("userId") Long userId) {
 		return systemService.resetUserReloadCount(userId);
 	}
