@@ -2,15 +2,14 @@ import Button from "../../../Components/Button";
 import * as Default from "../../../Default";
 import * as Community from '../Community';
 import * as Styled from './Styled';
-import { useEffect, useState, } from "react";
+import { useCallback, useState } from "react";
 import axios from "axios";
-
-const LoginInfo = {
-    typo: "login",
-    id: "login"
-}
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+    const navigate = useNavigate();
+    const toMain = useCallback(() => navigate("/", { replace: true }), [navigate]);
+
     const [id, setId] = useState("")
     const [pw, setPw] = useState("")
 
@@ -21,9 +20,7 @@ const Login = () => {
         setPw(e.target.value)
     }
 
-    const [token, setToken] = useState("");
-
-    const tryLogin = (e) => {
+    const tryLogin = () => {
 
         const data = {
             username: id,
@@ -32,15 +29,13 @@ const Login = () => {
 
         axios.post("http://localhost:8080/login", data)
             .then((res) => {
-                console.log("Data: ", data);
-                console.log("res.data: ", res.data);
                 localStorage.setItem('Authorization', res.headers.authorization);
-                setToken(localStorage.getItem("Authorization"));
-
+                console.log("login success");
+                console.log("res data: ", res.data);
+                toMain();
             }).catch((e) => {
                 console.log("err: ", e);
                 alert("login failed");
-                console.log(localStorage.getItem("Authorization"));
             })
     }
 
@@ -58,7 +53,7 @@ const Login = () => {
                     type="password"
                     onChange={handleInputPw} />
             </Community.InfoContainer>
-            <Default.StyledLink id="login-button" replace to={token ? "/" : "/user/login"} onClick={tryLogin}><Button typo={LoginInfo.typo} ID={LoginInfo.id} /></Default.StyledLink>
+            <Default.StyledLink id="login-button" to="/" onClick={tryLogin}><Button typo="login" ID="login" /></Default.StyledLink>
             <Styled.LoginFormFooter>
                 <Styled.LoginCheckboxWrapper>
                     <input type="checkbox"

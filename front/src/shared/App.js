@@ -11,7 +11,9 @@ function App() {
 
     return (
         <Routes>
-            <Route path="/" element={localStorage.getItem("Authorization") ? <Recommend /> : <Navigate to="/user/login" />} />
+            {localStorage.getItem("Authorization") &&
+                <Route path="/" element={<Recommend />} />
+            }
             <Route path="/user/login" element={<Login />} />
             <Route path="/user/register" element={<SignUp />} />
             {localStorage.getItem("Authorization") &&
