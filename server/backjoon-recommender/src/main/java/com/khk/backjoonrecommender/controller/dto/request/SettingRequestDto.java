@@ -2,14 +2,22 @@ package com.khk.backjoonrecommender.controller.dto.request;
 
 import com.khk.backjoonrecommender.entity.Option;
 import com.khk.backjoonrecommender.entity.Setting;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 @Data
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
-public class SettingRequestDTO {
+public class SettingRequestDto {
+	@NotNull
 	private Option option;
+	@NotBlank
 	private String levels;
 	private String tags;
 	private String sun;
@@ -19,21 +27,6 @@ public class SettingRequestDTO {
 	private String thu;
 	private String fri;
 	private String sat;
-
-	@Builder
-	public SettingRequestDTO(Option option, String levels, String tags, String sun, String mon,
-							 String tue, String wed, String thu, String fri, String sat) {
-		this.option = option;
-		this.levels = levels;
-		this.tags = tags;
-		this.sun = sun;
-		this.mon = mon;
-		this.tue = tue;
-		this.wed = wed;
-		this.thu = thu;
-		this.fri = fri;
-		this.sat = sat;
-	}
 
 	public Setting toEntity() {
 		return Setting.builder()
