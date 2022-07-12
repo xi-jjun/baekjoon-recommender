@@ -1,9 +1,6 @@
 package com.khk.backjoonrecommender.controller.dto.request;
 
 import com.khk.backjoonrecommender.entity.Option;
-import com.khk.backjoonrecommender.entity.Role;
-import com.khk.backjoonrecommender.entity.Setting;
-import com.khk.backjoonrecommender.entity.User;
 import lombok.Data;
 
 import javax.validation.constraints.Size;
@@ -30,16 +27,16 @@ public class UserRegisterRequestDto {
     private String fri;
     private String sat;
 
-    public UserRequestDTO toUserDto() {
-        return UserRequestDTO.builder()
+    public UserRequestDto toUserDto() {
+        return UserRequestDto.builder()
                 .username(username)
                 .baekJoonId(baekJoonId)
                 .password(password)
                 .build();
     }
 
-    public SettingRequestDTO toSettingDto() {
-        return SettingRequestDTO.builder()
+    public SettingRequestDto toSettingDto() {
+        return SettingRequestDto.builder()
                 .option(option)
                 .levels(levels)
                 .tags(tags)
