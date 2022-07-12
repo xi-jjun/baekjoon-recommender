@@ -1,5 +1,6 @@
 package com.khk.backjoonrecommender.entity;
 
+import com.khk.backjoonrecommender.controller.dto.request.SettingRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,4 +32,17 @@ public class Setting {
     private String thu;
     private String fri;
     private String sat;
+
+    public void updateSettingInfo(SettingRequestDto settingRequestDTO) {
+        this.levels = settingRequestDTO.getLevels();
+        this.tags = settingRequestDTO.getTags();
+        this.option = settingRequestDTO.getOption();
+        this.sun = settingRequestDTO.getSun();
+        this.mon = settingRequestDTO.getMon();
+        this.tue = settingRequestDTO.getTue();
+        this.wed = settingRequestDTO.getWed();
+        this.thu = settingRequestDTO.getThu();
+        this.fri = settingRequestDTO.getFri();
+        this.sat = settingRequestDTO.getSat();
+    }
 }
