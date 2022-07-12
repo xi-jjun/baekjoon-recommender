@@ -1,6 +1,6 @@
 package com.khk.backjoonrecommender.controller.api;
 
-import com.khk.backjoonrecommender.controller.dto.request.SettingRequestDTO;
+import com.khk.backjoonrecommender.controller.dto.request.SettingRequestDto;
 import com.khk.backjoonrecommender.controller.dto.response.BasicResponseDto;
 import com.khk.backjoonrecommender.service.RecommendationService;
 import lombok.RequiredArgsConstructor;
@@ -31,8 +31,8 @@ public class RecommendationApiController {
     }
 
     @PostMapping("/additional")
-    public BasicResponseDto<?> additionalProblemDetails(Authentication authentication, @RequestBody SettingRequestDTO settingRequestDTO) throws IOException {
-        return recommendationService.findAdditionalProblem(authentication, settingRequestDTO);
+    public BasicResponseDto<?> additionalProblemDetails(Authentication authentication, @RequestBody SettingRequestDto settingRequestDto) throws IOException {
+        return recommendationService.findAdditionalProblem(authentication, settingRequestDto);
     }
 
     @GetMapping("/reload")
