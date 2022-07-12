@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 public class MyPageResponseDto {
 
+	private Long userId;
 	private String username;
 	private String baekJoonId;
 	private int reloadCount;
@@ -23,6 +24,7 @@ public class MyPageResponseDto {
 	private String satTags;
 
 	public MyPageResponseDto(User user, Setting setting) {
+		userId = user.getId();
 		username = user.getUsername();
 		baekJoonId = user.getBaekJoonId();
 		reloadCount = user.getReloadCount();

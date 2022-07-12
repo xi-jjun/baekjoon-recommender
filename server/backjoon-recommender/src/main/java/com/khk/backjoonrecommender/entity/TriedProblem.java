@@ -24,6 +24,7 @@ public class TriedProblem {
 	@ManyToOne(targetEntity = Problem.class, fetch = FetchType.LAZY)
 	private Problem problem;
 
+	@Enumerated(EnumType.STRING)
 	private SolveType isSolved;
 	private LocalDateTime solvedDate;
 
