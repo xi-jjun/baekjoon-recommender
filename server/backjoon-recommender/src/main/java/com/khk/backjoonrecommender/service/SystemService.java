@@ -12,4 +12,6 @@ public interface SystemService {
 	public BasicResponseDto<?> resetUsersReloadCount();
 
 	public BasicResponseDto<?> resetUserReloadCount(Long userId);
+
+	void resetDailyReloadCount();
 }
