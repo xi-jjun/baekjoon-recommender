@@ -1,12 +1,11 @@
 package com.khk.backjoonrecommender.service.impl;
 
+import com.khk.backjoonrecommender.controller.dto.request.RivalSearchRequestDto;
 import com.khk.backjoonrecommender.controller.dto.request.SettingRequestDto;
 import com.khk.backjoonrecommender.controller.dto.request.UserRegisterRequestDto;
 import com.khk.backjoonrecommender.controller.dto.request.UserRequestDto;
 import com.khk.backjoonrecommender.controller.dto.response.*;
-import com.khk.backjoonrecommender.entity.Option;
 import com.khk.backjoonrecommender.entity.Rival;
-import com.khk.backjoonrecommender.entity.Role;
 import com.khk.backjoonrecommender.entity.Setting;
 import com.khk.backjoonrecommender.entity.User;
 import com.khk.backjoonrecommender.exception.BaekJoonIdNotFoundException;
@@ -25,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -135,6 +133,17 @@ public class BasicUserService implements UserService {
 		return new BasicResponseDto<>(200, "RIVAL", results);
 	}
 
+	@Override
+	public BasicResponseDto<RivalSearchResponseDto> findRival(RivalSearchRequestDto rivalSearchRequestDto) {
+		String username = rivalSearchRequestDto.getUsername();
+		User findUser = userRepository.findByUsername(username);
+		if (findUser == null) {
+			throw new IllegalArgumentException("찾는 유저가 없습니다.");
+		}
+		RivalSearchResponseDto responseDto = new RivalSearchResponseDto(findUser.getId(), findUser.getUsername());
+		return new BasicResponseDto<>(SUCCESS, SUCCESS_USER_DETAIL, responseDto);
+	}
+
 	@Transactional
 	@Override
 	public BasicResponseDto<RivalResponseDto> addRival(Long rivalId) {
@@ -146,7 +155,7 @@ public class BasicUserService implements UserService {
 			Rival rival = new Rival(user, optional.get());
 			rival.setUser(user);
 			savedRival = rivalRepository.save(rival);
-			return new BasicResponseDto<>(200, "RIVAL", new RivalResponseDto(savedRival.getId(), savedRival.getSelectedUser().getUsername()));
+			return new BasicResponseDto<>(200, "RIVAL", new RivalResponseDto(user.getId(), savedRival.getSelectedUser().getUsername()));
 		}
 		return new BasicResponseDto<>(400, "RIVAL", null);
 	}

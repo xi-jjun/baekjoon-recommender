@@ -1,10 +1,8 @@
 package com.khk.backjoonrecommender.service;
 
+import com.khk.backjoonrecommender.controller.dto.request.RivalSearchRequestDto;
 import com.khk.backjoonrecommender.controller.dto.request.UserRegisterRequestDto;
-import com.khk.backjoonrecommender.controller.dto.response.BasicResponseDto;
-import com.khk.backjoonrecommender.controller.dto.response.MyPageResponseDto;
-import com.khk.backjoonrecommender.controller.dto.response.RivalListResponseDto;
-import com.khk.backjoonrecommender.controller.dto.response.RivalResponseDto;
+import com.khk.backjoonrecommender.controller.dto.response.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 
@@ -24,4 +22,6 @@ public interface UserService {
 	BasicResponseDto<RivalResponseDto> addRival(Long rivalId);
 
 	BasicResponseDto<?> deleteRival(Long rivalId);
+
+	BasicResponseDto<RivalSearchResponseDto> findRival(RivalSearchRequestDto rivalSearchRequestDto);
 }
