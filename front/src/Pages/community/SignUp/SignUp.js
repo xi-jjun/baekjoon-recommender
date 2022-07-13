@@ -1,7 +1,6 @@
 import * as Community from '../Community';
 import * as Styled from './Styled';
 import Button from "../../../Components/Button";
-import CommunityButton from '../../../Components/CommunityButton';
 import Toggle from '../../../Components/Toggle';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -108,7 +107,6 @@ function SignUp() {
                 <Community.InfoSubContainer>
                     <Community.InfoLabel>ID</Community.InfoLabel>
                     <Community.Input placeholder='id' id="new_id" type="text" onChange={handleInputId} />
-                    <CommunityButton typo="중복확인" />
                 </Community.InfoSubContainer>
                 <Community.InfoSubContainer>
                     <Community.InfoLabel>PW</Community.InfoLabel>
