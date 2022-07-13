@@ -28,6 +28,10 @@ public class TriedProblem {
 	private SolveType isSolved;
 	private LocalDateTime solvedDate;
 
+	public boolean solved() {
+		return this.isSolved.equals(SolveType.PASS);
+	}
+
 	public void updateSolvedStatus(SolveType solveType) {
 		this.isSolved = solveType;
 	}
