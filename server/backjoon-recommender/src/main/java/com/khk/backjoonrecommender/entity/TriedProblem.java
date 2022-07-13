@@ -18,15 +18,19 @@ public class TriedProblem {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
+	@ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private User user;
 
-	@ManyToOne(targetEntity = Problem.class, fetch = FetchType.LAZY)
+	@ManyToOne(targetEntity = Problem.class, fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
 	private Problem problem;
 
 	@Enumerated(EnumType.STRING)
 	private SolveType isSolved;
 	private LocalDateTime solvedDate;
+
+	public boolean solved() {
+		return this.isSolved.equals(SolveType.PASS);
+	}
 
 	public void updateSolvedStatus(SolveType solveType) {
 		this.isSolved = solveType;

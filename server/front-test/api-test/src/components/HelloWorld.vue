@@ -45,6 +45,20 @@
       <button id="checkIfSolved" v-on:click="checkIfSolved" class="mt-0 btn btn-secondary">풀었나?</button>
     </div>
 
+    <div>
+      <h3>GET - /api/v1/{ user id }/solved  user id에 해당하는 사용자가 푼 문제 리스트를 가져오는 API</h3>
+      <button id="getSolvedProblemList" v-on:click="getSolvedProblemList" class="mt-0 btn btn-secondary">get solved problem list</button>
+    </div>
+
+    <div>
+      <h3>DELETE - /api/v1/user 현재 로그인된 사용자의 계정을 삭제하는 API</h3>
+      <button id="deleteUser" v-on:click="deleteUser" class="mt-0 btn btn-secondary">delete user</button>
+    </div>
+
+
+
+
+
     <hr>
     <h1>System API - ADMIN만 사용이 가능</h1>
 
@@ -84,6 +98,25 @@ export default {
     }
   },
   methods: {
+    deleteUser() {
+
+    },
+    getSolvedProblemList() {
+      const token = localStorage.getItem('Authorization')
+      const headers = {
+        'Authorization': token
+      };
+
+      const userId = 2;
+
+      axios({
+        method: 'GET',
+        url: `http://localhost:8080/api/v1/user/${userId}/solved`,
+        headers: headers,
+      }).then(function (response) {
+        console.log(response);
+      })
+    },
     modifyUser() {
       const token = localStorage.getItem('Authorization')
       const headers = {
@@ -157,7 +190,7 @@ export default {
         'Authorization': token
       };
 
-      const problemId = 1002; // 1002 번 문제를 풀었는지 확인하기 위함
+      const problemId = 1001; // 1002 번 문제를 풀었는지 확인하기 위함
       // => 이 값은 당연하게도 추천받은 문제 번호를 가져와야 하는 것.
 
       axios({
