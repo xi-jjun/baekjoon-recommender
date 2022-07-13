@@ -1,7 +1,8 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import * as Styled from '../Default';
 
-const HeaderTypo = ({ name }) => {
+const HeaderTypo = ({ name, onClick }) => {
     const [mouseOver, setMouseOver] = useState(false);
     const mouseGetOver = () => {
         setMouseOver(true);
@@ -17,27 +18,37 @@ const HeaderTypo = ({ name }) => {
             style={{
                 textDecoration: mouseOver ? 'underline' : '',
                 cursor: mouseOver ? 'pointer' : ''
-            }}>
+            }}
+            onClick={onClick}>
             {name}
         </Styled.HeaderTypo>
     )
 }
 
 const Header = () => {
-    const clickHeader = () => {
-        localStorage.removeItem("Authorization")
-    };
+    const navigate = useNavigate();
 
     return (
         <div>
             <Styled.HeaderContainer>
                 <div>Logo</div>
                 <Styled.HeaderTypoContainer>
-                    <Styled.StyledLink to="/"><HeaderTypo name="Main" /></Styled.StyledLink>
-                    <Styled.StyledLink to="/rival"><HeaderTypo name="Rival" /></Styled.StyledLink>
-                    <Styled.StyledLink to="/solved"><HeaderTypo name="Solved" /></Styled.StyledLink>
-                    <Styled.StyledLink to="/user/login" onClick={clickHeader}><HeaderTypo name="Logout" /></Styled.StyledLink>
-                    <Styled.StyledLink to="/user/my-page"><HeaderTypo name="MyPage" /></Styled.StyledLink>
+                    <HeaderTypo name="Main" onClick={() => {
+                        navigate("/", { replace: true });
+                    }} />
+                    <HeaderTypo name="Rival" onClick={() => {
+                        navigate("/rival", { replace: true });
+                    }} />
+                    <HeaderTypo name="Solved" onClick={() => {
+                        navigate("/solved", { replace: true });
+                    }} />
+                    <HeaderTypo name="Logout" onClick={() => {
+                        localStorage.removeItem("Authorization");
+                        navigate("/user/login", { replace: true });
+                    }} />
+                    <HeaderTypo name="MyPage" onClick={() => {
+                        navigate("/user/my-page", { replace: true });
+                    }} />
                 </Styled.HeaderTypoContainer>
             </Styled.HeaderContainer>
         </div>
