@@ -6,6 +6,7 @@ import Recommend from '../Pages/main/Recommend/Recommend';
 import Rival from "../Pages/main/Rival/Rival";
 import Solved from "../Pages/main/Solved/Solved";
 import MyPage from '../Pages/community/MyPage/MyPage';
+import Admin from "../Pages/admin/Admin";
 
 function App() {
 
@@ -14,6 +15,9 @@ function App() {
             <Route path="/" element={<Recommend />} />
             <Route path="/user/login" element={<Login />} />
             <Route path="/user/register" element={<SignUp />} />
+            {localStorage.getItem("Authorization") &&
+                <Route path='/admin' element={<Admin />} />
+            }
             {localStorage.getItem("Authorization") &&
                 <Route path="/user/my-page" element={<MyPage />} />
             }{localStorage.getItem("Authorization") &&
