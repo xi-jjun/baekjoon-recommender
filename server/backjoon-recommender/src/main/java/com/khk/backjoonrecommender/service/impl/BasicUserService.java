@@ -5,8 +5,10 @@ import com.khk.backjoonrecommender.controller.dto.request.SettingRequestDto;
 import com.khk.backjoonrecommender.controller.dto.request.UserRegisterRequestDto;
 import com.khk.backjoonrecommender.controller.dto.request.UserRequestDto;
 import com.khk.backjoonrecommender.controller.dto.response.*;
+import com.khk.backjoonrecommender.entity.Problem;
 import com.khk.backjoonrecommender.entity.Rival;
 import com.khk.backjoonrecommender.entity.Setting;
+import com.khk.backjoonrecommender.entity.TriedProblem;
 import com.khk.backjoonrecommender.entity.User;
 import com.khk.backjoonrecommender.exception.BaekJoonIdNotFoundException;
 import com.khk.backjoonrecommender.exception.handler.AlreadyRegisteredException;
@@ -89,7 +91,6 @@ public class BasicUserService implements UserService {
 	}
 
 	@Transactional
-	@Override
 	public BasicResponseDto<?> registerUser(UserRegisterRequestDto userRegisterRequestDto) throws IOException {
 		UserRequestDto userRequestDTO = userRegisterRequestDto.toUserDto();
 		SettingRequestDto settingRequestDTO = userRegisterRequestDto.toSettingDto();
@@ -142,6 +143,38 @@ public class BasicUserService implements UserService {
 		}
 		RivalSearchResponseDto responseDto = new RivalSearchResponseDto(findUser.getId(), findUser.getUsername());
 		return new BasicResponseDto<>(SUCCESS, SUCCESS_USER_DETAIL, responseDto);
+	}
+
+	@Override
+	public BasicResponseDto<List<Problem>> getSolvedProblemList(Long userId) {
+		Optional<User> findResult = userRepository.findById(userId);
+		log.info("get solved problem list user id = {}", userId);
+		if (findResult.isPresent()) {
+			User user = findResult.get();
+			List<Problem> solvedProblemList = user.getTriedProblemList().stream()
+					.filter(TriedProblem::solved)
+					.map(TriedProblem::getProblem)
+					.collect(Collectors.toList());
+			log.info("success to get solved problem list");
+
+			return new BasicResponseDto<>(200, "solved problem list user id=" + userId, solvedProblemList);
+		}
+
+		return new BasicResponseDto<>(400, "user not founded id=" + userId, null);
+	}
+
+	@Transactional
+	@Override
+	public BasicResponseDto<?> deleteUserInfo(Authentication authentication) {
+		String loginUsername = authentication.getName();
+		User loginUser = userRepository.findByUsername(loginUsername);
+
+		userRepository.delete(loginUser);
+
+		return BasicResponseDto.builder()
+				.code(200)
+				.message("success to delete user username=" + loginUsername)
+				.build();
 	}
 
 	@Transactional
