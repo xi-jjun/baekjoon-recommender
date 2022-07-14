@@ -15,7 +15,7 @@ public class ScheduledTasks {
 
         /* 스케쥴 task 정의 */
 //        @Scheduled(fixedDelay = 5000)
-        @Scheduled(cron = "0 0 0 1/1 * ? *")
+        @Scheduled(cron = "0 0 0 1/1 * ?")
         public void dailyResetScheduler() {
                 log.info("reset daily reload count");
                 systemService.resetDailyReloadCount();
