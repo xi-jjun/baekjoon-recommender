@@ -2,6 +2,7 @@ package com.khk.backjoonrecommender.service.impl;
 
 import com.khk.backjoonrecommender.controller.dto.request.SettingRequestDto;
 import com.khk.backjoonrecommender.controller.dto.response.BasicResponseDto;
+import com.khk.backjoonrecommender.controller.dto.response.RecommendProblemResponseDto;
 import com.khk.backjoonrecommender.entity.Option;
 import com.khk.backjoonrecommender.entity.Problem;
 import com.khk.backjoonrecommender.entity.Setting;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -58,10 +60,19 @@ public class RecommendationBasicService implements RecommendationService {
 		List<Problem> filteredProblemList = getFilteredProblemList(levelFilter, tagFilter, userSolvedFilter);
 
 		Problem recommendedProblem = getRandomProblem(filteredProblemList);
-		BasicResponseDto<Problem> result = new BasicResponseDto<>();
+
+		TriedProblem todayRecommended = TriedProblem.builder()
+				.user(loginUser)
+				.problem(recommendedProblem)
+				.isSolved(SolveType.SOLVING)
+				.recommendedDate(LocalDate.now())
+				.build();
+		triedProblemRepository.save(todayRecommended);
+
+		BasicResponseDto<RecommendProblemResponseDto> result = new BasicResponseDto<>();
 		result.setCode(200);
 		result.setMessage("success to recommend baek joon problem");
-		result.setData(recommendedProblem);
+		result.setData(new RecommendProblemResponseDto(todayRecommended));
 
 		return result;
 	}

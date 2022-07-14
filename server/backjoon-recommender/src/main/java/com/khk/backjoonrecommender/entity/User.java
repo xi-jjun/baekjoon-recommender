@@ -1,5 +1,6 @@
 package com.khk.backjoonrecommender.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.khk.backjoonrecommender.controller.dto.request.UserRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,6 +44,7 @@ public class User {
     @JoinColumn(name = "setting_id")
     private Setting setting;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<TriedProblem> triedProblemList = new ArrayList<>();
 

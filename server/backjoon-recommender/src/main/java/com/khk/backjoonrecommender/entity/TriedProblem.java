@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Builder
@@ -27,6 +28,7 @@ public class TriedProblem {
 	@Enumerated(EnumType.STRING)
 	private SolveType isSolved;
 	private LocalDateTime solvedDate;
+	private LocalDate recommendedDate;
 
 	public boolean solved() {
 		return this.isSolved.equals(SolveType.PASS);
