@@ -11,24 +11,19 @@ const Admin = () => {
     }
 
     const resetAllUsersReloadCount = () => {
-        axios.patch("http://localhost:8080/api/v1/system/reload-count", {
-            headers: {
-                "Authorization": localStorage.getItem("Authorization")
-            }
-        }).then(res => {
-            console.log("res: ", res);
-        }).catch(e => {
-            console.log("err: ", e);
-        })
+        axios.defaults.headers.common['Authorization'] = localStorage.getItem("Authorization")
+        axios.patch("http://localhost:8080/api/v1/system/reload-count")
+            .then(res => {
+                console.log("res: ", res);
+            }).catch(e => {
+                console.log("err: ", e);
+            })
     }
 
     const reloadCountReset = () => {
         console.log("user id: ", userId);
-        axios.patch(`http://localhost:8080/api/v1/system/${userId}/reload-count`, {
-            headers: {
-                "Authorization": localStorage.getItem("Authorization")
-            }
-        })
+        axios.defaults.headers.common['Authorization'] = localStorage.getItem("Authorization")
+        axios.patch(`http://localhost:8080/api/v1/system/${userId}/reload-count`)
             .then(res => {
                 console.log("res: ", res);
             }).catch(e => {
@@ -37,15 +32,13 @@ const Admin = () => {
     }
 
     const updateProblemList = () => {
-        axios.patch('http://localhost:8080/api/v1/system/problem-list', {
-            headers: {
-                "Authorization": localStorage.getItem("Authorization")
-            }
-        }).then(res => {
-            console.log("res: ", res);
-        }).catch(e => {
-            console.log("err: ", e);
-        })
+        axios.defaults.headers.common['Authorization'] = localStorage.getItem("Authorization")
+        axios.patch('http://localhost:8080/api/v1/system/problem-list')
+            .then(res => {
+                console.log("res: ", res);
+            }).catch(e => {
+                console.log("err: ", e);
+            })
     }
 
     return (
