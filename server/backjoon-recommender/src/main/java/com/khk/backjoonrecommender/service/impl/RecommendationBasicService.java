@@ -14,6 +14,7 @@ import com.khk.backjoonrecommender.repository.UserRepository;
 import com.khk.backjoonrecommender.service.BaekJoonApiService;
 import com.khk.backjoonrecommender.service.RecommendationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
@@ -52,7 +54,7 @@ public class RecommendationBasicService implements RecommendationService {
 		String userBaekJoonId = loginUser.getBaekJoonId();
 		Set<Integer> levelFilter = getLevelFilter(); // 사용자가 설정한 난이도 필터
 		Set<String> tagFilter = getTagFilter(); // 사용자가 설정한 문제유형 필터
-		Set<Long> userSolvedFilter = getUserSolvedFilter(userBaekJoonId); // 사용자가 이미 해결한 문제 번호 핕터
+		Set<Long> userSolvedFilter = getUserSolvedFilterFromBaekJoon(userBaekJoonId); // 사용자가 이미 해결한 문제 번호 핕터
 
 		List<Problem> filteredProblemList = getFilteredProblemList(levelFilter, tagFilter, userSolvedFilter);
 
@@ -72,7 +74,7 @@ public class RecommendationBasicService implements RecommendationService {
 		return filteredProblemList.get(randomPickedNumber);
 	}
 
-	private Set<Long> getUserSolvedFilter(String userBaekJoonId) throws IOException {
+	private Set<Long> getUserSolvedFilterFromBaekJoon(String userBaekJoonId) throws IOException {
 		List<Long> userSolvedProblemIdList = baekJoonApiService.getSolvedProblemIdListByBaekJoonId(userBaekJoonId);
 		return new HashSet<>(userSolvedProblemIdList);
 	}
