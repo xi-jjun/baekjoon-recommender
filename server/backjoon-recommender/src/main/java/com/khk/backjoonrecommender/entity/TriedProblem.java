@@ -1,27 +1,38 @@
 package com.khk.backjoonrecommender.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Entity
 public class TriedProblem {
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
+	@ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private User user;
 
-	@ManyToOne(targetEntity = Problem.class, fetch = FetchType.LAZY)
+	@ManyToOne(targetEntity = Problem.class, fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
 	private Problem problem;
 
+	@Enumerated(EnumType.STRING)
 	private SolveType isSolved;
 	private LocalDateTime solvedDate;
+
+	public boolean solved() {
+		return this.isSolved.equals(SolveType.PASS);
+	}
+
+	public void updateSolvedStatus(SolveType solveType) {
+		this.isSolved = solveType;
+	}
 }

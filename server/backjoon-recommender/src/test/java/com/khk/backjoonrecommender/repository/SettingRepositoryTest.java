@@ -1,6 +1,6 @@
 package com.khk.backjoonrecommender.repository;
 
-import com.khk.backjoonrecommender.entity.OfferedType;
+import com.khk.backjoonrecommender.entity.Option;
 import com.khk.backjoonrecommender.entity.Setting;
 import com.khk.backjoonrecommender.entity.User;
 import org.junit.jupiter.api.BeforeAll;
@@ -39,29 +39,29 @@ class SettingRepositoryTest {
 	@Test
 	void saveSettingOptionToday() {
 		// given
-		final String LEVEL = "1, 2, 3, 4, 5, 6, 7";
-		final String TYPE = "DFS, BFS, DP, BINARY SEARCH";
+		final String LEVEL = "1,2,3,4,5,6,7";
+		final String TAGS = "DFS,BFS,DP,BINARY SEARCH";
 		User user = userRepository.findByUsername("kjj97");
 
-		Setting setting = new Setting();
-		setting.setUser(user);
-		setting.setOfferedType(OfferedType.TODAY);
+		Setting setting = Setting.builder()
+				.option(Option.TODAY)
+				.levels(LEVEL)
+				.tags(TAGS)
+				.build();
 
-		// TODAY 에 해당하는 사용자 맞춤 문제추천 필터 설정
-		setting.setProblemType(TYPE);
-		setting.setLevel(LEVEL);
+		user.setProblemFilterSetting(setting);  // 사용자와 setting 연관 매핑 해준다.
 
+		// setting 정보를 저장 (User 와 매핑된 상태로)
 		settingRepository.save(setting);
-		em.flush();
+		em.flush(); // 이 때 user 에 setting 정보가 매핑 됐기에 dirty check 발생
 		em.clear();
 
-		// when
+		// 사용자 정보를 DB 에서 꺼내온 후, Setting 에 관한 정보 조회
 		User findUser = userRepository.findByUsername("kjj97");
-		Setting findUserSetting = settingRepository.findByUser(findUser);
+		Setting userSetting = findUser.getSetting();
 
-
-		// then
-		assertThat(findUserSetting.getUser().getBaekJoonId()).isEqualTo("bj000");
-		assertThat(findUserSetting.getOfferedType()).isEqualTo(OfferedType.TODAY);
+		assertThat(userSetting.getOption()).isEqualTo(Option.TODAY);
+		assertThat(userSetting.getLevels()).isEqualTo(LEVEL);
+		assertThat(userSetting.getTags()).isEqualTo(TAGS);
 	}
 }

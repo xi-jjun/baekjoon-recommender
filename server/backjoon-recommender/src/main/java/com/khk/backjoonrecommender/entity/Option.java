@@ -1,6 +1,7 @@
 package com.khk.backjoonrecommender.entity;
 
-public enum OfferedType {
+public enum Option {
     TODAY,
-    WEEKLY
+    WEEKLY,
+    TEMP
 }

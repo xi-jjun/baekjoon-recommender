@@ -1,7 +1,7 @@
 spring:
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
 
   datasource:
     url: jdbc:h2:tcp://localhost/~/baek

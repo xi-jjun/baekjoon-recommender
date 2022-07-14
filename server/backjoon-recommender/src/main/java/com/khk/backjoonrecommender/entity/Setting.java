@@ -1,32 +1,29 @@
 package com.khk.backjoonrecommender.entity;
 
+import com.khk.backjoonrecommender.controller.dto.request.SettingRequestDto;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @Getter
-@Setter // for test
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Entity
 public class Setting {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    private User user;
-
-    private String level;
-    private String problemType;
+    private String levels;
+    private String tags;
 
     @Enumerated(value = EnumType.STRING)
-    private OfferedType offeredType;
+    private Option option;
 
     private String sun;
     private String mon;
@@ -35,4 +32,17 @@ public class Setting {
     private String thu;
     private String fri;
     private String sat;
+
+    public void updateSettingInfo(SettingRequestDto settingRequestDTO) {
+        this.levels = settingRequestDTO.getLevels();
+        this.tags = settingRequestDTO.getTags();
+        this.option = settingRequestDTO.getOption();
+        this.sun = settingRequestDTO.getSun();
+        this.mon = settingRequestDTO.getMon();
+        this.tue = settingRequestDTO.getTue();
+        this.wed = settingRequestDTO.getWed();
+        this.thu = settingRequestDTO.getThu();
+        this.fri = settingRequestDTO.getFri();
+        this.sat = settingRequestDTO.getSat();
+    }
 }

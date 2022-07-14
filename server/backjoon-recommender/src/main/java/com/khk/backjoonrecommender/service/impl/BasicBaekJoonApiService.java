@@ -1,7 +1,7 @@
-package com.khk.backjoonrecommender.service;
+package com.khk.backjoonrecommender.service.impl;
 
 import com.khk.backjoonrecommender.entity.Problem;
-import com.khk.backjoonrecommender.repository.ProblemRepository;
+import com.khk.backjoonrecommender.service.BaekJoonApiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
@@ -20,55 +20,50 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class BaekJoonProblemBasicCollector implements BaekJoonProblemCollector {
-	private final ProblemRepository problemRepository;
-	static final String BASIC_BAEKJOON_PROBLEM_LIST_URL = "https://www.acmicpc.net/problemset/";
-	static final String PROBLEM_LIST_CLASS = "list_problem_id";
-	static final String NEXT_PAGE_ID = "next_page";
-	static final String BASIC_DETAIL_PROBLEM_URL = "https://www.acmicpc.net/problem/";
+public class BasicBaekJoonApiService implements BaekJoonApiService {
+	private static final String BASIC_BAEKJOON_PROBLEM_LIST_URL = "https://www.acmicpc.net/problemset/";
+	private static final String PROBLEM_LIST_CLASS = "list_problem_id";
+	private static final String NEXT_PAGE_ID = "next_page";
+	private static final String BASIC_DETAIL_PROBLEM_URL = "https://www.acmicpc.net/problem/";
 
-	static final String TITLE = "titleKo";
-	static final String LEVEL = "level";
-	static final String TAGS = "tags";
-	static final String TAG_KEY = "key";
-	static final String PROBLEM_INFO_API = "https://solved.ac/api/v3/problem/show?problemId=";
+	private static final String TITLE = "titleKo";
+	private static final String LEVEL = "level";
+	private static final String TAGS = "tags";
+	private static final String TAG_KEY = "key";
+	private static final String PROBLEM_INFO_API = "https://solved.ac/api/v3/problem/show?problemId=";
+
+	private static final String USER_SOLVED_PROBLEM_LIST_URL = "https://www.acmicpc.net/user/";
 
 	@Override
-	public List<Problem> getAllProblemList() throws IOException, ParseException, InterruptedException {
-		List<Problem> problemList = new ArrayList<>();
+	public List<Long> getAllProblemIdListFromBaekJoon() throws IOException {
+		List<Long> problemIdList = new ArrayList<>();
 		int pageNumber = 1;
-		Document document = null;
-		Element hasNext = null;
+		Document document;
+		Element hasNext;
 		do {
 			document = Jsoup.connect(BASIC_BAEKJOON_PROBLEM_LIST_URL + pageNumber).get();
-			Elements problemIdElements = document.getElementsByClass(PROBLEM_LIST_CLASS);
-
-			for (Element problemIdElement : problemIdElements) {
-				String problemIdText = problemIdElement.html();
-				Long problemId = Long.parseLong(problemIdText);
-
-				Problem problem = getProblemInfoByProblemId(problemId);
-				log.info("problem Id={}, title={}", problem.getId(), problem.getTitle());
-
-				problemList.add(problem);
-				Thread.sleep(1000); // 1 초까지는 괜찮아 보였음. 그러나 너무 느려서 중간에 테스트 중단
+			Elements thisPageProblemIdElements = document.getElementsByClass(PROBLEM_LIST_CLASS);
+			for (Element problemIdElement : thisPageProblemIdElements) {
+				Long problemId = Long.parseLong(problemIdElement.html());
+				problemIdList.add(problemId);
 			}
-
 			hasNext = document.getElementById(NEXT_PAGE_ID);
-
 			++pageNumber;
+			if (pageNumber == 3) break; // 일단 2페이지(총 200문제) 분량만 테스트로 저장하기 했습니다
 		} while (hasNext != null);
 
-		return problemList;
+		return problemIdList;
 	}
 
 	@Override
-	public Problem getProblemInfoByProblemId(Long problemId) throws IOException, ParseException {
+	public Problem getProblemByProblemId(Long problemId) throws IOException, ParseException {
 		JSONObject problemObj = getProblemInfoFromSolvedAPI(problemId);
 
 		String title = problemObj.get(TITLE).toString();
@@ -100,18 +95,19 @@ public class BaekJoonProblemBasicCollector implements BaekJoonProblemCollector {
 	}
 
 	@Override
-	public void updateProblemList() throws IOException {
-//		if (isDifferent()) {
-//			// DB 에 크롤링 데이터를 DB 에 반영시켜야 함
-//		}
-	}
+	public List<Long> getSolvedProblemIdListByBaekJoonId(String baekJoonId) throws IOException {
+		Document document = Jsoup.connect(USER_SOLVED_PROBLEM_LIST_URL + baekJoonId).get();
+		Element solvedElements = document.getElementsByClass("problem-list").get(0);
+		String solvedElementsText = solvedElements.text();
+		if (solvedElementsText.isBlank()) {
+			return List.of(0L);
+		}
+		
+		String[] parsedSolvedIdList = solvedElementsText.split(" ");
 
-	private boolean isDifferent() throws IOException, ParseException, InterruptedException {
-		List<Problem> allProblemList = problemRepository.findAll();
-		int databaseProblemListSize = allProblemList.size();
-		int presentProblemListSize = getAllProblemList().size();
-
-		return databaseProblemListSize != presentProblemListSize;
+		return Arrays.stream(parsedSolvedIdList)
+				.map(Long::parseLong)
+				.collect(Collectors.toList());
 	}
 
 	private JSONObject getProblemInfoFromSolvedAPI(Long problemId) throws IOException, ParseException {
