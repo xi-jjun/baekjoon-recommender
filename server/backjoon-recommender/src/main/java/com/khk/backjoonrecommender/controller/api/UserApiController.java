@@ -3,7 +3,6 @@ package com.khk.backjoonrecommender.controller.api;
 import com.khk.backjoonrecommender.controller.dto.request.RivalSearchRequestDto;
 import com.khk.backjoonrecommender.controller.dto.request.UserRegisterRequestDto;
 import com.khk.backjoonrecommender.controller.dto.response.*;
-import com.khk.backjoonrecommender.entity.Problem;
 import com.khk.backjoonrecommender.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,7 @@ public class UserApiController {
 	}
 
 	@GetMapping("/{userId}/solved")
-	public BasicResponseDto<List<Problem>> solvedProblemList(@PathVariable Long userId) {
+	public BasicResponseDto<List<SolvedProblemListResponseDto>> solvedProblemList(@PathVariable Long userId) {
 		return userService.getSolvedProblemList(userId);
 	}
 

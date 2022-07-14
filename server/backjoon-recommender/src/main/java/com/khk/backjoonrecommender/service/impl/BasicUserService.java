@@ -190,14 +190,14 @@ public class BasicUserService implements UserService {
 	}
 
 	@Override
-	public BasicResponseDto<List<Problem>> getSolvedProblemList(Long userId) {
+	public BasicResponseDto<List<SolvedProblemListResponseDto>> getSolvedProblemList(Long userId) {
 		Optional<User> findResult = userRepository.findById(userId);
 		log.info("get solved problem list user id = {}", userId);
 		if (findResult.isPresent()) {
 			User user = findResult.get();
-			List<Problem> solvedProblemList = user.getTriedProblemList().stream()
+			List<SolvedProblemListResponseDto> solvedProblemList = user.getTriedProblemList().stream()
 					.filter(TriedProblem::solved)
-					.map(TriedProblem::getProblem)
+					.map(SolvedProblemListResponseDto::new)
 					.collect(Collectors.toList());
 			log.info("success to get solved problem list");
 
