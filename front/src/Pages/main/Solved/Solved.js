@@ -2,124 +2,37 @@ import "../../../default.css";
 import * as Styled from './Styled';
 import Header from "../../../Components/Header";
 import Pagination from "../../../Components/Pagination";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from "axios";
 
 const pages = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 const Solved = () => {
+
+    useEffect(() => {
+        axios.get("http://localhost:8080/api/v1/user", {
+            headers: {
+                'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'Authorization': localStorage.getItem("Authorization")
+            }
+        }).then(res => {
+            console.log("res ", res);
+        }).catch(e => {
+            console.log("error: ", e);
+        })
+    })
+
     return (
         <div>
             <Header />
             <Styled.Container>
                 <Styled.QuestionContainer>
-                    <Styled.QuestionContainerLabel>날짜</Styled.QuestionContainerLabel>
+                    <Styled.QuestionLabelContainer>
+                        <Styled.QuestionLabel>날짜</Styled.QuestionLabel>
+                    </Styled.QuestionLabelContainer>
                     <Styled.Question>
                         <Styled.QuestionElement>22.06.25</Styled.QuestionElement>
                     </Styled.Question>
-                    <Styled.Question className='space' />
-                    <Styled.Question className='space' />
-                    <Styled.Question className='space' />
-                    <Styled.Question className='space' />
-                    <Styled.Question>
-                        <Styled.QuestionElement>22.06.24</Styled.QuestionElement>
-                    </Styled.Question>
-                    <Styled.Question className='space' />
-                    <Styled.Question className='space' />
-                    <Styled.Question className='space' />
-                    <Styled.Question className='space' />
-                </Styled.QuestionContainer>
-                <Styled.QuestionContainer>
-                    <Styled.QuestionContainerLabel>푼 문제</Styled.QuestionContainerLabel>
-                    <Styled.Question>
-                        <Styled.QuestionElement>10120번</Styled.QuestionElement>
-                        <Styled.QuestionElement>벽돌 쌓기</Styled.QuestionElement>
-                        <Styled.QuestionElement>silver[2]</Styled.QuestionElement>
-                    </Styled.Question>
-                    <Styled.Question>
-                        <Styled.QuestionElement>10120번</Styled.QuestionElement>
-                        <Styled.QuestionElement>벽돌 쌓기</Styled.QuestionElement>
-                        <Styled.QuestionElement>silver[2]</Styled.QuestionElement>
-                    </Styled.Question>
-                    <Styled.Question>
-                        <Styled.QuestionElement>10120번</Styled.QuestionElement>
-                        <Styled.QuestionElement>벽돌 쌓기</Styled.QuestionElement>
-                        <Styled.QuestionElement>silver[2]</Styled.QuestionElement>
-                    </Styled.Question>
-                    <Styled.Question>
-                        <Styled.QuestionElement>10120번</Styled.QuestionElement>
-                        <Styled.QuestionElement>벽돌 쌓기</Styled.QuestionElement>
-                        <Styled.QuestionElement>silver[2]</Styled.QuestionElement>
-                    </Styled.Question>
-                    <Styled.Question>
-                        <Styled.QuestionElement>10120번</Styled.QuestionElement>
-                        <Styled.QuestionElement>벽돌 쌓기</Styled.QuestionElement>
-                        <Styled.QuestionElement>silver[2]</Styled.QuestionElement>
-                    </Styled.Question>
-                    <Styled.Question>
-                        <Styled.QuestionElement>10120번</Styled.QuestionElement>
-                        <Styled.QuestionElement>벽돌 쌓기</Styled.QuestionElement>
-                        <Styled.QuestionElement>silver[2]</Styled.QuestionElement>
-                    </Styled.Question>
-                    <Styled.Question>
-                        <Styled.QuestionElement>10120번</Styled.QuestionElement>
-                        <Styled.QuestionElement>벽돌 쌓기</Styled.QuestionElement>
-                        <Styled.QuestionElement>silver[2]</Styled.QuestionElement>
-                    </Styled.Question>
-                    <Styled.Question>
-                        <Styled.QuestionElement>10120번</Styled.QuestionElement>
-                        <Styled.QuestionElement>벽돌 쌓기</Styled.QuestionElement>
-                        <Styled.QuestionElement>silver[2]</Styled.QuestionElement>
-                    </Styled.Question>
-                    <Styled.Question>
-                        <Styled.QuestionElement>10120번</Styled.QuestionElement>
-                        <Styled.QuestionElement>벽돌 쌓기</Styled.QuestionElement>
-                        <Styled.QuestionElement>silver[2]</Styled.QuestionElement>
-                    </Styled.Question>
-                    <Styled.Question>
-                        <Styled.QuestionElement>10120번</Styled.QuestionElement>
-                        <Styled.QuestionElement>벽돌 쌓기</Styled.QuestionElement>
-                        <Styled.QuestionElement>silver[2]</Styled.QuestionElement>
-                    </Styled.Question>
-                    <Styled.PaginationContainer>
-                        {pages.map(page => <Pagination number={page} />)}
-                    </Styled.PaginationContainer>
-                </Styled.QuestionContainer>
-                <Styled.QuestionContainer>
-                    <Styled.QuestionContainerLabel>못 푼 문제</Styled.QuestionContainerLabel>
-                    <Styled.Question>
-                        <Styled.QuestionElement>10120번</Styled.QuestionElement>
-                        <Styled.QuestionElement>벽돌 쌓기</Styled.QuestionElement>
-                        <Styled.QuestionElement>silver[2]</Styled.QuestionElement>
-                    </Styled.Question>
-                    <Styled.Question>
-                        <Styled.QuestionElement>10120번</Styled.QuestionElement>
-                        <Styled.QuestionElement>벽돌 쌓기</Styled.QuestionElement>
-                        <Styled.QuestionElement>silver[2]</Styled.QuestionElement>
-                    </Styled.Question>
-                    <Styled.Question>
-                        <Styled.QuestionElement>10120번</Styled.QuestionElement>
-                        <Styled.QuestionElement>벽돌 쌓기</Styled.QuestionElement>
-                        <Styled.QuestionElement>silver[2]</Styled.QuestionElement>
-                    </Styled.Question>
-                    <Styled.Question>
-                        <Styled.QuestionElement>10120번</Styled.QuestionElement>
-                        <Styled.QuestionElement>벽돌 쌓기</Styled.QuestionElement>
-                        <Styled.QuestionElement>silver[2]</Styled.QuestionElement>
-                    </Styled.Question>
-                    <Styled.Question>
-                        <Styled.QuestionElement>10120번</Styled.QuestionElement>
-                        <Styled.QuestionElement>벽돌 쌓기</Styled.QuestionElement>
-                        <Styled.QuestionElement>silver[2]</Styled.QuestionElement>
-                    </Styled.Question>
-                    <Styled.Question>
-                        <Styled.QuestionElement>10120번</Styled.QuestionElement>
-                        <Styled.QuestionElement>벽돌 쌓기</Styled.QuestionElement>
-                        <Styled.QuestionElement>silver[2]</Styled.QuestionElement>
-                    </Styled.Question>
-                    <Styled.Question className='space' />
-                    <Styled.Question className='space' />
-                    <Styled.Question className='space' />
-                    <Styled.Question className='space' />
                 </Styled.QuestionContainer>
             </Styled.Container>
         </div>
