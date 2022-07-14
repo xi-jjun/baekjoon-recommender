@@ -26,6 +26,11 @@ public class RecommendationApiController {
         return recommendationService.recommendProblem(authentication);
     }
 
+    @GetMapping("/today")
+    public BasicResponseDto<?> todayRecommendedProblemList(Authentication authentication) {
+        return recommendationService.getTodayRecommendedProblemListByUser(authentication);
+    }
+
     @PostMapping
     public BasicResponseDto<?> problemCheck(Authentication authentication, @RequestBody CheckSolvedRequestDto checkSolvedRequestDto) throws IOException {
         Long problemId = checkSolvedRequestDto.getProblemId();

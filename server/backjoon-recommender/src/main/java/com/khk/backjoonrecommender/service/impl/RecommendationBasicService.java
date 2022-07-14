@@ -77,6 +77,28 @@ public class RecommendationBasicService implements RecommendationService {
 		return result;
 	}
 
+	@Override
+	public BasicResponseDto<List<RecommendProblemResponseDto>> getTodayRecommendedProblemListByUser(Authentication authentication) {
+		User loginUser = getLoginUser(authentication);
+		List<TriedProblem> triedProblemList = loginUser.getTriedProblemList();
+
+		List<RecommendProblemResponseDto> todayRecommendedList = triedProblemList.stream()
+				.filter(TriedProblem::isRecommendedToday)
+				.map(RecommendProblemResponseDto::new)
+				.collect(Collectors.toList());
+
+		if (todayRecommendedList.isEmpty()) {
+			return new BasicResponseDto<>(400, "No recommended today", null);
+		}
+
+		BasicResponseDto<List<RecommendProblemResponseDto>> response = new BasicResponseDto<>();
+		response.setCode(200);
+		response.setMessage("today recommended problem list");
+		response.setData(todayRecommendedList);
+
+		return response;
+	}
+
 	/**
 	 * Server 로 부터, 로그인된 사용자가 푼 문제 번호 목록 가져와서 Set 으로 반환
 	 * @param loginUser 사용자 Entity

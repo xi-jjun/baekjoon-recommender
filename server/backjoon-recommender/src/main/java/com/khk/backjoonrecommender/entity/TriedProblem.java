@@ -34,6 +34,11 @@ public class TriedProblem {
 		return this.isSolved.equals(SolveType.PASS);
 	}
 
+	public boolean isRecommendedToday() {
+		final LocalDate TODAY = LocalDate.now();
+		return TODAY.equals(this.recommendedDate);
+	}
+
 	public void updateSolvedStatus(SolveType solveType) {
 		this.isSolved = solveType;
 	}
