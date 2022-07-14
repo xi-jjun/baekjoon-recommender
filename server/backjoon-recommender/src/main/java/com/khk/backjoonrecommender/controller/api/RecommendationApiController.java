@@ -1,5 +1,6 @@
 package com.khk.backjoonrecommender.controller.api;
 
+import com.khk.backjoonrecommender.controller.dto.request.CheckSolvedRequestDto;
 import com.khk.backjoonrecommender.controller.dto.request.SettingRequestDto;
 import com.khk.backjoonrecommender.controller.dto.response.BasicResponseDto;
 import com.khk.backjoonrecommender.service.RecommendationService;
@@ -26,7 +27,8 @@ public class RecommendationApiController {
     }
 
     @PostMapping
-    public BasicResponseDto<?> problemCheck(Authentication authentication, @RequestBody Long problemId) throws IOException {
+    public BasicResponseDto<?> problemCheck(Authentication authentication, @RequestBody CheckSolvedRequestDto checkSolvedRequestDto) throws IOException {
+        Long problemId = checkSolvedRequestDto.getProblemId();
         return recommendationService.checkProblemIfSolved(authentication, problemId);
     }
 
