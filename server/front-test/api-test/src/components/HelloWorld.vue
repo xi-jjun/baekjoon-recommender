@@ -197,7 +197,9 @@ export default {
         method: 'POST',
         url: 'http://localhost:8080/api/v1/recommendation',
         headers: headers,
-        data: problemId
+        data: {
+          problemId: problemId
+        }
       }).then(function (response) {
         console.log(response);
       })
