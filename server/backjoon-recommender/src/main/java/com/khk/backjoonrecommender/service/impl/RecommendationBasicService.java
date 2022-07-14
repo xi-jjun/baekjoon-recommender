@@ -2,6 +2,7 @@ package com.khk.backjoonrecommender.service.impl;
 
 import com.khk.backjoonrecommender.controller.dto.request.SettingRequestDto;
 import com.khk.backjoonrecommender.controller.dto.response.BasicResponseDto;
+import com.khk.backjoonrecommender.controller.dto.response.RecommendProblemResponseDto;
 import com.khk.backjoonrecommender.entity.Option;
 import com.khk.backjoonrecommender.entity.Problem;
 import com.khk.backjoonrecommender.entity.Setting;
@@ -20,11 +21,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
@@ -43,7 +45,7 @@ public class RecommendationBasicService implements RecommendationService {
 	private Setting userSetting = new Setting();
 
 	@Override
-	public BasicResponseDto<?> recommendProblem(Authentication authentication) throws IOException {
+	public BasicResponseDto<?> recommendProblem(Authentication authentication) {
 		User loginUser = getLoginUser(authentication);
 
 		Option userOption = userSetting.getOption();
@@ -51,20 +53,73 @@ public class RecommendationBasicService implements RecommendationService {
 			userSetting = loginUser.getSetting();
 		}
 
-		String userBaekJoonId = loginUser.getBaekJoonId();
 		Set<Integer> levelFilter = getLevelFilter(); // 사용자가 설정한 난이도 필터
 		Set<String> tagFilter = getTagFilter(); // 사용자가 설정한 문제유형 필터
-		Set<Long> userSolvedFilter = getUserSolvedFilterFromBaekJoon(userBaekJoonId); // 사용자가 이미 해결한 문제 번호 핕터
+		Set<Long> userSolvedFilter = getUserSolvedProblemFilterFromServer(loginUser); // 사용자가 이미 해결한 문제 번호 핕터
 
 		List<Problem> filteredProblemList = getFilteredProblemList(levelFilter, tagFilter, userSolvedFilter);
 
 		Problem recommendedProblem = getRandomProblem(filteredProblemList);
-		BasicResponseDto<Problem> result = new BasicResponseDto<>();
+
+		TriedProblem todayRecommended = TriedProblem.builder()
+				.user(loginUser)
+				.problem(recommendedProblem)
+				.isSolved(SolveType.SOLVING)
+				.recommendedDate(LocalDate.now())
+				.build();
+		triedProblemRepository.save(todayRecommended);
+
+		BasicResponseDto<RecommendProblemResponseDto> result = new BasicResponseDto<>();
 		result.setCode(200);
 		result.setMessage("success to recommend baek joon problem");
-		result.setData(recommendedProblem);
+		result.setData(new RecommendProblemResponseDto(todayRecommended));
 
 		return result;
+	}
+
+	/**
+	 * 오늘 사용자가 추천받은 문제 목록을 정보 조회
+	 * @param authentication 로그인된 사용자 객체
+	 * @return 오늘 날짜 기준으로 추천 받은 문제 정보
+	 */
+	@Override
+	public BasicResponseDto<List<RecommendProblemResponseDto>> getTodayRecommendedProblemListByUser(Authentication authentication) {
+		User loginUser = getLoginUser(authentication);
+		List<TriedProblem> triedProblemList = loginUser.getTriedProblemList();
+
+		List<RecommendProblemResponseDto> todayRecommendedList = triedProblemList.stream()
+				.filter(TriedProblem::isRecommendedToday)
+				.map(RecommendProblemResponseDto::new)
+				.collect(Collectors.toList());
+
+		if (todayRecommendedList.isEmpty()) {
+			return new BasicResponseDto<>(400, "No recommended today", null);
+		}
+
+		BasicResponseDto<List<RecommendProblemResponseDto>> response = new BasicResponseDto<>();
+		response.setCode(200);
+		response.setMessage("today recommended problem list");
+		response.setData(todayRecommendedList);
+
+		return response;
+	}
+
+	/**
+	 * Server 로 부터, 로그인된 사용자가 푼 문제 번호 목록 가져와서 Set 으로 반환
+	 * @param loginUser 사용자 Entity
+	 * @return 푼 문제가 없다면, 의미 없는 값 0과 1을 넣어서 Set 으로 반환.
+	 * 		   푼 문제가 있다면, 해당 문제 번호들을 Set 으로 반환
+	 */
+	private Set<Long> getUserSolvedProblemFilterFromServer(User loginUser) {
+		List<TriedProblem> triedProblemList = loginUser.getTriedProblemList();
+		if (triedProblemList.isEmpty()) {
+			return Set.of(0L, 1L);
+		}
+
+		return triedProblemList.stream()
+				.filter(TriedProblem::solved)
+				.map(p -> p.getProblem().getId())
+				.collect(Collectors.toSet());
 	}
 
 	private Problem getRandomProblem(List<Problem> filteredProblemList) {
@@ -74,8 +129,14 @@ public class RecommendationBasicService implements RecommendationService {
 		return filteredProblemList.get(randomPickedNumber);
 	}
 
-	private Set<Long> getUserSolvedFilterFromBaekJoon(String userBaekJoonId) throws IOException {
-		List<Long> userSolvedProblemIdList = baekJoonApiService.getSolvedProblemIdListByBaekJoonId(userBaekJoonId);
+	/**
+	 * 직접 백준 사이트에서 사용자가 푼 문제 번호 목록 가져와서 Set 으로 반환
+	 * @param baekJoonId 사용자 백준 아이디
+	 * @return 사용자가 푼 문제 Set
+	 * @throws IOException BaekJoonApiService 에서 크롤링 오류가 발생하면 IOException 발생
+	 */
+	private Set<Long> getUserSolvedProblemFilterFromBaekJoon(String baekJoonId) throws IOException {
+		List<Long> userSolvedProblemIdList = baekJoonApiService.getSolvedProblemIdListByBaekJoonId(baekJoonId);
 		return new HashSet<>(userSolvedProblemIdList);
 	}
 
@@ -137,28 +198,42 @@ public class RecommendationBasicService implements RecommendationService {
 				.collect(Collectors.toSet());
 	}
 
+	/**
+	 * problem id 에 해당하는 문제가 풀렸는지 여부를 알기 위한 기능.
+	 * if solved, then TriedProblem 에서 problem id 에 해당하는 객체에 풀렸다는 표시를 한다.
+	 * else, 안풀렸다는 표시를 하거나, 문제가 존재하지 않는 것
+	 * @param authentication 로그인된 사용자 객체
+	 * @param problemId 현재 풀었는지 여부가 궁금한 문제번호
+	 * @return 푼 문제에 대한 응답
+	 * @throws IOException
+	 */
 	@Transactional
 	@Override
 	public BasicResponseDto<?> checkProblemIfSolved(Authentication authentication, Long problemId) throws IOException {
 		User loginUser = getLoginUser(authentication);
 		String userBaekJoonId = loginUser.getBaekJoonId();
-		List<Long> solvedProblemIdList = baekJoonApiService.getSolvedProblemIdListByBaekJoonId(userBaekJoonId);
-		Problem problem = problemRepository.findById(problemId).orElse(null);
+		Set<Long> solvedProblemIdList = getUserSolvedProblemFilterFromBaekJoon(userBaekJoonId);
 
-		if (solvedProblemIdList.contains(problemId)) {
-			TriedProblem triedProblem = TriedProblem.builder()
-					.problem(problem)
-					.user(loginUser)
-					.solvedDate(LocalDateTime.now())
-					.isSolved(SolveType.PASS)
-					.build();
-			triedProblemRepository.save(triedProblem);
+		if (solvedProblemIdList.contains(problemId)) { // 백준에서 푼 문제 번호 중에 현재 problem id 가 있다면,
+			List<TriedProblem> triedProblemList = loginUser.getTriedProblemList();
+			Optional<TriedProblem> problem = triedProblemList.stream()
+					.filter(Predicate.not(TriedProblem::solved)) // 풀지 못했다고 표시된 문제들 중에서
+					.filter(t -> t.isSameProblem(problemId)) // problem id 와 같은 것을 찾는다.
+					.findFirst();
 
-			BasicResponseDto<?> responseDto = new BasicResponseDto<>();
-			responseDto.setCode(200);
-			responseDto.setMessage(userBaekJoonId + " solved problem id=" + problemId);
+			if (problem.isPresent()) {
+				TriedProblem solvedProblem = problem.get();
+				solvedProblem.updateSolvedStatus(SolveType.PASS);
 
-			return responseDto;
+				BasicResponseDto<RecommendProblemResponseDto> responseDto = new BasicResponseDto<>();
+				responseDto.setCode(200);
+				responseDto.setMessage(userBaekJoonId + " solved problem id=" + problemId);
+				responseDto.setData(new RecommendProblemResponseDto(solvedProblem));
+
+				return responseDto;
+			}
+
+			return new BasicResponseDto<>(400, "problem is not existed", null);
 		}
 
 		BasicResponseDto<?> responseDto = new BasicResponseDto<>();

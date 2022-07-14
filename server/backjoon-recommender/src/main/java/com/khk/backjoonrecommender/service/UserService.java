@@ -3,7 +3,6 @@ package com.khk.backjoonrecommender.service;
 import com.khk.backjoonrecommender.controller.dto.request.RivalSearchRequestDto;
 import com.khk.backjoonrecommender.controller.dto.request.UserRegisterRequestDto;
 import com.khk.backjoonrecommender.controller.dto.response.*;
-import com.khk.backjoonrecommender.entity.Problem;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 
@@ -25,7 +24,7 @@ public interface UserService {
 
 	BasicResponseDto<RivalSearchResponseDto> findRival(RivalSearchRequestDto rivalSearchRequestDto);
 
-	BasicResponseDto<List<Problem>> getSolvedProblemList(Long userId);
+	BasicResponseDto<List<SolvedProblemListResponseDto>> getSolvedProblemList(Long userId);
 
 	BasicResponseDto<?> deleteUserInfo(Authentication authentication);
 }

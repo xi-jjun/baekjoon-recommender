@@ -8,13 +8,17 @@ import com.khk.backjoonrecommender.controller.dto.response.*;
 import com.khk.backjoonrecommender.entity.Problem;
 import com.khk.backjoonrecommender.entity.Rival;
 import com.khk.backjoonrecommender.entity.Setting;
+import com.khk.backjoonrecommender.entity.SolveType;
 import com.khk.backjoonrecommender.entity.TriedProblem;
 import com.khk.backjoonrecommender.entity.User;
 import com.khk.backjoonrecommender.exception.BaekJoonIdNotFoundException;
 import com.khk.backjoonrecommender.exception.handler.AlreadyRegisteredException;
+import com.khk.backjoonrecommender.repository.ProblemRepository;
 import com.khk.backjoonrecommender.repository.RivalRepository;
 import com.khk.backjoonrecommender.repository.SettingRepository;
+import com.khk.backjoonrecommender.repository.TriedProblemRepository;
 import com.khk.backjoonrecommender.repository.UserRepository;
+import com.khk.backjoonrecommender.service.BaekJoonApiService;
 import com.khk.backjoonrecommender.service.UserService;
 import com.khk.backjoonrecommender.service.ValidationService;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +31,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,7 +45,10 @@ import static com.khk.backjoonrecommender.common.ResponseCodeMessage.*;
 @Service
 public class BasicUserService implements UserService {
 	private final ValidationService validationService;
+	private final BaekJoonApiService baekJoonApiService;
 	private final UserRepository userRepository;
+	private final TriedProblemRepository triedProblemRepository;
+	private final ProblemRepository problemRepository;
 	private final RivalRepository rivalRepository;
 	private final SettingRepository settingRepository;
 	private final BCryptPasswordEncoder passwordEncoder;
@@ -114,6 +123,8 @@ public class BasicUserService implements UserService {
 		user.resetReloadCount();
 		userRepository.save(user);
 
+		saveSolvedProblemFromBaekJoonToServer(user);
+
 		BasicResponseDto<User> responseDto = new BasicResponseDto<>();
 		responseDto.setCode(SUCCESS);
 		responseDto.setMessage(REGISTER_SUCCESS);
@@ -121,6 +132,39 @@ public class BasicUserService implements UserService {
 		log.info("user {} is created", user.getUsername());
 
 		return responseDto;
+	}
+
+	/**
+	 * 회원가입 시 사용자의 백준 아이디가 푼 문제 전체를 Server 에 반영
+	 * @param user 사용자 Entity
+	 * @throws IOException 백준 사이트 크롤링 Exception
+	 */
+	private void saveSolvedProblemFromBaekJoonToServer(User user) throws IOException {
+		String baekJoonId = user.getBaekJoonId();
+		List<Long> userSolvedProblemIdList = baekJoonApiService.getSolvedProblemIdListByBaekJoonId(baekJoonId);
+		List<Optional<Problem>> userSolvedProblemList = userSolvedProblemIdList.stream()
+				.map(problemRepository::findById)
+				.collect(Collectors.toList());
+
+		userSolvedProblemList.stream()
+				.filter(Optional::isPresent)
+				.forEach(solvedProblem -> saveTriedProblemToServer(user, solvedProblem.get()));
+	}
+
+	/**
+	 * 사용자가 푼 문제를 다 : 다 매핑으로 TriedProblem 으로 Server 에 저장
+	 * @param user 사용자 Entity
+	 * @param solvedProblem 사용자가 푼 문제 객체
+	 */
+	private void saveTriedProblemToServer(User user, Problem solvedProblem) {
+		TriedProblem passedProblem = TriedProblem.builder()
+				.user(user)
+				.problem(solvedProblem)
+				.solvedDate(LocalDateTime.of(2022, Month.JUNE, 25, 0, 0))
+				.isSolved(SolveType.PASS)
+				.build();
+		log.info("user id={} solved problem no.{}", user.getId(), solvedProblem.getId());
+		triedProblemRepository.save(passedProblem);
 	}
 
 	@Override
@@ -146,14 +190,14 @@ public class BasicUserService implements UserService {
 	}
 
 	@Override
-	public BasicResponseDto<List<Problem>> getSolvedProblemList(Long userId) {
+	public BasicResponseDto<List<SolvedProblemListResponseDto>> getSolvedProblemList(Long userId) {
 		Optional<User> findResult = userRepository.findById(userId);
 		log.info("get solved problem list user id = {}", userId);
 		if (findResult.isPresent()) {
 			User user = findResult.get();
-			List<Problem> solvedProblemList = user.getTriedProblemList().stream()
+			List<SolvedProblemListResponseDto> solvedProblemList = user.getTriedProblemList().stream()
 					.filter(TriedProblem::solved)
-					.map(TriedProblem::getProblem)
+					.map(SolvedProblemListResponseDto::new)
 					.collect(Collectors.toList());
 			log.info("success to get solved problem list");
 
