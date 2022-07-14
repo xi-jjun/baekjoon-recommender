@@ -7,7 +7,7 @@ import org.springframework.security.core.Authentication;
 import java.io.IOException;
 
 public interface RecommendationService {
-    public BasicResponseDto<?> recommendProblem(Authentication authentication) throws IOException;
+    public BasicResponseDto<?> recommendProblem(Authentication authentication);
 
     public BasicResponseDto<?> checkProblemIfSolved(Authentication authentication, Long problemId) throws IOException;
 

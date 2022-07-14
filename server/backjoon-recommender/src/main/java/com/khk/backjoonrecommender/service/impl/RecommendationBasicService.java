@@ -43,7 +43,7 @@ public class RecommendationBasicService implements RecommendationService {
 	private Setting userSetting = new Setting();
 
 	@Override
-	public BasicResponseDto<?> recommendProblem(Authentication authentication) throws IOException {
+	public BasicResponseDto<?> recommendProblem(Authentication authentication) {
 		User loginUser = getLoginUser(authentication);
 
 		Option userOption = userSetting.getOption();
@@ -51,10 +51,9 @@ public class RecommendationBasicService implements RecommendationService {
 			userSetting = loginUser.getSetting();
 		}
 
-		String userBaekJoonId = loginUser.getBaekJoonId();
 		Set<Integer> levelFilter = getLevelFilter(); // 사용자가 설정한 난이도 필터
 		Set<String> tagFilter = getTagFilter(); // 사용자가 설정한 문제유형 필터
-		Set<Long> userSolvedFilter = getUserSolvedFilterFromBaekJoon(userBaekJoonId); // 사용자가 이미 해결한 문제 번호 핕터
+		Set<Long> userSolvedFilter = getUserSolvedProblemFilterFromServer(loginUser); // 사용자가 이미 해결한 문제 번호 핕터
 
 		List<Problem> filteredProblemList = getFilteredProblemList(levelFilter, tagFilter, userSolvedFilter);
 
@@ -67,6 +66,24 @@ public class RecommendationBasicService implements RecommendationService {
 		return result;
 	}
 
+	/**
+	 * Server 로 부터, 로그인된 사용자가 푼 문제 번호 목록 가져와서 Set 으로 반환
+	 * @param loginUser 사용자 Entity
+	 * @return 푼 문제가 없다면, 의미 없는 값 0과 1을 넣어서 Set 으로 반환.
+	 * 		   푼 문제가 있다면, 해당 문제 번호들을 Set 으로 반환
+	 */
+	private Set<Long> getUserSolvedProblemFilterFromServer(User loginUser) {
+		List<TriedProblem> triedProblemList = loginUser.getTriedProblemList();
+		if (triedProblemList.isEmpty()) {
+			return Set.of(0L, 1L);
+		}
+
+		return triedProblemList.stream()
+				.filter(TriedProblem::solved)
+				.map(p -> p.getProblem().getId())
+				.collect(Collectors.toSet());
+	}
+
 	private Problem getRandomProblem(List<Problem> filteredProblemList) {
 		ThreadLocalRandom random = ThreadLocalRandom.current();
 		int randomPickedNumber = random.nextInt(filteredProblemList.size());
@@ -74,8 +91,14 @@ public class RecommendationBasicService implements RecommendationService {
 		return filteredProblemList.get(randomPickedNumber);
 	}
 
-	private Set<Long> getUserSolvedFilterFromBaekJoon(String userBaekJoonId) throws IOException {
-		List<Long> userSolvedProblemIdList = baekJoonApiService.getSolvedProblemIdListByBaekJoonId(userBaekJoonId);
+	/**
+	 * 직접 백준 사이트에서 사용자가 푼 문제 번호 목록 가져와서 Set 으로 반환
+	 * @param baekJoonId 사용자 백준 아이디
+	 * @return 사용자가 푼 문제 Set
+	 * @throws IOException BaekJoonApiService 에서 크롤링 오류가 발생하면 IOException 발생
+	 */
+	private Set<Long> getUserSolvedProblemFilterFromBaekJoon(String baekJoonId) throws IOException {
+		List<Long> userSolvedProblemIdList = baekJoonApiService.getSolvedProblemIdListByBaekJoonId(baekJoonId);
 		return new HashSet<>(userSolvedProblemIdList);
 	}
 
@@ -142,7 +165,7 @@ public class RecommendationBasicService implements RecommendationService {
 	public BasicResponseDto<?> checkProblemIfSolved(Authentication authentication, Long problemId) throws IOException {
 		User loginUser = getLoginUser(authentication);
 		String userBaekJoonId = loginUser.getBaekJoonId();
-		List<Long> solvedProblemIdList = baekJoonApiService.getSolvedProblemIdListByBaekJoonId(userBaekJoonId);
+		Set<Long> solvedProblemIdList = getUserSolvedProblemFilterFromBaekJoon(userBaekJoonId);
 		Problem problem = problemRepository.findById(problemId).orElse(null);
 
 		if (solvedProblemIdList.contains(problemId)) {
