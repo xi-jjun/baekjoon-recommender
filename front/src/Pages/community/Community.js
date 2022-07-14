@@ -1,8 +1,7 @@
 import styled from "styled-components";
 import "../../default.css";
 import * as Default from "../../Default";
-import { useState } from "react";
-
+import { useEffect, useRef, useState } from "react";
 
 const questionTypeOptions = ["dp", "brute force", "sort"]
 const difficultyGradeOptions = ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Ruby"]
@@ -15,8 +14,18 @@ export const FilterElement = ({ typo, id }) => {
         onClickFilter(prev => !prev)
     }
 
+    const divRef = useRef();
+
+    useEffect(() => {
+        if (divRef) {
+            onClickFilter(divRef.current.checked);
+        }
+    }, [divRef?.current?.checked])
+
     return (
-        <div checked={filterClicked}
+        <div
+            checked={filterClicked}
+            ref={divRef}
             id={id}
             value={typo}
             style={{
@@ -50,6 +59,9 @@ export const FilterElement = ({ typo, id }) => {
 }
 
 export const DifficultyFilter = ({ page }) => {
+
+    // const [checked, setChecked] = useState < Boolean > ([]);
+
     return (
         <div>
             <div style={{ display: "flex", margin: "5px 0" }}>
@@ -184,6 +196,7 @@ font-size: 20px;
 export const InfoSubContainer = styled.div`
 width: 100%;
 display: flex;
+justify-content: "space-between";
 align-items: center;
 `
 
@@ -198,7 +211,7 @@ margin: 5px 0;
 `
 
 export const ShortInput = styled.input`
-width: 395px;
+width: 470px;
 height: 40px;
 box-sizing: border-box;
 border: solid 1px #bbb;
