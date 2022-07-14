@@ -98,9 +98,14 @@ public class BasicBaekJoonApiService implements BaekJoonApiService {
 	public List<Long> getSolvedProblemIdListByBaekJoonId(String baekJoonId) throws IOException {
 		Document document = Jsoup.connect(USER_SOLVED_PROBLEM_LIST_URL + baekJoonId).get();
 		Element solvedElements = document.getElementsByClass("problem-list").get(0);
-		String[] solvedIdList = solvedElements.text().split(" ");
+		String solvedElementsText = solvedElements.text();
+		if (solvedElementsText.isBlank()) {
+			return List.of(0L);
+		}
+		
+		String[] parsedSolvedIdList = solvedElementsText.split(" ");
 
-		return Arrays.stream(solvedIdList)
+		return Arrays.stream(parsedSolvedIdList)
 				.map(Long::parseLong)
 				.collect(Collectors.toList());
 	}
