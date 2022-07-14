@@ -1,13 +1,13 @@
-import { useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as Default from "../../../Default";
 import * as Styled from "./Styled"
+import { DifficultyFilter, FilterElement } from "../../community/Community";
 import Header from "../../../Components/Header";
-import SelectBox from "../../../Components/SelectBox";
 import Button from "../../../Components/Button";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const questionTypeOptions = ["dp", "brute force", "sort"]
-const difficultyGradeOptions = ["bronze", "silver", "gold", "platinum", "diamond", "ruby"]
-const difficultyLevelOptions = [1, 2, 3, 4, 5]
 
 const Question = ({ number, title, solved }) => {
     const [dropBoxClicked, dropBoxOnClick] = useState(false)
@@ -42,14 +42,41 @@ const Question = ({ number, title, solved }) => {
     )
 }
 
-const AddQuestionButton = () => {
-    const [mouseOver, setMouseOver] = useState(false)
-    const getMouseOver = () => {
-        setMouseOver(true)
+const Recommend = () => {
+    const navigate = useNavigate();
+    const toLogin = () => {
+        navigate("/user/login", { replace: true });
     }
-    const getMouseOut = () => {
-        setMouseOver(false)
-    }
+
+    const [problemId, setProblemId] = useState(-1);
+
+    const recommended = [];
+    const [data, setData] = useState([])
+
+    useEffect(() => {
+
+        if (!localStorage.getItem("Authorization")) {
+            console.log("navigate to login");
+            toLogin();
+        }
+
+        // 문제 추천 받기
+        axios.defaults.headers.common['Authorization'] = localStorage.getItem("Authorization");
+        axios.get("http://localhost:8080/api/v1/recommendation")
+            .then((res) => {
+                const newData = res.data.data;
+                console.log("newData: ", newData);
+                recommended.append(newData);
+                setProblemId(data.id);
+                axios.post("http://localhost:8080/api/v1/recommendation", { problemId: newData.id })
+                    .then(res => {
+                        console.log("res: ", res);
+                    }).catch(e => {
+                        console.log("err: ", e);
+                    })
+            }).catch((e) => console.log("recommend err: ", e))
+
+    }, []);
 
     const [buttonClicked, buttonOnClick] = useState(false)
     const clickButton = () => {
@@ -61,65 +88,120 @@ const AddQuestionButton = () => {
         checkBoxOnClick(prev => !prev)
     }
 
-    const AdditionalFilter = () => {
+    const nextProblem = (e) => {
+        e.preventDefault();
+        const levels = [];
+        for (let i = 0; i < 31; i++) {
+            if (document.querySelector(`#recommend-${i}`).checked) {
+                levels.push(i);
+            }
+        }
+
+        const tags = []
+        for (let e of document.querySelectorAll("#recommend-type-element")) {
+            if (e.checked) {
+                tags.push(e.getAttribute("value"))
+            }
+        }
+
+        const settingRequestDTO = {
+            option: checkBoxClicked ? "TEMP" : "",
+            levels: levels.join(),
+            tags: tags.join(),
+            // 아래는 안쓰는 데이터이다.
+            sun: "",
+            mon: "",
+            tue: "",
+            wed: "",
+            thu: "",
+            fri: "",
+            sat: ""
+        }
+        console.log("info: ", settingRequestDTO);
+        axios.defaults.headers.common['Authorization'] = localStorage.getItem("Authorization");
+        axios.defaults.headers.common["Content-type"] = 'application/json; charset=UTF-8';
+        axios.post("http://localhost:8080/api/v1/recommendation/additional", settingRequestDTO)
+            .then(res => {
+                console.log("res: ", res);
+            }).catch(e => console.log("err: ", e));
+    }
+
+    const recommendationAgain = () => {
+        axios.get("http://localhost:8080/api/v1/recommendation/reload", {
+            headers: {
+                "Authorization": localStorage.getItem("Authorization")
+            }
+        }).then(res => {
+            console.log("res: ", res);
+        }).catch(e => {
+            console.log("recommendation again err: ", e);
+        })
+    }
+
+    const AddQuestionButton = () => {
+
+        const [mouseOver, setMouseOver] = useState(false)
+        const getMouseOver = () => {
+            setMouseOver(true)
+        }
+        const getMouseOut = () => {
+            setMouseOver(false)
+        }
+
+        const AdditionalFilter = () => {
+            return (
+                <div>
+                    <Styled.FilterCheckBoxContainer>
+                        <input type="checkbox"
+                            style={{ width: "12px", height: "12px", borderColor: "#e5e5e5" }} checked={checkBoxClicked} onChange={clickCheckBox} />
+                        <Styled.FilterCheckBoxLabel>필터 사용</Styled.FilterCheckBoxLabel>
+                    </Styled.FilterCheckBoxContainer>
+                    {checkBoxClicked ?
+                        <div>
+                            <div style={{ display: "flex", margin: "25px 0" }}>
+                                <div style={{ width: "130px" }}>문제 유형</div>
+                                {questionTypeOptions.map(op => <FilterElement typo={op} id="recommend-type-element" />)}
+                            </div >
+                            <DifficultyFilter page="recommend" />
+                        </div> : null}
+                    <Styled.AdditionalQuestionButtonWrapper>
+                        <Styled.AdditionalQuestionButtonContainer>
+                            <Default.StyledLink onClick={nextProblem} to="/"><Button typo="Confirm" ID="additional_question" /></Default.StyledLink>
+                        </Styled.AdditionalQuestionButtonContainer>
+                    </Styled.AdditionalQuestionButtonWrapper>
+                </div >
+            )
+        }
+
         return (
             <div>
-                <Styled.FilterCheckBoxContainer>
-                    <input type="checkbox"
-                        style={{ width: "12px", height: "12px", borderColor: "#e5e5e5" }} checked={checkBoxClicked} onClick={clickCheckBox} />
-                    <Styled.FilterCheckBoxLabel>필터 사용</Styled.FilterCheckBoxLabel>
-                </Styled.FilterCheckBoxContainer>
-                {checkBoxClicked ?
-                    <div>
-                        <Default.SelectBoxContainer>
-                            <Default.SelectBoxLabel>문제 유형</Default.SelectBoxLabel>
-                            <SelectBox selectTypo="문제 유형" options={questionTypeOptions} ></SelectBox>
-                        </Default.SelectBoxContainer>
-                        <Default.SelectBoxContainer>
-                            <Default.SelectBoxLabel>난이도</Default.SelectBoxLabel>
-                            <SelectBox selectTypo="등급" options={difficultyGradeOptions} ></SelectBox>
-                            <SelectBox selectTypo="레벨" options={difficultyLevelOptions} ></SelectBox>
-                        </Default.SelectBoxContainer>
-                        <Styled.AdditionalQuestionButtonWrapper>
-                            <Styled.AdditionalQuestionButtonContainer>
-                                <Button typo="Confirm" ID="additional_question" />
-                            </Styled.AdditionalQuestionButtonContainer>
-                        </Styled.AdditionalQuestionButtonWrapper>
-                    </div> : null}
-            </div >
+                <button style={{
+                    width: "60px",
+                    height: "38px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    background: mouseOver || buttonClicked ? "#ff0000" : "#fff",
+                    border: "solid 1px #ff0000",
+                    borderRadius: "3px",
+                    boxSizing: "border-box",
+                    margin: "15px 0",
+                    color: mouseOver || buttonClicked ? "#fff" : "#ff0000",
+                    fontSize: "20px",
+                    fontWeight: "400",
+                    transition: "all 0.5s ease-out",
+                    cursor: "pointer"
+                }}
+                    onMouseOver={getMouseOver}
+                    onMouseOut={getMouseOut}
+                    onClick={clickButton}>
+                    +
+                </button>
+                {buttonClicked ? <AdditionalFilter /> : null}
+            </div>
         )
     }
 
-    return (
-        <div>
-            <button style={{
-                width: "60px",
-                height: "38px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                background: mouseOver || buttonClicked ? "#ff0000" : "#fff",
-                border: "solid 1px #ff0000",
-                borderRadius: "3px",
-                boxSizing: "border-box",
-                margin: "15px 0",
-                color: mouseOver || buttonClicked ? "#fff" : "#ff0000",
-                fontSize: "20px",
-                fontWeight: "400",
-                transition: "all 0.5s ease-out",
-                cursor: "pointer"
-            }}
-                onMouseOver={getMouseOver}
-                onMouseOut={getMouseOut}
-                onClick={clickButton}>
-                +
-            </button>
-            {buttonClicked ? <AdditionalFilter /> : null}
-        </div>
-    )
-}
-
-const Recommend = () => {
     return (
         <div>
             <Header />
@@ -134,14 +216,13 @@ const Recommend = () => {
                         </Styled.Question>
                         <div>
                             <Styled.QuestionTableDivider />
-                            <Question number="10012" title="다이나믹 프로그래밍" solved="O" />
-                        </div>
-                        <div>
-                            <Styled.QuestionTableDivider />
-                            <Question number="25051" title="다익스트라 알고리즘" solved="X" />
+                            <Question number={data.id} title={data.title} solved="O" />
                         </div>
                     </Styled.QuestionTable>
                 </Styled.QuestionForm>
+                <div style={{ width: "100px" }}>
+                    <Button typo={"Refresh"} onClick={recommendationAgain} />
+                </div>
                 <div>
                     <Styled.AdditionalQuestionForm>
                         <AddQuestionButton>+</AddQuestionButton>

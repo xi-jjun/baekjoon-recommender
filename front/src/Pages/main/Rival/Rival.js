@@ -3,8 +3,9 @@ import * as Default from "../../../Default";
 import * as Styled from "./Styled";
 import Header from "../../../Components/Header";
 import Pagination from "../../../Components/Pagination";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CanvasJSReact from "../../../assets/canvasjs.react";
+import axios from "axios";
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 const options = {
@@ -34,11 +35,11 @@ const options = {
 
 const pages = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-const RivalGraph = ({ options }) => {
-    return (
-        <CanvasJSChart options={options} />
-    )
-}
+// const RivalGraph = ({ options }) => {
+//     return (
+//         <CanvasJSChart options={options} />
+//     )
+// }
 
 const RivalComponent = ({ numb, name, rank, totalSolved, weekSolved, tear }) => {
     const [rivalClicked, rivalOnClick] = useState(false)
@@ -62,7 +63,7 @@ const RivalComponent = ({ numb, name, rank, totalSolved, weekSolved, tear }) => 
             </Styled.Rival>
             {rivalClicked ?
                 <div>
-                    <RivalGraph options={options} />
+                    {/* <RivalGraph options={options} /> */}
                     <Styled.RivalDivider />
                     <Styled.RivalDropDown>해결한 문제 수: {totalSolved >= 0 ? "+" : ""}{totalSolved}</Styled.RivalDropDown>
                     <Styled.RivalDivider />
@@ -76,38 +77,56 @@ const RivalComponent = ({ numb, name, rank, totalSolved, weekSolved, tear }) => 
 }
 
 const Rival = () => {
+
+    const [rivalList, setRivalList] = useState([])
+
+    useEffect(() => {
+
+        axios.defaults.headers.common['Authorization'] = localStorage.getItem("Authorization")
+        axios.get("http://localhost:8080/api/v1/user/rivals")
+            .then(res => {
+                const rivalData = res.data.data;
+                setRivalList(rivalData);
+            }).catch(e => {
+                console.log("err: ", e);
+            })
+    }, [])
+
     return (
         <div>
             <Header />
             <Styled.Container>
                 <Styled.RivalContainer>
                     <Styled.RivalDivider />
-                    <RivalComponent numb={1} name="라이벌" rank="silver2" totalSolved={+99} weekSolved={+51} tear={-3} />
-                    <Styled.RivalDivider />
-                    <RivalComponent numb={2} name="라이벌" rank="silver2" totalSolved={+99} weekSolved={+51} tear={-3} />
-                    <Styled.RivalDivider />
-                    <RivalComponent numb={3} name="라이벌" rank="silver2" totalSolved={+99} weekSolved={+51} tear={-3} />
-                    <Styled.RivalDivider />
-                    <RivalComponent numb={4} name="라이벌" rank="silver2" totalSolved={+99} weekSolved={+51} tear={-3} />
-                    <Styled.RivalDivider />
-                    <RivalComponent numb={5} name="라이벌" rank="silver2" totalSolved={+99} weekSolved={+51} tear={-3} />
-                    <Styled.RivalDivider />
-                    <RivalComponent numb={6} name="라이벌" rank="silver2" totalSolved={+99} weekSolved={+51} tear={-3} />
-                    <Styled.RivalDivider />
-                    <RivalComponent numb={7} name="라이벌" rank="silver2" totalSolved={+99} weekSolved={+51} tear={-3} />
-                    <Styled.RivalDivider />
-                    <RivalComponent numb={8} name="라이벌" rank="silver2" totalSolved={+99} weekSolved={+51} tear={-3} />
-                    <Styled.RivalDivider />
-                    <RivalComponent numb={9} name="라이벌" rank="silver2" totalSolved={+99} weekSolved={+51} tear={-3} />
-                    <Styled.RivalDivider />
-                    <RivalComponent numb={10} name="라이벌" rank="silver2" totalSolved={+99} weekSolved={+51} tear={-3} />
-                    <Styled.RivalDivider />
-                    <Styled.PaginationContainer>
-                        {pages.map(page => <Pagination number={page} />)}
-                    </Styled.PaginationContainer>
+                    {rivalList.length == 0 ?
+                        <div>
+                            <div style={{
+                                width: "100%",
+                                height: "60px",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center"
+                            }}>
+                                등록한 라이벌이 없습니다.
+                            </div>
+                            <Styled.RivalDivider />
+                        </div>
+                        : null
+                    }
+                    {rivalList.map((rival, index) => {
+                        <div>
+                            <RivalComponent numb={index + 1} name="라이벌" rank="silver2" totalSolved={+99} weekSolved={+51} tear={-3} />
+                            <Styled.RivalDivider />
+                        </div>
+                    })}
+                    {rivalList.length > 10 ?
+                        <Styled.PaginationContainer>
+                            {pages.map(page => <Pagination number={page} />)}
+                        </Styled.PaginationContainer>
+                        : null}
                 </Styled.RivalContainer>
             </Styled.Container>
-        </div>
+        </div >
     )
 }
 

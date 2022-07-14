@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const Button = ({ typo, ID }) => {
+const Button = ({ typo, ID, onClick }) => {
     const [mouseOver, setMouseOver] = useState(false);
     const mouseGetOver = () => {
         setMouseOver(true);
@@ -27,7 +27,8 @@ const Button = ({ typo, ID }) => {
                 transition: "all 0.2s ease-out"
             }}
             onMouseOver={mouseGetOver}
-            onMouseOut={mouseGetOut}>
+            onMouseOut={mouseGetOut}
+            onClick={onClick}>
             {typo}
         </button>
     )

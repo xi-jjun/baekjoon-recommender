@@ -16,7 +16,7 @@ box-sizing: border-box;
 margin: 0 15px;
 `
 
-export const QuestionContainerLabel = styled.div`
+export const QuestionLabelContainer = styled.div`
 width: 100%;
 height: 56px;
 display: flex;
@@ -28,6 +28,12 @@ padding: 0 10px;
 color: #333;
 font-size: 20px;
 font-weight: 600;
+`
+
+export const QuestionLabel = styled.div`
+width: 150px;
+display: flex;
+align-items: center;
 `
 
 export const Question = styled.div`

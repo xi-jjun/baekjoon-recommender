@@ -83,7 +83,8 @@ margin: 35px;
 export const AdditionalQuestionButtonWrapper = styled.div`
 width: 100%;
 display: flex;
-justify-content: flex-end
+justify-content: flex-end;
+margin-bottom: 30px;
 `
 
 export const AdditionalQuestionButtonContainer = styled.div`
