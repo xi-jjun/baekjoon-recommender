@@ -34,15 +34,18 @@ const MyPage = () => {
                 'Authorization': localStorage.getItem("Authorization")
             }
         }).then(res => {
-            setData(res.data.data);
-            console.log(data);
-            const levels = data.levels.split(",");
-            const dailyTags = data.dailyTags.split(",");
+            const newData = res.data.data
+            setData(newData);
+            console.log(newData);
+            const levels = newData.levels.split(",");
+            const dailyTags = newData.dailyTags.split(",");
             for (let l of levels) {
                 document.querySelector(`#my-page-${l}`).checked = true;
             }
             for (let t of dailyTags) {
-                for (let e of document.querySelectorAll("#my-page-type-element")) {
+                const elements = document.querySelectorAll("#my-page-type-element");
+                for (let e of elements) {
+                    console.log(e.typo)
                     if (e.typo == t) {
                         e.checked = true;
                     }
@@ -108,12 +111,8 @@ const MyPage = () => {
         };
 
         console.log("sign up request: ", signUpRequestDTO);
-
-        axios.patch("http://localhost:8080/api/v1/user", {
-            headers: {
-                "Authorization": localStorage.getItem("Authorization")
-            }
-        }, signUpRequestDTO)
+        axios.defaults.headers.common['Authorization'] = localStorage.getItem("Authorization")
+        axios.patch("http://localhost:8080/api/v1/user", signUpRequestDTO)
             .then(res => {
                 console.log("res: ", res);
             }).catch(e => {
