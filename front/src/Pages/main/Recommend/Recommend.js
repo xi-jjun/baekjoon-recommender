@@ -50,22 +50,7 @@ const Recommend = () => {
 
     const [problemId, setProblemId] = useState(-1);
 
-    const checkIfSolved = () => {
-        // 새로고침 하면 추천한 문제가 풀렸는지 확인
-        axios.post("http://localhost:8080/api/v1/recommendation",
-            {
-                problemId: problemId
-            },
-            {
-                headers: {
-                    'Content-type': 'application/json; charset=UTF-8',
-                    'Authorization': localStorage.getItem("Authorization"),
-                },
-            }).then(res => {
-                console.log("res: ", res);
-            }).catch(e => console.log("err: ", e));
-    }
-
+    const recommended = [];
     const [data, setData] = useState([])
 
     useEffect(() => {
@@ -75,50 +60,23 @@ const Recommend = () => {
             toLogin();
         }
 
-        // if (window.performance) {
-        //     if (performance.navigation.TYPE_RELOAD) {
-        //         // 새로고침 여부 확인
-        //         checkIfSolved();
-        //     }
-        // }
-
-        setTimeout(() => {
-            // 로그인 request 처리 후 recommend 페이지의 request
-
-            axios.patch("http://localhost:8080/api/v1/system/problem-list", {
-                headers: {
-                    "Authorization": localStorage.getItem("Authorization")
-                }
-            }).then(res => {
-                console.log("Res: ", res);
-                // 문제 추천 받기
-                axios.get("http://localhost:8080/api/v1/recommendation", {
-                    headers: {
-                        "Authorization": localStorage.getItem("Authorization")
-                    }
-                })
-                    .then((res) => {
-                        setData(res.data);
-                        console.log(data)
-                        setProblemId(data.problemId)
+        // 문제 추천 받기
+        axios.defaults.headers.common['Authorization'] = localStorage.getItem("Authorization");
+        axios.get("http://localhost:8080/api/v1/recommendation")
+            .then((res) => {
+                const newData = res.data.data;
+                console.log("newData: ", newData);
+                recommended.append(newData);
+                setProblemId(data.id);
+                axios.post("http://localhost:8080/api/v1/recommendation", { problemId: newData.id })
+                    .then(res => {
+                        console.log("res: ", res);
+                    }).catch(e => {
+                        console.log("err: ", e);
                     })
-                    .catch((e) => console.log("recommend err: ", e))
-            }).catch(console.log("not admin"));
-        }, 300);
+            }).catch((e) => console.log("recommend err: ", e))
 
     }, []);
-
-    const clickConfirm = () => {
-        console.log("confirm button clicked")
-        axios.get("http://localhost:8080/api/v1/recommendation/reload", {
-            headers: {
-                "Authorization": localStorage.getItem("Authorization")
-            }
-        }).then((res) => {
-            console.log("res: ", res)
-
-        }).catch((e) => console.log("err: ", e))
-    }
 
     const [buttonClicked, buttonOnClick] = useState(false)
     const clickButton = () => {
@@ -130,8 +88,8 @@ const Recommend = () => {
         checkBoxOnClick(prev => !prev)
     }
 
-    const nextProblem = () => {
-
+    const nextProblem = (e) => {
+        e.preventDefault();
         const levels = [];
         for (let i = 0; i < 31; i++) {
             if (document.querySelector(`#recommend-${i}`).checked) {
@@ -160,15 +118,24 @@ const Recommend = () => {
             sat: ""
         }
         console.log("info: ", settingRequestDTO);
-
-        axios.post("http://localhost:8080/api/v1/recommendation/additional", settingRequestDTO,
-            {
-                headers: {
-                    "Authorization": localStorage.getItem("Authorization")
-                }
-            }).then(res => {
+        axios.defaults.headers.common['Authorization'] = localStorage.getItem("Authorization");
+        axios.defaults.headers.common["Content-type"] = 'application/json; charset=UTF-8';
+        axios.post("http://localhost:8080/api/v1/recommendation/additional", settingRequestDTO)
+            .then(res => {
                 console.log("res: ", res);
             }).catch(e => console.log("err: ", e));
+    }
+
+    const recommendationAgain = () => {
+        axios.get("http://localhost:8080/api/v1/recommendation/reload", {
+            headers: {
+                "Authorization": localStorage.getItem("Authorization")
+            }
+        }).then(res => {
+            console.log("res: ", res);
+        }).catch(e => {
+            console.log("recommendation again err: ", e);
+        })
     }
 
     const AddQuestionButton = () => {
@@ -180,7 +147,6 @@ const Recommend = () => {
         const getMouseOut = () => {
             setMouseOver(false)
         }
-
 
         const AdditionalFilter = () => {
             return (
@@ -250,14 +216,13 @@ const Recommend = () => {
                         </Styled.Question>
                         <div>
                             <Styled.QuestionTableDivider />
-                            <Question number="10012" title="다이나믹 프로그래밍" solved="O" />
-                        </div>
-                        <div>
-                            <Styled.QuestionTableDivider />
-                            <Question number="25051" title="다익스트라 알고리즘" solved="X" />
+                            <Question number={data.id} title={data.title} solved="O" />
                         </div>
                     </Styled.QuestionTable>
                 </Styled.QuestionForm>
+                <div style={{ width: "100px" }}>
+                    <Button typo={"Refresh"} onClick={recommendationAgain} />
+                </div>
                 <div>
                     <Styled.AdditionalQuestionForm>
                         <AddQuestionButton>+</AddQuestionButton>
