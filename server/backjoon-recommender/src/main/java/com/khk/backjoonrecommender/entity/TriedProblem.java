@@ -39,7 +39,14 @@ public class TriedProblem {
 		return TODAY.equals(this.recommendedDate);
 	}
 
+	public boolean isSameProblem(Long problemId) {
+		return this.getProblem().getId().equals(problemId);
+	}
+
 	public void updateSolvedStatus(SolveType solveType) {
+		if (solveType.equals(SolveType.PASS)) {
+			this.solvedDate = LocalDateTime.now();
+		}
 		this.isSolved = solveType;
 	}
 }

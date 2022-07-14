@@ -22,11 +22,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
@@ -77,6 +77,11 @@ public class RecommendationBasicService implements RecommendationService {
 		return result;
 	}
 
+	/**
+	 * 오늘 사용자가 추천받은 문제 목록을 정보 조회
+	 * @param authentication 로그인된 사용자 객체
+	 * @return 오늘 날짜 기준으로 추천 받은 문제 정보
+	 */
 	@Override
 	public BasicResponseDto<List<RecommendProblemResponseDto>> getTodayRecommendedProblemListByUser(Authentication authentication) {
 		User loginUser = getLoginUser(authentication);
@@ -193,28 +198,42 @@ public class RecommendationBasicService implements RecommendationService {
 				.collect(Collectors.toSet());
 	}
 
+	/**
+	 * problem id 에 해당하는 문제가 풀렸는지 여부를 알기 위한 기능.
+	 * if solved, then TriedProblem 에서 problem id 에 해당하는 객체에 풀렸다는 표시를 한다.
+	 * else, 안풀렸다는 표시를 하거나, 문제가 존재하지 않는 것
+	 * @param authentication 로그인된 사용자 객체
+	 * @param problemId 현재 풀었는지 여부가 궁금한 문제번호
+	 * @return 푼 문제에 대한 응답
+	 * @throws IOException
+	 */
 	@Transactional
 	@Override
 	public BasicResponseDto<?> checkProblemIfSolved(Authentication authentication, Long problemId) throws IOException {
 		User loginUser = getLoginUser(authentication);
 		String userBaekJoonId = loginUser.getBaekJoonId();
 		Set<Long> solvedProblemIdList = getUserSolvedProblemFilterFromBaekJoon(userBaekJoonId);
-		Problem problem = problemRepository.findById(problemId).orElse(null);
 
-		if (solvedProblemIdList.contains(problemId)) {
-			TriedProblem triedProblem = TriedProblem.builder()
-					.problem(problem)
-					.user(loginUser)
-					.solvedDate(LocalDateTime.now())
-					.isSolved(SolveType.PASS)
-					.build();
-			triedProblemRepository.save(triedProblem);
+		if (solvedProblemIdList.contains(problemId)) { // 백준에서 푼 문제 번호 중에 현재 problem id 가 있다면,
+			List<TriedProblem> triedProblemList = loginUser.getTriedProblemList();
+			Optional<TriedProblem> problem = triedProblemList.stream()
+					.filter(Predicate.not(TriedProblem::solved)) // 풀지 못했다고 표시된 문제들 중에서
+					.filter(t -> t.isSameProblem(problemId)) // problem id 와 같은 것을 찾는다.
+					.findFirst();
 
-			BasicResponseDto<?> responseDto = new BasicResponseDto<>();
-			responseDto.setCode(200);
-			responseDto.setMessage(userBaekJoonId + " solved problem id=" + problemId);
+			if (problem.isPresent()) {
+				TriedProblem solvedProblem = problem.get();
+				solvedProblem.updateSolvedStatus(SolveType.PASS);
 
-			return responseDto;
+				BasicResponseDto<RecommendProblemResponseDto> responseDto = new BasicResponseDto<>();
+				responseDto.setCode(200);
+				responseDto.setMessage(userBaekJoonId + " solved problem id=" + problemId);
+				responseDto.setData(new RecommendProblemResponseDto(solvedProblem));
+
+				return responseDto;
+			}
+
+			return new BasicResponseDto<>(400, "problem is not existed", null);
 		}
 
 		BasicResponseDto<?> responseDto = new BasicResponseDto<>();
