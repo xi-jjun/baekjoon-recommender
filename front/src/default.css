@@ -5,3 +5,11 @@
 .hidden {
     display: none;
 }
+
+.space {
+    visibility: hidden;
+}
+
+.rotate {
+    transform: rotate(180deg);
+}
