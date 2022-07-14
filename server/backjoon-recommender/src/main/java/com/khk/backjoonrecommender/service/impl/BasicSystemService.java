@@ -93,4 +93,13 @@ public class BasicSystemService implements SystemService {
 
 		return responseDto;
 	}
+
+	@Override
+	@Transactional
+	public void resetDailyReloadCount() {
+		List<User> users = userRepository.findAll();
+		for (User user : users) {
+			user.resetReloadCount();
+		}
+	}
 }

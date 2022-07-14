@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest
 class BasicUserServiceTest {
 	@Autowired
-	private UserService userService;
+	private BasicUserService userService;
 
 	@Test
 	void signUpValidBaekJoonId() throws IOException {
