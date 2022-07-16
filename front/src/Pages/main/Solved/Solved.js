@@ -10,6 +10,7 @@ const pages = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 const Solved = () => {
 
     const [questionList, setQuestionList] = useState([]);
+    const [unSolvedQuestionList, setUnSolvedQuestionList] = useState([]);
 
     useEffect(() => {
 
@@ -30,6 +31,16 @@ const Solved = () => {
                 console.log("question list: ", questionList);
             }).catch(e => console.log("err: ", e));
         }).catch(e => console.log("err: ", e));
+
+        axios.defaults.headers.common['Authorization'] = localStorage.getItem("Authorization");
+        axios.get("http://localhost:8080/api/v1/recommendation/today")
+            .then(res => {
+                setUnSolvedQuestionList(res.data.data);
+                console.log("unsolved: ", unSolvedQuestionList);
+                unSolvedQuestionList.map(q => {
+                    console.log("id, title, date: ", q.problem.id, q.problem.title, q.recommendedDate);
+                })
+            }).catch(e => console.log("err: ", e));
 
     }, [])
 
@@ -75,7 +86,7 @@ const Solved = () => {
                         : null}
                     {questionList && questionList.map(q =>
                         <Styled.Question>
-                            <QuestionDate date={q.solvedDate} />
+                            <QuestionDate date={q.recommendedDate} />
                             <QuestionInfo
                                 id={q.problem.id}
                                 title={q.problem.title}
@@ -87,7 +98,7 @@ const Solved = () => {
                     <Styled.QuestionLabelContainer>
                         <Styled.QuestionLabel>못 푼 문제</Styled.QuestionLabel>
                     </Styled.QuestionLabelContainer>
-                    {!questionList || questionList.length == 0 ?
+                    {!unSolvedQuestionList || unSolvedQuestionList.length == 0 ?
                         <div style={{
                             width: "100%",
                             height: "60px",
@@ -98,9 +109,9 @@ const Solved = () => {
                             못 푼 문제가 없습니다.
                         </div>
                         : null}
-                    {questionList && questionList.map(q =>
+                    {unSolvedQuestionList && unSolvedQuestionList.map(q =>
                         <Styled.Question>
-                            <QuestionDate date={"22.06.25"} />
+                            <QuestionDate date={q.solvedDate} />
                             <QuestionInfo
                                 id={q.problem.id}
                                 title={q.problem.title}
