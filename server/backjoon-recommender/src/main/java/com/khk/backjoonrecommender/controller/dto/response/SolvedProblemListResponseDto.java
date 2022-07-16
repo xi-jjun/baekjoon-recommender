@@ -22,6 +22,6 @@ public class SolvedProblemListResponseDto {
 		this.username = solver.getUsername();
 		this.baekJoonId = solver.getBaekJoonId();
 		this.isSolved = triedProblem.getIsSolved();
-		this.solvedDate = getSolvedDate();
+		this.solvedDate = triedProblem.getSolvedDate();
 	}
 }
