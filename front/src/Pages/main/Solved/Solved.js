@@ -87,6 +87,7 @@ const Solved = () => {
                     {questionList && questionList.map(q =>
                         <Styled.Question>
                             <QuestionDate date={q.recommendedDate} />
+
                             <QuestionInfo
                                 id={q.problem.id}
                                 title={q.problem.title}
@@ -99,6 +100,7 @@ const Solved = () => {
                         <Styled.QuestionLabel>못 푼 문제</Styled.QuestionLabel>
                     </Styled.QuestionLabelContainer>
                     {!unSolvedQuestionList || unSolvedQuestionList.length == 0 ?
+
                         <div style={{
                             width: "100%",
                             height: "60px",
@@ -112,6 +114,7 @@ const Solved = () => {
                     {unSolvedQuestionList && unSolvedQuestionList.map(q =>
                         <Styled.Question>
                             <QuestionDate date={q.solvedDate} />
+
                             <QuestionInfo
                                 id={q.problem.id}
                                 title={q.problem.title}

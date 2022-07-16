@@ -19,10 +19,10 @@ public class TriedProblem {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
 	private User user;
 
-	@ManyToOne(targetEntity = Problem.class, fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+	@ManyToOne(targetEntity = Problem.class, fetch = FetchType.EAGER)
 	private Problem problem;
 
 	@Enumerated(EnumType.STRING)

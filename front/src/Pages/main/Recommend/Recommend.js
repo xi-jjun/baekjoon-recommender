@@ -162,6 +162,7 @@ const Recommend = () => {
                 alert("refresh 불가능");
                 return;
             }
+
         }).catch(e => {
             console.log("recommendation again err: ", e);
         })
