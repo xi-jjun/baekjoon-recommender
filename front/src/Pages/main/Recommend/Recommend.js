@@ -148,7 +148,7 @@ const Recommend = () => {
             .then(res => {
                 recommended.push(res.data.data);
             }).catch(e => console.log("err: ", e));
-        // refresh();
+        refresh();
     }
 
     const recommendationAgain = () => {
@@ -166,7 +166,7 @@ const Recommend = () => {
         }).catch(e => {
             console.log("recommendation again err: ", e);
         })
-        // refresh();
+        refresh();
     }
 
     const AddQuestionButton = () => {
