@@ -32,6 +32,7 @@ const Login = () => {
                     localStorage.setItem('Authorization', res.headers.authorization);
                     console.log("admin login success");
                     console.log("res data: ", res.data);
+                    localStorage.setItem("hiddenQuestion", "[]");
                     navigate("/admin", { replace: true });
                 }).catch((e) => {
                     console.log("err: ", e);
