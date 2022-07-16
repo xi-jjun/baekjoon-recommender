@@ -30,7 +30,7 @@ const MyPage = () => {
     useEffect(() => {
         axios.get("http://localhost:8080/api/v1/user", {
             headers: {
-                'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8;',
                 'Authorization': localStorage.getItem("Authorization")
             }
         }).then(res => {
