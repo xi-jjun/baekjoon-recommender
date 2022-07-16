@@ -258,10 +258,10 @@ const Recommend = () => {
                                 </div>
                                 : null}
                             {recommended && recommended.map(data => {
-                                if (!localStorage.getItem("hiddenQuestion").includes(data.problem.id)) {
+                                // if (!localStorage.getItem("hiddenQuestion").includes(data.problem.id)) {
                                     return (<Question number={data.problem.id} title={data.problem.title}
                                         solved={data.isSolved == "PASS" ? "O" : "X"} />)
-                                }
+                                // }
                             }
                             )}
                         </div>
