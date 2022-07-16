@@ -258,6 +258,7 @@ public class BasicUserService implements UserService {
 		}
 
 		UserRequestDto userRequestDTO = userRegisterRequestDto.toUserDto();
+		userRequestDTO.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
 		SettingRequestDto settingRequestDTO = userRegisterRequestDto.toSettingDto();
 
 		String loginUsername = authentication.getName();
