@@ -9,7 +9,7 @@ padding: 30px;
 `
 
 export const QuestionContainer = styled.div`
-width: 450px;
+width: 800px;
 display: flex;
 flex-direction: column;
 box-sizing: border-box;
@@ -52,6 +52,14 @@ box-sizing: border-box;
 padding: 0 10px;
 color: #555;
 font-size: 16px;
+`
+
+export const QuestionUnSolvedContainer = styled.div`
+width: 450px;
+display: flex;
+flex-direction: column;
+box-sizing: border-box;
+margin: 0 15px;
 `
 
 export const PaginationContainer = styled.div`
