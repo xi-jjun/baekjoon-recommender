@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useSyncExternalStore } from "react";
 import * as Default from "../../../Default";
 import * as Styled from "./Styled"
 import { DifficultyFilter, FilterElement } from "../../community/Community";
@@ -7,7 +7,7 @@ import Button from "../../../Components/Button";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const questionTypeOptions = ["dp", "brute force", "sort"]
+const questionTypeOptions = ["dp", "implementation", "arithmetic", "math", "geometry", "graphs", "topological_sorting", "bruteforcing", "combinatorics", "graph_traversal", "bfs", "dfs", "regex", "string", "bitmask", "flow", "dp_bitfield", "sorting", "number_theory", "primality_test", "sieve", "bipartite_matching", "number_theory", "primality_test", "sieve", "data_structures", "deque", "divide_and_conquer", "recursion"]
 
 const Question = ({ number, title, solved }) => {
     const [dropBoxClicked, dropBoxOnClick] = useState(false)
@@ -47,35 +47,46 @@ const Recommend = () => {
     const toLogin = () => {
         navigate("/user/login", { replace: true });
     }
+    const refresh = () => {
+        window.location.reload();
+    }
 
-    const [problemId, setProblemId] = useState(-1);
-
-    const recommended = [];
-    const [data, setData] = useState([])
+    const [recommended, setRecommended] = useState([]);
 
     useEffect(() => {
 
         if (!localStorage.getItem("Authorization")) {
             console.log("navigate to login");
             toLogin();
+            return;
         }
 
-        // 문제 추천 받기
         axios.defaults.headers.common['Authorization'] = localStorage.getItem("Authorization");
-        axios.get("http://localhost:8080/api/v1/recommendation")
-            .then((res) => {
-                const newData = res.data.data;
-                console.log("newData: ", newData);
-                recommended.append(newData);
-                setProblemId(data.id);
-                axios.post("http://localhost:8080/api/v1/recommendation", { problemId: newData.id })
-                    .then(res => {
-                        console.log("res: ", res);
-                    }).catch(e => {
-                        console.log("err: ", e);
-                    })
-            }).catch((e) => console.log("recommend err: ", e))
 
+        axios.get("http://localhost:8080/api/v1/recommendation/today")
+            .then(res => {
+                const recommendedTmp = res.data.data;
+                setRecommended(recommendedTmp);
+                if (!recommendedTmp || recommendedTmp.length == 0) {
+                    axios.get("http://localhost:8080/api/v1/recommendation")
+                        .then(res => {
+                            console.log("recommend: ", res);
+                            refresh();
+                        })
+                        .catch((e) => console.log("recommend err: ", e))
+                }
+            })
+            .catch(e => {
+                console.log("err: ", e);
+            })
+
+
+        recommended && recommended.map(data => {
+            axios.post("http://localhost:8080/api/v1/recommendation", { problemId: data.id })
+                .catch(e => {
+                    console.log("err: ", e);
+                })
+        })
     }, []);
 
     const [buttonClicked, buttonOnClick] = useState(false)
@@ -88,42 +99,56 @@ const Recommend = () => {
         checkBoxOnClick(prev => !prev)
     }
 
-    const nextProblem = (e) => {
-        e.preventDefault();
-        const levels = [];
-        for (let i = 0; i < 31; i++) {
-            if (document.querySelector(`#recommend-${i}`).checked) {
-                levels.push(i);
+    const [settingRequestDTO, setSettingRequestDTO] = useState({});
+
+    const nextProblem = () => {
+        if (checkBoxClicked) {
+
+            const levels = [];
+            for (let i = 0; i < 31; i++) {
+                if (document.querySelector(`#recommend-${i}`).checked) {
+                    levels.push(i);
+                }
             }
+
+            const tags = []
+            for (let e of document.querySelectorAll("#recommend-type-element")) {
+                if (e.checked) {
+                    tags.push(e.getAttribute("value"))
+                }
+            }
+
+            setSettingRequestDTO({
+                option: checkBoxClicked ? "TEMP" : "",
+                levels: levels.join(),
+                tags: tags.join(),
+                // 아래는 안쓰는 데이터이다.
+                sun: "",
+                mon: "",
+                tue: "",
+                wed: "",
+                thu: "",
+                fri: "",
+                sat: ""
+            })
+        }
+        else {
+            axios.get("http://localhost:8080/api/v1/user", {
+                headers: {
+                    "Authorization": localStorage.getItem("Authorization"),
+                    "Content-type": 'application/json; charset=UTF-8',
+                }
+            }).then(res => {
+                setSettingRequestDTO(res.data.data);
+            }).catch(e => console.log("err: ", e));
         }
 
-        const tags = []
-        for (let e of document.querySelectorAll("#recommend-type-element")) {
-            if (e.checked) {
-                tags.push(e.getAttribute("value"))
-            }
-        }
-
-        const settingRequestDTO = {
-            option: checkBoxClicked ? "TEMP" : "",
-            levels: levels.join(),
-            tags: tags.join(),
-            // 아래는 안쓰는 데이터이다.
-            sun: "",
-            mon: "",
-            tue: "",
-            wed: "",
-            thu: "",
-            fri: "",
-            sat: ""
-        }
-        console.log("info: ", settingRequestDTO);
         axios.defaults.headers.common['Authorization'] = localStorage.getItem("Authorization");
-        axios.defaults.headers.common["Content-type"] = 'application/json; charset=UTF-8';
         axios.post("http://localhost:8080/api/v1/recommendation/additional", settingRequestDTO)
             .then(res => {
-                console.log("res: ", res);
+                recommended.push(res.data.data);
             }).catch(e => console.log("err: ", e));
+        // refresh();
     }
 
     const recommendationAgain = () => {
@@ -133,9 +158,14 @@ const Recommend = () => {
             }
         }).then(res => {
             console.log("res: ", res);
+            const list = JSON.parse(localStorage.getItem("hiddenQuestion"));
+            list.push(recommended.pop().problem.id);
+            localStorage.setItem("hiddenQuestion", JSON.stringify(list));
+            console.log(localStorage.getItem("hiddenQuestion"));
         }).catch(e => {
             console.log("recommendation again err: ", e);
         })
+        // refresh();
     }
 
     const AddQuestionButton = () => {
@@ -158,7 +188,7 @@ const Recommend = () => {
                     </Styled.FilterCheckBoxContainer>
                     {checkBoxClicked ?
                         <div>
-                            <div style={{ display: "flex", margin: "25px 0" }}>
+                            <div style={{ display: "flex", flexWrap: "wrap", margin: "25px 0" }}>
                                 <div style={{ width: "130px" }}>문제 유형</div>
                                 {questionTypeOptions.map(op => <FilterElement typo={op} id="recommend-type-element" />)}
                             </div >
@@ -166,7 +196,7 @@ const Recommend = () => {
                         </div> : null}
                     <Styled.AdditionalQuestionButtonWrapper>
                         <Styled.AdditionalQuestionButtonContainer>
-                            <Default.StyledLink onClick={nextProblem} to="/"><Button typo="Confirm" ID="additional_question" /></Default.StyledLink>
+                            <Button onClick={nextProblem} typo="Confirm" ID="additional_question" />
                         </Styled.AdditionalQuestionButtonContainer>
                     </Styled.AdditionalQuestionButtonWrapper>
                 </div >
@@ -216,7 +246,24 @@ const Recommend = () => {
                         </Styled.Question>
                         <div>
                             <Styled.QuestionTableDivider />
-                            <Question number={data.id} title={data.title} solved="O" />
+                            {!recommended ?
+                                <div style={{
+                                    width: "100%",
+                                    height: "60px",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center", color: "#333"
+                                }}>
+                                    오늘 추천 받은 문제가 없습니다.
+                                </div>
+                                : null}
+                            {recommended && recommended.map(data => {
+                                if (!localStorage.getItem("hiddenQuestion").includes(data.problem.id)) {
+                                    return (<Question number={data.problem.id} title={data.problem.title}
+                                        solved={data.isSolved == "PASS" ? "O" : "X"} />)
+                                }
+                            }
+                            )}
                         </div>
                     </Styled.QuestionTable>
                 </Styled.QuestionForm>
@@ -224,9 +271,14 @@ const Recommend = () => {
                     <Button typo={"Refresh"} onClick={recommendationAgain} />
                 </div>
                 <div>
-                    <Styled.AdditionalQuestionForm>
-                        <AddQuestionButton>+</AddQuestionButton>
-                    </Styled.AdditionalQuestionForm>
+                    {
+                        // true
+                        recommended && !recommended.map(data => data.isSolved).includes("SOLVING")
+                            ?
+                            <Styled.AdditionalQuestionForm>
+                                <AddQuestionButton>+</AddQuestionButton>
+                            </Styled.AdditionalQuestionForm>
+                            : null}
                 </div>
             </Styled.Container>
         </div>
