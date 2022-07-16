@@ -76,17 +76,19 @@ const Recommend = () => {
                         .catch((e) => console.log("recommend err: ", e))
                 }
             })
+            .then(() => {
+                recommended && recommended.map(data => {
+                    axios.post("http://localhost:8080/api/v1/recommendation", { problemId: data.problem.id })
+                        .then(res => console.log("is solved : ", res))
+                        .catch(e => {
+                            console.log("err: ", e);
+                        })
+                })
+            })
             .catch(e => {
                 console.log("err: ", e);
             })
 
-
-        recommended && recommended.map(data => {
-            axios.post("http://localhost:8080/api/v1/recommendation", { problemId: data.id })
-                .catch(e => {
-                    console.log("err: ", e);
-                })
-        })
     }, []);
 
     const [buttonClicked, buttonOnClick] = useState(false)
@@ -148,7 +150,7 @@ const Recommend = () => {
             .then(res => {
                 recommended.push(res.data.data);
             }).catch(e => console.log("err: ", e));
-        // refresh();
+        refresh();
     }
 
     const recommendationAgain = () => {
@@ -158,14 +160,15 @@ const Recommend = () => {
             }
         }).then(res => {
             console.log("res: ", res);
-            const list = JSON.parse(localStorage.getItem("hiddenQuestion"));
-            list.push(recommended.pop().problem.id);
-            localStorage.setItem("hiddenQuestion", JSON.stringify(list));
-            console.log(localStorage.getItem("hiddenQuestion"));
+            if (res.data.code == 400) {
+                alert("refresh 불가능");
+                return;
+            }
+
         }).catch(e => {
             console.log("recommendation again err: ", e);
         })
-        // refresh();
+        refresh();
     }
 
     const AddQuestionButton = () => {
@@ -257,13 +260,8 @@ const Recommend = () => {
                                     오늘 추천 받은 문제가 없습니다.
                                 </div>
                                 : null}
-                            {recommended && recommended.map(data => {
-                                if (!localStorage.getItem("hiddenQuestion").includes(data.problem.id)) {
-                                    return (<Question number={data.problem.id} title={data.problem.title}
-                                        solved={data.isSolved == "PASS" ? "O" : "X"} />)
-                                }
-                            }
-                            )}
+                            {recommended && recommended.map(data => <Question number={data.problem.id} title={data.problem.title}
+                                solved={data.isSolved == "PASS" ? "O" : "X"} />)}
                         </div>
                     </Styled.QuestionTable>
                 </Styled.QuestionForm>

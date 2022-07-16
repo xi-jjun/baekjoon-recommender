@@ -7,9 +7,40 @@ import axios from "axios";
 
 const pages = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
+
+const QuestionDate = ({ date }) => {
+    return (
+        <Styled.QuestionElement>
+            {date}
+        </Styled.QuestionElement>
+    )
+}
+
+const QuestionInfo = ({ id, title, level }) => {
+    return (<div style={{ display: "flex" }}>
+        <Styled.QuestionElement style={{
+            width: "60px"
+        }}>
+            {id}
+        </Styled.QuestionElement>
+        <Styled.QuestionElement style={{
+            width: "370px",
+            paddingLeft: "30px"
+        }}>
+            {title}
+        </Styled.QuestionElement>
+        <Styled.QuestionElement style={{
+            width: "30px"
+        }}>
+            {level}
+        </Styled.QuestionElement>
+    </div>)
+}
+
 const Solved = () => {
 
     const [questionList, setQuestionList] = useState([]);
+    const [unSolvedQuestionList, setUnSolvedQuestionList] = useState([]);
 
     useEffect(() => {
 
@@ -26,32 +57,19 @@ const Solved = () => {
                     "Authorization": localStorage.getItem("Authorization")
                 }
             }).then(res => {
+                console.log("get user's solved list: ", res);
                 setQuestionList(res.data.data);
                 console.log("question list: ", questionList);
             }).catch(e => console.log("err: ", e));
         }).catch(e => console.log("err: ", e));
 
+        axios.defaults.headers.common['Authorization'] = localStorage.getItem("Authorization");
+        axios.get("http://localhost:8080/api/v1/recommendation/today")
+            .then(res => {
+                setUnSolvedQuestionList(res.data.data);
+            }).catch(e => console.log("err: ", e));
+
     }, [])
-
-    const QuestionDate = ({ date }) => {
-        <Styled.QuestionElement>
-            {date}
-        </Styled.QuestionElement>
-    }
-
-    const QuestionInfo = ({ id, title, level }) => {
-        <div style={{ display: "flex" }}>
-            <Styled.QuestionElement>
-                {id}
-            </Styled.QuestionElement>
-            <Styled.QuestionElement>
-                {title}
-            </Styled.QuestionElement>
-            <Styled.QuestionElement>
-                {level}
-            </Styled.QuestionElement>
-        </div>
-    }
 
     return (
         <div>
@@ -75,19 +93,19 @@ const Solved = () => {
                         : null}
                     {questionList && questionList.map(q =>
                         <Styled.Question>
-                            <QuestionDate date={q.solvedDate} />
+                            <QuestionDate date={q.solvedDate.substring(0, 10)} />
                             <QuestionInfo
                                 id={q.problem.id}
                                 title={q.problem.title}
                                 level={q.problem.level} />
-                        </Styled.Question>)
-                    }
+                        </Styled.Question>
+                    )}
                 </Styled.QuestionContainer>
                 <Styled.QuestionUnSolvedContainer>
                     <Styled.QuestionLabelContainer>
                         <Styled.QuestionLabel>못 푼 문제</Styled.QuestionLabel>
                     </Styled.QuestionLabelContainer>
-                    {!questionList || questionList.length == 0 ?
+                    {!unSolvedQuestionList || unSolvedQuestionList.length == 0 ?
                         <div style={{
                             width: "100%",
                             height: "60px",
@@ -98,9 +116,8 @@ const Solved = () => {
                             못 푼 문제가 없습니다.
                         </div>
                         : null}
-                    {questionList && questionList.map(q =>
+                    {unSolvedQuestionList && unSolvedQuestionList.map(q =>
                         <Styled.Question>
-                            <QuestionDate date={"22.06.25"} />
                             <QuestionInfo
                                 id={q.problem.id}
                                 title={q.problem.title}

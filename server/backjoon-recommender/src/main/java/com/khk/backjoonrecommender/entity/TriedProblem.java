@@ -19,10 +19,10 @@ public class TriedProblem {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
 	private User user;
 
-	@ManyToOne(targetEntity = Problem.class, fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+	@ManyToOne(targetEntity = Problem.class, fetch = FetchType.EAGER)
 	private Problem problem;
 
 	@Enumerated(EnumType.STRING)
@@ -37,6 +37,10 @@ public class TriedProblem {
 	public boolean isRecommendedToday() {
 		final LocalDate TODAY = LocalDate.now();
 		return TODAY.equals(this.recommendedDate);
+	}
+
+	public boolean solving() {
+		return this.isSolved.equals(SolveType.SOLVING);
 	}
 
 	public boolean isSameProblem(Long problemId) {

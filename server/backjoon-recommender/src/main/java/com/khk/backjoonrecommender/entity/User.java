@@ -60,6 +60,11 @@ public class User {
 
     public void updateUserInfo(UserRequestDto userRequestDTO) {
         this.baekJoonId = userRequestDTO.getBaekJoonId();
+        this.password = userRequestDTO.getPassword();
+    }
+
+    public boolean hasRemainedCount() {
+        return this.reloadCount > 0;
     }
 
     public void decreaseReloadCount() {
