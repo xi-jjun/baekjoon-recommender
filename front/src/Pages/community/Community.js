@@ -3,7 +3,7 @@ import "../../default.css";
 import * as Default from "../../Default";
 import { useEffect, useRef, useState } from "react";
 
-const questionTypeOptions = ["dp", "brute force", "sort"]
+const questionTypeOptions = ["dp", "implementation", "arithmetic", "math", "geometry", "graphs", "topological_sorting", "bruteforcing", "combinatorics", "graph_traversal", "bfs", "dfs", "regex", "string", "bitmask", "flow", "dp_bitfield", "sorting", "number_theory", "primality_test", "sieve", "bipartite_matching", "number_theory", "primality_test", "sieve", "data_structures", "deque", "divide_and_conquer", "recursion"]
 const difficultyGradeOptions = ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Ruby"]
 const difficultyLevelOptions = [1, 2, 3, 4, 5]
 
@@ -40,7 +40,7 @@ export const FilterElement = ({ typo, id }) => {
                 color: "#fff",
                 fontSize: "14px",
                 boxSizing: "border-box",
-                margin: "0 4px",
+                margin: "4px",
                 padding: "0 4px",
                 cursor: "pointer",
                 transition: "all 0.1s ease-out"
@@ -83,7 +83,7 @@ export const DifficultyFilter = ({ page }) => {
 export const DailyFilter = ({ id }) => {
     return (
         <div id={id}>
-            <div style={{ display: "flex", margin: "5px 0" }}>
+            <div style={{ display: "flex", flexWrap: "wrap", boxSizing: "border-box", margin: "5px 0" }}>
                 {questionTypeOptions.map(op => <FilterElement typo={op} id={id + "-element"} />)}
             </div >
         </div>
