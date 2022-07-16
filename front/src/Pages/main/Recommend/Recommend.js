@@ -76,17 +76,19 @@ const Recommend = () => {
                         .catch((e) => console.log("recommend err: ", e))
                 }
             })
+            .then(() => {
+                recommended && recommended.map(data => {
+                    axios.post("http://localhost:8080/api/v1/recommendation", { problemId: data.problem.id })
+                        .then(res => console.log("is solved : ", res))
+                        .catch(e => {
+                            console.log("err: ", e);
+                        })
+                })
+            })
             .catch(e => {
                 console.log("err: ", e);
             })
 
-
-        recommended && recommended.map(data => {
-            axios.post("http://localhost:8080/api/v1/recommendation", { problemId: data.id })
-                .catch(e => {
-                    console.log("err: ", e);
-                })
-        })
     }, []);
 
     const [buttonClicked, buttonOnClick] = useState(false)
