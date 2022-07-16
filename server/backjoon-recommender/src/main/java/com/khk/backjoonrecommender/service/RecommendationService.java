@@ -15,7 +15,7 @@ public interface RecommendationService {
 
     BasicResponseDto<?> checkProblemIfSolved(Authentication authentication, Long problemId) throws IOException;
 
-    BasicResponseDto<?> findAdditionalProblem(Authentication authentication, SettingRequestDto settingRequestDto) throws IOException;
+    BasicResponseDto<?> recommendAdditionalProblem(Authentication authentication, SettingRequestDto settingRequestDto);
 
     BasicResponseDto<?> reloadProblem(Authentication authentication) throws IOException;
 }

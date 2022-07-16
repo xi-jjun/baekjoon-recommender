@@ -22,7 +22,7 @@ public class RecommendationApiController {
     private final RecommendationService recommendationService;
 
     @GetMapping
-    public BasicResponseDto<?> problemDetails(Authentication authentication) throws IOException {
+    public BasicResponseDto<?> problemDetails(Authentication authentication) {
         return recommendationService.recommendProblem(authentication);
     }
 
@@ -38,8 +38,8 @@ public class RecommendationApiController {
     }
 
     @PostMapping("/additional")
-    public BasicResponseDto<?> additionalProblemDetails(Authentication authentication, @RequestBody SettingRequestDto settingRequestDto) throws IOException {
-        return recommendationService.findAdditionalProblem(authentication, settingRequestDto);
+    public BasicResponseDto<?> additionalProblemDetails(Authentication authentication, @RequestBody SettingRequestDto settingRequestDto) {
+        return recommendationService.recommendAdditionalProblem(authentication, settingRequestDto);
     }
 
     @GetMapping("/reload")

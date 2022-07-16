@@ -244,7 +244,7 @@ public class RecommendationBasicService implements RecommendationService {
 	}
 
 	@Override
-	public BasicResponseDto<?> findAdditionalProblem(Authentication authentication, SettingRequestDto settingRequestDto) throws IOException {
+	public BasicResponseDto<?> recommendAdditionalProblem(Authentication authentication, SettingRequestDto settingRequestDto) {
 		Setting tempSetting = settingRequestDto.toEntity();
 		userSetting = tempSetting;
 
@@ -268,10 +268,10 @@ public class RecommendationBasicService implements RecommendationService {
 
 	@Transactional
 	@Override
-	public BasicResponseDto<?> reloadProblem(Authentication authentication) throws IOException {
+	public BasicResponseDto<?> reloadProblem(Authentication authentication) {
 		User loginUser = getLoginUser(authentication);
-		int remainedTrialCnt = loginUser.getReloadCount();
-		if (remainedTrialCnt <= 0) {
+
+		if (!loginUser.hasRemainedCount()) {
 			BasicResponseDto<?> responseDto = new BasicResponseDto<>();
 			responseDto.setCode(400);
 			responseDto.setMessage("user reload count is zero");
@@ -280,6 +280,20 @@ public class RecommendationBasicService implements RecommendationService {
 		}
 		loginUser.decreaseReloadCount();
 
+		// 해당 사용자에게 추천된 문제 중, '안 풀었고', '오늘 추천받은' 문제를 삭제.
+		deleteLastRecommendedProblem(loginUser);
+
+		// 이후 추천 => recommendProblem(auth) 다.
 		return recommendProblem(authentication);
+	}
+
+	private void deleteLastRecommendedProblem(User loginUser) {
+		List<TriedProblem> todayRecommendedList = loginUser.getTriedProblemList();
+		Optional<TriedProblem> lastRecommendedProblem = todayRecommendedList.stream()
+				.filter(TriedProblem::solving)
+				.filter(TriedProblem::isRecommendedToday)
+				.findFirst();
+
+		lastRecommendedProblem.ifPresent(triedProblemRepository::delete);
 	}
 }

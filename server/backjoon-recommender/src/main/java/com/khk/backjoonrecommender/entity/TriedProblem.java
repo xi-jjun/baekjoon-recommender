@@ -39,6 +39,10 @@ public class TriedProblem {
 		return TODAY.equals(this.recommendedDate);
 	}
 
+	public boolean solving() {
+		return this.isSolved.equals(SolveType.SOLVING);
+	}
+
 	public boolean isSameProblem(Long problemId) {
 		return this.getProblem().getId().equals(problemId);
 	}
