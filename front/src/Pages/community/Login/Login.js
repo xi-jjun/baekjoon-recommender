@@ -26,13 +26,16 @@ const Login = () => {
             password: pw,
         };
 
-        if (id == "admin" && pw == "1234") {
+        const adminInfo = require("../../admin/adminInfo.json");
+
+        if (id == adminInfo.admin && pw == adminInfo.password) {
             axios.post("http://localhost:8080/login", data)
                 .then((res) => {
                     localStorage.setItem('Authorization', res.headers.authorization);
                     console.log("admin login success");
                     console.log("res data: ", res.data);
                     navigate("/admin", { replace: true });
+                    return;
                 }).catch((e) => {
                     console.log("err: ", e);
                     alert("login failed");
@@ -45,6 +48,7 @@ const Login = () => {
                     console.log("login success");
                     console.log("res data: ", res.data);
                     navigate("/", { replace: true });
+                    return;
                 }).catch((e) => {
                     console.log("err: ", e);
                     alert("login failed");
