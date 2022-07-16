@@ -1,0 +1,22 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/baek
+    driver-class-name: org.h2.Driver
+    username: ${local.username}
+    password: ${local.password}
+
+jwt:
+  hash-key: ${secret.jwt.hash-key}
+  expire-time: ${secret.jwt.expire-time}
+  subject: ${secret.jwt.subject}
