@@ -158,10 +158,10 @@ const Recommend = () => {
             }
         }).then(res => {
             console.log("res: ", res);
-            const list = JSON.parse(localStorage.getItem("hiddenQuestion"));
-            list.push(recommended.pop().problem.id);
-            localStorage.setItem("hiddenQuestion", JSON.stringify(list));
-            console.log(localStorage.getItem("hiddenQuestion"));
+            if (res.data.code == 400) {
+                alert("refresh 불가능");
+                return;
+            }
         }).catch(e => {
             console.log("recommendation again err: ", e);
         })
@@ -257,13 +257,8 @@ const Recommend = () => {
                                     오늘 추천 받은 문제가 없습니다.
                                 </div>
                                 : null}
-                            {recommended && recommended.map(data => {
-                                if (!localStorage.getItem("hiddenQuestion").includes(data.problem.id)) {
-                                    return (<Question number={data.problem.id} title={data.problem.title}
-                                        solved={data.isSolved == "PASS" ? "O" : "X"} />)
-                                }
-                            }
-                            )}
+                            {recommended && recommended.map(data => <Question number={data.problem.id} title={data.problem.title}
+                                solved={data.isSolved == "PASS" ? "O" : "X"} />)}
                         </div>
                     </Styled.QuestionTable>
                 </Styled.QuestionForm>
