@@ -57,7 +57,14 @@
 
 ### 👩🏻‍💻 Front-end
 
-- React
+- React 18.2.0
+- react-dom 18.2.0
+- react-redux 8.0.2
+- react-router-dom 6.3.0
+- react-scripts 5.0.1
+- styled-components 5.3.5
+- axios 0.27.2
+- jquery 3.6.0
 
 <br>
 
@@ -90,6 +97,50 @@ backjoonrecommender
 
 ```text
 front
+├── public
+│   ├── index.html
+│   └── manifest.json
+├── src
+│   ├── client
+│   │   └── Root.js
+│   ├── Components    
+│   │   ├── Button.js
+│   │   ├── Header.js
+│   │   ├── Pagination.js
+│   │   └── Toggle.js
+│   ├── Pages
+│   │   ├── admin
+│   │   │   ├── admin.js
+│   │   │   └── adminInfo.json
+│   │   ├── community
+│   │   │   ├── Login
+│   │   │   │   ├── Login.js
+│   │   │   │   └── Styled.js
+│   │   │   ├── MyPage
+│   │   │   │   ├── MyPage.js
+│   │   │   │   └── Styled.js
+│   │   │   ├── SignUp
+│   │   │   │   ├── SignUp.js
+│   │   │   │   └── Styled.js
+│   │   │   └── Community.js
+│   │   └── main
+│   │       ├── Recommend
+│   │       │   ├── Recommend.js
+│   │       │   └── Styled.js
+│   │       ├── Rival
+│   │       │   ├── Rival.js
+│   │       │   └── Styled.js
+│   │       └── Solved
+│   │           ├── Solved.js
+│   │           └── Styled.js
+│   ├── shared
+│   │   └── App.js
+│   ├── default.css
+│   ├── Default.js
+│   ├── index.js
+│   └── reportWebVitals.js
+├── package-lock.json
+└── package.json
 ```
 
 <br>
