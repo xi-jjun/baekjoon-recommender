@@ -92,6 +92,7 @@ public class BasicUserService implements UserService {
 	}
 
 	@Override
+	@Transactional
 	public BasicResponseDto<?> registerUser(UserRegisterRequestDto userRegisterRequestDto, BindingResult bindingResult) throws IOException {
 		if (bindingResult.hasErrors()) {
 			throw new IllegalArgumentException("값 잘못 입력");
