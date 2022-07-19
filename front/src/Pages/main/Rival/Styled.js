@@ -59,6 +59,7 @@ flex-direction: column;
 justify-content: center;
 box-sizing: border-box;
 padding: 0 10px;
+cursor: pointer;
 `
 
 export const PaginationContainer = styled.div`
