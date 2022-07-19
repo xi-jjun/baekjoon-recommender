@@ -41,10 +41,19 @@ const pages = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 //     )
 // }
 
-const RivalComponent = ({ numb, name, rank, totalSolved, weekSolved, tear }) => {
+const RivalComponent = ({ numb, name, rank, rivalId }) => {
     const [rivalClicked, rivalOnClick] = useState(false)
     const clickRival = () => {
         rivalOnClick(prev => !prev)
+    }
+
+    console.log("rival id: ", rivalId);
+
+    const rivalRegister = () => {
+        axios.post(`http://localhost:8080/api/v1/user/rivals/${rivalId}`)
+            .then(res => {
+                console.log("rival registered: ", res);
+            }).catch(e => console.log("err: ", e))
     }
 
     return (
@@ -55,7 +64,7 @@ const RivalComponent = ({ numb, name, rank, totalSolved, weekSolved, tear }) => 
                 onClick={clickRival}>
                 <Styled.RivalElementContainer>
                     <Styled.RivalNumb>{numb}</Styled.RivalNumb>
-                    <Styled.RivalElement>{name}</Styled.RivalElement>
+                    <Styled.RivalElement style={{ width: "300px" }}>{name}</Styled.RivalElement>
                     <Styled.RivalElement>{rank}</Styled.RivalElement>
                 </Styled.RivalElementContainer>
                 <Default.SelectBoxArrow className={rivalClicked ? "rotate" : ""}
@@ -65,11 +74,7 @@ const RivalComponent = ({ numb, name, rank, totalSolved, weekSolved, tear }) => 
                 <div>
                     {/* <RivalGraph options={options} /> */}
                     <Styled.RivalDivider />
-                    <Styled.RivalDropDown>해결한 문제 수: {totalSolved >= 0 ? "+" : ""}{totalSolved}</Styled.RivalDropDown>
-                    <Styled.RivalDivider />
-                    <Styled.RivalDropDown>최근 일주일 동안 해결한 문제 수: {weekSolved >= 0 ? "+" : ""}{weekSolved}</Styled.RivalDropDown>
-                    <Styled.RivalDivider />
-                    <Styled.RivalDropDown>티어 차이: {tear >= 0 ? "+" : ""}{tear}</Styled.RivalDropDown>
+                    <Styled.RivalDropDown onClick={rivalRegister}>라이벌 등록</Styled.RivalDropDown>
                 </div>
                 : null}
         </div>
@@ -79,13 +84,28 @@ const RivalComponent = ({ numb, name, rank, totalSolved, weekSolved, tear }) => 
 const Rival = () => {
 
     const [rivalList, setRivalList] = useState([])
+    const [searchResult, setSearchResult] = useState({});
+    const [searchInput, setSearchInput] = useState("");
+    const handleSearchInput = (e) => {
+        setSearchInput(e.target.value);
+    }
+
+    const clickSearch = () => {
+        axios.defaults.headers.common['Authorization'] = localStorage.getItem("Authorization")
+        axios.post("http://localhost:8080/api/v1/user/rivals", { username: searchInput })
+            .then(res => {
+                setSearchResult(res.data.data)
+            })
+            .catch(e => console.log("err: ", e))
+    }
 
     useEffect(() => {
-
+        setSearchResult({});
         axios.defaults.headers.common['Authorization'] = localStorage.getItem("Authorization")
         axios.get("http://localhost:8080/api/v1/user/rivals")
             .then(res => {
                 const rivalData = res.data.data;
+                console.log("rival data: ", rivalData);
                 setRivalList(rivalData);
             }).catch(e => {
                 console.log("err: ", e);
@@ -98,7 +118,7 @@ const Rival = () => {
             <Styled.Container>
                 <Styled.RivalContainer>
                     <Styled.RivalDivider />
-                    {rivalList.length == 0 ?
+                    {searchResult == {} && rivalList.length == 0 ?
                         <div>
                             <div style={{
                                 width: "100%",
@@ -113,18 +133,33 @@ const Rival = () => {
                         </div>
                         : null
                     }
-                    {rivalList.map((rival, index) => {
+                    {searchResult == {} && rivalList.map((rival, index) => {
                         <div>
-                            <RivalComponent numb={index + 1} name="라이벌" rank="silver2" totalSolved={+99} weekSolved={+51} tear={-3} />
+                            <RivalComponent numb={index + 1} name="라이벌" rank="silver2" />
                             <Styled.RivalDivider />
                         </div>
                     })}
+                    {searchResult != {} ?
+                        <div>
+                            <RivalComponent numb={1} name={searchResult.username} rank="silver2" rivalId={searchResult.id} />
+                            <Styled.RivalDivider />
+                        </div>
+                        : null
+                    }
                     {rivalList.length > 10 ?
                         <Styled.PaginationContainer>
                             {pages.map(page => <Pagination number={page} />)}
                         </Styled.PaginationContainer>
                         : null}
                 </Styled.RivalContainer>
+                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "15px" }}>
+                    <input style={{
+                        width: "430px", height: "40px",
+                        border: "none", borderBottom: "solid 1px #666"
+                    }} placeholder="search"
+                        onChange={handleSearchInput} />
+                    <img onClick={clickSearch} style={{ width: "20px", height: "20px", marginTop: "5px" }} src="https://cdn-icons-png.flaticon.com/512/61/61088.png" />
+                </div>
             </Styled.Container>
         </div >
     )

@@ -17,7 +17,9 @@ const Question = ({ number, title, solved }) => {
     const ShortCut = () => {
         return (
             <Styled.Question>
-                <Styled.QuestionShortCut to="https://www.acmicpc.net/" target="_blank">{number}번-{title} baekJoon 문제 바로 가기</Styled.QuestionShortCut>
+                <Styled.QuestionShortCut onClick={() => {
+                    window.open(`https://www.acmicpc.net/problem/${number}`, "_blank");
+                }}>{number}번-{title} baekJoon 문제 바로 가기</Styled.QuestionShortCut>
             </Styled.Question>
         )
     }
