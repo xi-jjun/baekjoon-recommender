@@ -62,13 +62,14 @@ justify-content: center;
 align-items: center;
 `
 
-export const QuestionShortCut = styled(Link)`
+export const QuestionShortCut = styled.div`
 width: 100%;
 color: #666;
 font-size: 16px;
 text-decoration: none;
 box-sizing: border-box;
 padding: 0 20px;
+cursor: pointer;
 `
 
 export const AdditionalQuestionForm = styled.div`
