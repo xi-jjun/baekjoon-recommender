@@ -4,6 +4,7 @@ import com.khk.backjoonrecommender.controller.dto.request.RivalSearchRequestDto;
 import com.khk.backjoonrecommender.controller.dto.request.UserRegisterRequestDto;
 import com.khk.backjoonrecommender.controller.dto.response.*;
 import com.khk.backjoonrecommender.service.UserService;
+import com.khk.backjoonrecommender.service.impl.RivalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -21,6 +22,7 @@ import java.util.List;
 public class UserApiController {
 
 	private final UserService userService;
+	private final RivalService rivalService;
 
 	@GetMapping
 	public BasicResponseDto<MyPageResponseDto> userDetails(Authentication authentication) {
@@ -34,7 +36,7 @@ public class UserApiController {
 
 	@GetMapping("/rivals")
 	public BasicResponseDto<List<RivalListResponseDto>> userRivals(Authentication authentication) {
-		return userService.findRivals(authentication);
+		return rivalService.findRivals(authentication);
 	}
 
 	@PostMapping("/rivals")
@@ -43,17 +45,17 @@ public class UserApiController {
 		if (bindingResult.hasErrors()) {
 			throw new IllegalArgumentException("유저명을 입력해주세요.");
 		}
-		return userService.findRival(rivalSearchDto);
+		return rivalService.findRival(rivalSearchDto);
 	}
 
 	@PostMapping("/rivals/{rivalId}")
 	public BasicResponseDto<RivalResponseDto> rivalAdd(@PathVariable Long rivalId) {
-		return userService.addRival(rivalId);
+		return rivalService.addRival(rivalId);
 	}
 
 	@DeleteMapping("/rivals/{rivalId}")
 	public BasicResponseDto<?> rivalDelete(@PathVariable Long rivalId) {
-		return userService.deleteRival(rivalId);
+		return rivalService.deleteRival(rivalId);
 	}
 
 	@PostMapping

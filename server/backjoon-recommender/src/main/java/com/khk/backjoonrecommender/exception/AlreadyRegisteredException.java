@@ -1,4 +1,4 @@
-package com.khk.backjoonrecommender.exception.handler;
+package com.khk.backjoonrecommender.exception;
 
 public class AlreadyRegisteredException extends IllegalArgumentException {
 }

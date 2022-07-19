@@ -1,18 +1,16 @@
 package com.khk.backjoonrecommender.service.impl;
 
-import com.khk.backjoonrecommender.controller.dto.request.RivalSearchRequestDto;
 import com.khk.backjoonrecommender.controller.dto.request.SettingRequestDto;
 import com.khk.backjoonrecommender.controller.dto.request.UserRegisterRequestDto;
 import com.khk.backjoonrecommender.controller.dto.request.UserRequestDto;
 import com.khk.backjoonrecommender.controller.dto.response.*;
 import com.khk.backjoonrecommender.entity.Problem;
-import com.khk.backjoonrecommender.entity.Rival;
 import com.khk.backjoonrecommender.entity.Setting;
 import com.khk.backjoonrecommender.entity.SolveType;
 import com.khk.backjoonrecommender.entity.TriedProblem;
 import com.khk.backjoonrecommender.entity.User;
 import com.khk.backjoonrecommender.exception.BaekJoonIdNotFoundException;
-import com.khk.backjoonrecommender.exception.handler.AlreadyRegisteredException;
+import com.khk.backjoonrecommender.exception.AlreadyRegisteredException;
 import com.khk.backjoonrecommender.repository.ProblemRepository;
 import com.khk.backjoonrecommender.repository.RivalRepository;
 import com.khk.backjoonrecommender.repository.SettingRepository;
@@ -24,7 +22,6 @@ import com.khk.backjoonrecommender.service.ValidationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -169,28 +166,6 @@ public class BasicUserService implements UserService {
 	}
 
 	@Override
-	public BasicResponseDto<List<RivalListResponseDto>> findRivals(Authentication authentication) {
-		String username = authentication.getName();
-		User user = userRepository.findByUsername(username);
-		List<Rival> rivals = rivalRepository.findAllBySelectingUser(user);
-		List<RivalListResponseDto> results = rivals.stream()
-				.map(rival -> new RivalListResponseDto(rival.getId(), rival.getSelectedUser().getUsername()))
-				.collect(Collectors.toList());
-		return new BasicResponseDto<>(200, "RIVAL", results);
-	}
-
-	@Override
-	public BasicResponseDto<RivalSearchResponseDto> findRival(RivalSearchRequestDto rivalSearchRequestDto) {
-		String username = rivalSearchRequestDto.getUsername();
-		User findUser = userRepository.findByUsername(username);
-		if (findUser == null) {
-			throw new IllegalArgumentException("찾는 유저가 없습니다.");
-		}
-		RivalSearchResponseDto responseDto = new RivalSearchResponseDto(findUser.getId(), findUser.getUsername());
-		return new BasicResponseDto<>(SUCCESS, SUCCESS_USER_DETAIL, responseDto);
-	}
-
-	@Override
 	public BasicResponseDto<List<SolvedProblemListResponseDto>> getSolvedProblemList(Long userId) {
 		Optional<User> findResult = userRepository.findById(userId);
 		log.info("get solved problem list user id = {}", userId);
@@ -220,29 +195,6 @@ public class BasicUserService implements UserService {
 				.code(200)
 				.message("success to delete user username=" + loginUsername)
 				.build();
-	}
-
-	@Transactional
-	@Override
-	public BasicResponseDto<RivalResponseDto> addRival(Long rivalId) {
-		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		User user = userRepository.findByUsername(username);
-		Optional<User> optional = userRepository.findById(rivalId);
-		Rival savedRival;
-		if (optional.isPresent()) {
-			Rival rival = new Rival(user, optional.get());
-			rival.setUser(user);
-			savedRival = rivalRepository.save(rival);
-			return new BasicResponseDto<>(200, "RIVAL", new RivalResponseDto(user.getId(), savedRival.getSelectedUser().getUsername()));
-		}
-		return new BasicResponseDto<>(400, "RIVAL", null);
-	}
-
-	@Override
-	@Transactional
-	public BasicResponseDto<?> deleteRival(Long rivalId) {
-		rivalRepository.deleteById(rivalId);
-		return new BasicResponseDto<>(200, "RIVAL DELETE", null);
 	}
 
 	private void encodingUserPassword(UserRequestDto userRequestDto) {

@@ -11,6 +11,6 @@ public interface ResponseCodeMessage {
     String REGISTER_NOT_FOUND_BAEKJOONID = "baekJoonId is not existed";
 
     String SUCCESS_USER_DETAIL = "success to find username";
-
-
+    String NOT_FOUND_USERNAME = "not found username";
+    String CANNOT_REGISTER_ONESELF = "cannot register to rival oneself";
 }
