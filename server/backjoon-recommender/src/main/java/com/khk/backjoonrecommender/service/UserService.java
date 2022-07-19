@@ -16,14 +16,6 @@ public interface UserService {
 
 	BasicResponseDto<?> modifyUser(Authentication authentication, UserRegisterRequestDto userRegisterRequestDto, BindingResult bindingResult);
 
-	BasicResponseDto<List<RivalListResponseDto>> findRivals(Authentication authentication);
-
-	BasicResponseDto<RivalResponseDto> addRival(Long rivalId);
-
-	BasicResponseDto<?> deleteRival(Long rivalId);
-
-	BasicResponseDto<RivalSearchResponseDto> findRival(RivalSearchRequestDto rivalSearchRequestDto);
-
 	BasicResponseDto<List<SolvedProblemListResponseDto>> getSolvedProblemList(Long userId);
 
 	BasicResponseDto<?> deleteUserInfo(Authentication authentication);
