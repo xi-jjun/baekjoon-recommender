@@ -26,12 +26,12 @@ public class TriedProblem {
 	private Problem problem;
 
 	@Enumerated(EnumType.STRING)
-	private SolveType isSolved;
+	private SolvingStatus solvingStatus;
 	private LocalDateTime solvedDate;
 	private LocalDate recommendedDate;
 
 	public boolean solved() {
-		return this.isSolved.equals(SolveType.PASS);
+		return this.solvingStatus.equals(SolvingStatus.PASS);
 	}
 
 	public boolean isRecommendedToday() {
@@ -40,17 +40,17 @@ public class TriedProblem {
 	}
 
 	public boolean solving() {
-		return this.isSolved.equals(SolveType.SOLVING);
+		return this.solvingStatus.equals(SolvingStatus.SOLVING);
 	}
 
 	public boolean isSameProblem(Long problemId) {
 		return this.getProblem().getId().equals(problemId);
 	}
 
-	public void updateSolvedStatus(SolveType solveType) {
-		if (solveType.equals(SolveType.PASS)) {
+	public void updateSolvedStatus(SolvingStatus solvingStatus) {
+		if (solvingStatus.equals(SolvingStatus.PASS)) {
 			this.solvedDate = LocalDateTime.now();
 		}
-		this.isSolved = solveType;
+		this.solvingStatus = solvingStatus;
 	}
 }

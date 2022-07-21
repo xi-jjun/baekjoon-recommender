@@ -1,6 +1,6 @@
 package com.khk.backjoonrecommender.entity;
 
-public enum SolveType {
+public enum SolvingStatus {
     FAIL,
     PARTIAL,
     SOLVING,
