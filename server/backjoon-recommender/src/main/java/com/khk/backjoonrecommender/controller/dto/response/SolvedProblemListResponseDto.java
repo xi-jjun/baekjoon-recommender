@@ -1,7 +1,7 @@
 package com.khk.backjoonrecommender.controller.dto.response;
 
 import com.khk.backjoonrecommender.entity.Problem;
-import com.khk.backjoonrecommender.entity.SolveType;
+import com.khk.backjoonrecommender.entity.SolvingStatus;
 import com.khk.backjoonrecommender.entity.TriedProblem;
 import com.khk.backjoonrecommender.entity.User;
 import lombok.Data;
@@ -13,7 +13,7 @@ public class SolvedProblemListResponseDto {
 	private Problem problem;
 	private String username;
 	private String baekJoonId;
-	private SolveType isSolved;
+	private SolvingStatus isSolved;
 	private LocalDateTime solvedDate;
 
 	public SolvedProblemListResponseDto(TriedProblem triedProblem) {
@@ -21,7 +21,7 @@ public class SolvedProblemListResponseDto {
 		this.problem = triedProblem.getProblem();
 		this.username = solver.getUsername();
 		this.baekJoonId = solver.getBaekJoonId();
-		this.isSolved = triedProblem.getIsSolved();
+		this.isSolved = triedProblem.getSolvingStatus();
 		this.solvedDate = triedProblem.getSolvedDate();
 	}
 }
