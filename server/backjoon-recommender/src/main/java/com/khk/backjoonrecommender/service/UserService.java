@@ -6,13 +6,12 @@ import com.khk.backjoonrecommender.controller.dto.request.UserRequestDto;
 import com.khk.backjoonrecommender.controller.dto.response.*;
 import com.khk.backjoonrecommender.entity.Problem;
 import com.khk.backjoonrecommender.entity.Setting;
-import com.khk.backjoonrecommender.entity.SolveType;
+import com.khk.backjoonrecommender.entity.SolvingStatus;
 import com.khk.backjoonrecommender.entity.TriedProblem;
 import com.khk.backjoonrecommender.entity.User;
 import com.khk.backjoonrecommender.exception.BaekJoonIdNotFoundException;
 import com.khk.backjoonrecommender.exception.AlreadyRegisteredException;
 import com.khk.backjoonrecommender.repository.ProblemRepository;
-import com.khk.backjoonrecommender.repository.RivalRepository;
 import com.khk.backjoonrecommender.repository.SettingRepository;
 import com.khk.backjoonrecommender.repository.TriedProblemRepository;
 import com.khk.backjoonrecommender.repository.UserRepository;
@@ -38,6 +37,7 @@ import static com.khk.backjoonrecommender.common.ResponseCodeMessage.*;
 @RequiredArgsConstructor
 @Service
 public class UserService {
+	private static final LocalDateTime REGISTER_FIXED_SOLVED_DATE = LocalDateTime.of(2022, Month.JUNE, 25, 0, 0);
 	private final ValidationService validationService;
 	private final BaekJoonApiService baekJoonApiService;
 	private final UserRepository userRepository;
@@ -45,34 +45,6 @@ public class UserService {
 	private final ProblemRepository problemRepository;
 	private final SettingRepository settingRepository;
 	private final BCryptPasswordEncoder passwordEncoder;
-
-//	@Transactional
-//	@PostConstruct
-//	public void initAdmin() {
-//		Setting setting = Setting.builder()
-//				.option(Option.TODAY)
-//				.tags("dp,math,dfs,bfs")
-//				.levels("1,2,3,4,5,6,7")
-//				.sun("")
-//				.mon("")
-//				.tue("")
-//				.wed("")
-//				.thu("")
-//				.fri("")
-//				.sat("").build();
-//
-//		User admin = User.builder()
-//				.username("admin")
-//				.baekJoonId("rlawowns000")
-//				.password(passwordEncoder.encode("1234"))
-//				.role(Role.ADMIN)
-//				.setting(setting)
-//				.reloadCount(3)
-//				.build();
-//
-//		settingRepository.save(setting);
-//		userRepository.save(admin);
-//	}
 
 	public BasicResponseDto<MyPageResponseDto> findUser(Authentication authentication) {
 		String username = authentication.getName();
@@ -112,7 +84,7 @@ public class UserService {
 		}
 		User user = userRequestDTO.toEntity();
 		user.setProblemFilterSetting(setting);
-		user.resetReloadCount();
+		user.resetRefreshCount();
 		userRepository.save(user);
 
 		saveSolvedProblemFromBaekJoonToServer(user);
@@ -127,33 +99,32 @@ public class UserService {
 	}
 
 	/**
-	 * 회원가입 시 사용자의 백준 아이디가 푼 문제 전체를 Server 에 반영
+	 * 회원가입 시 사용자 백준 아이디의 이 때까지 푼 문제 전체를 Server 에 반영
+	 *
 	 * @param user 사용자 Entity
 	 * @throws IOException 백준 사이트 크롤링 Exception
 	 */
 	private void saveSolvedProblemFromBaekJoonToServer(User user) throws IOException {
 		String baekJoonId = user.getBaekJoonId();
 		List<Long> userSolvedProblemIdList = baekJoonApiService.getSolvedProblemIdListByBaekJoonId(baekJoonId);
-		List<Optional<Problem>> userSolvedProblemList = userSolvedProblemIdList.stream()
-				.map(problemRepository::findById)
-				.collect(Collectors.toList());
+		List<Problem> userSolvedProblemList = problemRepository.findProblemsByIdIn(userSolvedProblemIdList);
 
-		userSolvedProblemList.stream()
-				.filter(Optional::isPresent)
-				.forEach(solvedProblem -> saveTriedProblemToServer(user, solvedProblem.get()));
+		userSolvedProblemList
+				.forEach(solvedProblem -> saveTriedProblemToDatabase(user, solvedProblem));
 	}
 
 	/**
 	 * 사용자가 푼 문제를 다 : 다 매핑으로 TriedProblem 으로 Server 에 저장
-	 * @param user 사용자 Entity
+	 *
+	 * @param user          사용자 Entity
 	 * @param solvedProblem 사용자가 푼 문제 객체
 	 */
-	private void saveTriedProblemToServer(User user, Problem solvedProblem) {
+	private void saveTriedProblemToDatabase(User user, Problem solvedProblem) {
 		TriedProblem passedProblem = TriedProblem.builder()
 				.user(user)
 				.problem(solvedProblem)
-				.solvedDate(LocalDateTime.of(2022, Month.JUNE, 25, 0, 0))
-				.isSolved(SolveType.PASS)
+				.solvedDate(REGISTER_FIXED_SOLVED_DATE)
+				.solvingStatus(SolvingStatus.PASS)
 				.build();
 		log.info("user id={} solved problem no.{}", user.getId(), solvedProblem.getId());
 		triedProblemRepository.save(passedProblem);
@@ -164,13 +135,14 @@ public class UserService {
 		log.info("get solved problem list user id = {}", userId);
 		if (findResult.isPresent()) {
 			User user = findResult.get();
-			List<SolvedProblemListResponseDto> solvedProblemList = user.getTriedProblemList().stream()
-					.filter(TriedProblem::solved)
+			List<TriedProblem> solvedProblems = triedProblemRepository.findTriedProblemsByUserAndSolvingStatus(user, SolvingStatus.PASS);
+			List<SolvedProblemListResponseDto> response = solvedProblems.stream()
 					.map(SolvedProblemListResponseDto::new)
 					.collect(Collectors.toList());
+
 			log.info("success to get solved problem list");
 
-			return new BasicResponseDto<>(200, "solved problem list user id=" + userId, solvedProblemList);
+			return new BasicResponseDto<>(200, "solved problem list user id=" + userId, response);
 		}
 
 		return new BasicResponseDto<>(400, "user not founded id=" + userId, null);
@@ -202,17 +174,13 @@ public class UserService {
 		}
 
 		UserRequestDto userRequestDTO = userRegisterRequestDto.toUserDto();
-		userRequestDTO.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
+		encodingUserPassword(userRequestDTO);
 		SettingRequestDto settingRequestDTO = userRegisterRequestDto.toSettingDto();
 
 		String loginUsername = authentication.getName();
-		String modifiedUsername = userRequestDTO.getUsername();
-		if (!loginUsername.equals(modifiedUsername)) {
-			throw new IllegalArgumentException("알맞지 않은 사용자 요청");
-		}
-
 		User loginUser = userRepository.findByUsername(loginUsername);
 		loginUser.updateUserInfo(userRequestDTO);
+
 		Setting userSetting = loginUser.getSetting();
 		userSetting.updateSettingInfo(settingRequestDTO);
 
