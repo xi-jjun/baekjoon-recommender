@@ -27,8 +27,8 @@ public class SystemController {
 		systemService.resetDailyRefreshCount();
 	}
 
-	@PatchMapping("/{userId}/reload-count")
-	public BasicResponseDto<?> resetUserReloadCount(@PathVariable("userId") Long userId) {
+	@PatchMapping("/{userId}/refresh-count")
+	public BasicResponseDto<?> resetUserRefreshCount(@PathVariable("userId") Long userId) {
 		return systemService.resetUserRefreshCount(userId);
 	}
 }
