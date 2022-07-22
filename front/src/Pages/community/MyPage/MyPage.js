@@ -14,12 +14,8 @@ const MyPage = () => {
 
     const [data, setData] = useState(null);
     const [baekjoonID, setBaekjoonId] = useState("")
-    const [existingPw, setExistingPw] = useState("")
     const [newPw, setNewPw] = useState("")
 
-    const handleInputExistingPw = (e) => {
-        setExistingPw(e.target.value)
-    }
     const handleInputNewPw = (e) => {
         setNewPw(e.target.value)
     }
@@ -34,7 +30,8 @@ const MyPage = () => {
                 'Authorization': localStorage.getItem("Authorization")
             }
         }).then(res => {
-            const newData = res.data.data
+            const newData = res.data.data;
+            setBaekjoonId(newData.baekJoonId)
             setData(newData);
             console.log(newData);
             const levels = newData.levels.split(",");
@@ -43,13 +40,7 @@ const MyPage = () => {
                 document.querySelector(`#my-page-${l}`).checked = true;
             }
             for (let t of dailyTags) {
-                const elements = document.querySelectorAll("#my-page-type-element");
-                for (let e of elements) {
-                    console.log(e.typo)
-                    if (e.typo == t) {
-                        e.checked = true;
-                    }
-                }
+                document.querySelector(`#my-page-daily-element-${t}`).checked = true;
             }
         }).catch(e => {
             console.log("error: ", e);
@@ -65,7 +56,7 @@ const MyPage = () => {
             }
         }
 
-        for (let e of document.querySelectorAll("#my-page-daily-element")) {
+        for (let e of document.querySelectorAll(".my-page-daily-element")) {
             if (e.checked) {
                 tags.push(e.getAttribute("value"))
             }
@@ -128,15 +119,11 @@ const MyPage = () => {
                     <Community.InfoContainerLabel>Membership Info</Community.InfoContainerLabel>
                     <Community.InfoSubContainer>
                         <Community.InfoLabel>PW</Community.InfoLabel>
-                        <Community.Input placeholder="기존 pw" onChange={handleInputExistingPw} />
-                    </Community.InfoSubContainer>
-                    <Community.InfoSubContainer>
-                        <Community.InfoLabel></Community.InfoLabel>
                         <Community.Input placeholder="새로운 pw" onChange={handleInputNewPw} />
                     </Community.InfoSubContainer>
                     <Community.InfoSubContainer>
                         <Community.InfoLabel>Baekjoon ID</Community.InfoLabel>
-                        <Community.ShortInput placeholder="새로운 Baekjoon ID" onChange={handleInputId} />
+                        <Community.ShortInput placeholder="새로운 Baekjoon ID" value={baekjoonID} onChange={handleInputId} />
                     </Community.InfoSubContainer>
                 </Community.InfoContainer>
                 <Community.InfoContainer>
