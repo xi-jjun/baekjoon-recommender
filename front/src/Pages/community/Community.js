@@ -72,7 +72,7 @@ export const DifficultyFilter = ({ page }) => {
                 return (
                     <div style={{ display: "flex", margin: "5px 0" }}>
                         <div style={{ width: "130px" }}>{grade}</div>
-                        {difficultyLevelOptions.map((op, j) => <FilterElement typo={op} id={`${page}-${5 * i + j + 1}`} />)}
+                        {difficultyLevelOptions.map((op, j) => <FilterElement typo={op} id={`${page}-${5 * i + 5 - j}`} />)}
                     </div >
                 )
             })}
