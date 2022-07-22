@@ -7,7 +7,197 @@ import Button from "../../../Components/Button";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const questionTypeOptions = ["dp", "implementation", "arithmetic", "math", "geometry", "graphs", "topological_sorting", "bruteforcing", "combinatorics", "graph_traversal", "bfs", "dfs", "regex", "string", "bitmask", "flow", "dp_bitfield", "sorting", "number_theory", "primality_test", "sieve", "bipartite_matching", "number_theory", "primality_test", "sieve", "data_structures", "deque", "divide_and_conquer", "recursion"]
+const questionTypeOptions = [
+    "implementation",
+    "arithmetic",
+    "math",
+    "geometry",
+    "dp",
+    "graphs",
+    "topological_sorting",
+    "bruteforcing",
+    "combinatorics",
+    "graph_traversal",
+    "bfs",
+    "dfs",
+    "regex",
+    "string",
+    "bitmask",
+    "flow",
+    "dp_bitfield",
+    "sorting",
+    "number_theory",
+    "primality_test",
+    "sieve",
+    "bipartite_matching",
+    "data_structures",
+    "deque",
+    "greedy",
+    'divide_and_conquer',
+    'recursion',
+    'euclidean',
+    'ad_hoc',
+    'arbitrary_precision',
+    'backtracking',
+    'parsing',
+    'disjoint_set',
+    'mitm',
+    'mst',
+    'line_intersection',
+    'sweeping',
+    'prefix_sum',
+    'simulation',
+    'binary_search',
+    'floyd_warshall',
+    'priority_queue',
+    'convex_hull',
+    'pythagoras',
+    'fft',
+    'trees',
+    'case_work',
+    'mfmc',
+    'eulerian_path',
+    'point_in_convex_polygon',
+    'polygon_area',
+    'ternary_search',
+    'probability',
+    'kmp',
+    'knapsack',
+    'hash_set',
+    'scc',
+    'parametric_search',
+    'exponentiation_by_squaring',
+    'dp_tree',
+    'dp_connection_profile',
+    'geometry_3d',
+    'queue',
+    'dijkstra',
+    'hashing',
+    'heuristics',
+    'precomputation',
+    'trie',
+    'segtree',
+    'cactus',
+    'biconnected_component',
+    'constructive',
+    'a_star',
+    'game_theory',
+    'tree_set',
+    'calculus',
+    'numerical_analysis',
+    '2_sat',
+    'coordinate_compression',
+    'lazyprop',
+    'lis',
+    'stack',
+    'bellman_ford',
+    'extended_euclidean',
+    'two_pointer',
+    'mcmf',
+    '0_1_bfs',
+    'duality',
+    'hungarian',
+    'linear_programming',
+    'sliding_window',
+    'rotating_calipers',
+    'pigeonhole_principle',
+    'crt',
+    'discrete_log',
+    'mobius_inversion',
+    'lca',
+    'pbs',
+    'linked_list',
+    'inclusion_and_exclusion',
+    'modular_multiplicative_inverse',
+    'gaussian_elimination',
+    'linear_algebra',
+    'sprague_grundy',
+    'permutation_cycle_decomposition',
+    'articulation',
+    'rabin_karp',
+    'suffix_array',
+    'sparse_table',
+    'multi_segtree',
+    'point_in_non_convex_polygon',
+    'planar_graph',
+    'smaller_to_larger',
+    'miller_rabin',
+    'pollard_rho',
+    'dancing_links',
+    'knuth_x',
+    'cht',
+    'link_cut_tree',
+    'offline_queries',
+    'tsp',
+    'berlekamp_massey',
+    'kitamasa',
+    'min_enclosing_circle',
+    'tree_isomorphism',
+    'dp_deque',
+    'bidirectional_search',
+    'randomization',
+    'simulated_annealing',
+    'merge_sort_tree',
+    'aho_corasick',
+    'euler_tour_technique',
+    'splay_tree',
+    'mo',
+    'hld',
+    'bitset',
+    'pst',
+    'euler_characteristic',
+    'dual_graph',
+    'physics',
+    'manacher',
+    'half_plane_intersection',
+    'statistics',
+    'slope_trick',
+    'voronoi',
+    'euler_phi',
+    'stable_marriage',
+    'burnside',
+    'matroid',
+    'circulation',
+    'flt',
+    'delaunay',
+    'divide_and_conquer_optimization',
+    'rope',
+    'bipartite_graph',
+    'centroid',
+    'centroid_decomposition',
+    'sqrt_decomposition',
+    'pick',
+    'hirschberg',
+    'dominator_tree',
+    'hall',
+    "knuth",
+    "linearity_of_expectation",
+    "directed_mst",
+    "green",
+    "tree_decomposition",
+    "palindrome_tree",
+    "differential_cryptanalysis",
+    "geometric_boolean_operations",
+    "geometry_hyper",
+    "majority_vote",
+    "chordal_graph",
+    "utf8",
+    'lucas',
+    "offline_dynamic_connectivity",
+    "monotone_queue_optimization",
+    "stoer_wagner",
+    "hackenbush",
+    "general_matching",
+    "generating_function",
+    'z',
+    "bayes",
+    "suffix_tree",
+    "alien",
+    "tree_compression",
+    "rb_tree",
+    "discrete_sqrt",
+    "top_tree"
+]
 
 const Question = ({ number, title, solved }) => {
     const [dropBoxClicked, dropBoxOnClick] = useState(false)
@@ -64,18 +254,19 @@ const Recommend = () => {
         }
 
         axios.defaults.headers.common['Authorization'] = localStorage.getItem("Authorization");
-
-        axios.get("http://localhost:8080/api/v1/recommendation/today")
+        axios.get("http://localhost:8080/api/v1/recommendation/today", {
+            headers: {
+                "Content-type": 'application/json; charset=UTF-8'
+            }
+        })
             .then(res => {
                 const recommendedTmp = res.data.data;
                 setRecommended(recommendedTmp);
                 if (!recommendedTmp || recommendedTmp.length == 0) {
-                    axios.get("http://localhost:8080/api/v1/recommendation")
-                        .then(res => {
-                            console.log("recommend: ", res);
-                            refresh();
-                        })
-                        .catch((e) => console.log("recommend err: ", e))
+                    axios.get("http://localhost:8080/api/v1/recommendation").then(res => {
+                        console.log("recommend: ", res);
+                        refresh();
+                    }).catch((e) => console.log("recommend err: ", e))
                 }
             })
             .then(() => {
@@ -156,8 +347,9 @@ const Recommend = () => {
     }
 
     const recommendationAgain = () => {
-        axios.get("http://localhost:8080/api/v1/recommendation/reload", {
+        axios.get("http://localhost:8080/api/v1/recommendation/refresh", {
             headers: {
+                'Content-type': 'application/json; charset=UTF-8',
                 "Authorization": localStorage.getItem("Authorization")
             }
         }).then(res => {
