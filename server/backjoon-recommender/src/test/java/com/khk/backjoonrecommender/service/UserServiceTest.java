@@ -1,10 +1,9 @@
-package com.khk.backjoonrecommender.service.impl;
+package com.khk.backjoonrecommender.service;
 
 import com.khk.backjoonrecommender.controller.dto.request.UserRegisterRequestDto;
 import com.khk.backjoonrecommender.controller.dto.response.BasicResponseDto;
 import com.khk.backjoonrecommender.entity.Option;
 import com.khk.backjoonrecommender.exception.BaekJoonIdNotFoundException;
-import com.khk.backjoonrecommender.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +18,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Transactional
 @SpringBootTest
-class BasicUserServiceTest {
+class UserServiceTest {
 	@Autowired
-	private BasicUserService userService;
+	private UserService userService;
 
 	@Test
 	void signUpValidBaekJoonId() throws IOException {

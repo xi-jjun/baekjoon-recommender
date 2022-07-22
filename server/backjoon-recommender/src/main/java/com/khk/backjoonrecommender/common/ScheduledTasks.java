@@ -17,7 +17,7 @@ public class ScheduledTasks {
 //        @Scheduled(fixedDelay = 5000)
         @Scheduled(cron = "0 0 0 1/1 * ?")
         public void dailyResetScheduler() {
-                log.info("reset daily reload count");
-                systemService.resetDailyReloadCount();
+                log.info("reset daily recommendation refresh count");
+                systemService.resetDailyRefreshCount();
         }
 }

@@ -1,4 +1,4 @@
-package com.khk.backjoonrecommender.service.impl;
+package com.khk.backjoonrecommender.service;
 
 import com.khk.backjoonrecommender.controller.dto.request.RivalSearchRequestDto;
 import com.khk.backjoonrecommender.controller.dto.response.BasicResponseDto;

@@ -1,4 +1,4 @@
-package com.khk.backjoonrecommender.service.impl;
+package com.khk.backjoonrecommender.service;
 
 import com.khk.backjoonrecommender.service.ValidationService;
 import org.junit.jupiter.api.Test;
@@ -10,7 +10,7 @@ import java.io.IOException;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class BasicValidationServiceTest {
+class ValidationServiceTest {
 	@Autowired
 	private ValidationService validationService;
 

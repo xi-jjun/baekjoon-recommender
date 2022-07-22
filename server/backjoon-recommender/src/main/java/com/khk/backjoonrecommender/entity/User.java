@@ -19,7 +19,7 @@ import java.util.List;
 @Entity
 public class User {
     @Transient
-    private static final int INIT_RELOAD_COUNT = 3;
+    private static final int INIT_REFRESH_COUNT = 3;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +32,7 @@ public class User {
 
     private String baekJoonId;
 
-    private int reloadCount;
+    private int refreshCount;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -63,17 +63,17 @@ public class User {
         this.password = userRequestDTO.getPassword();
     }
 
-    public boolean hasRemainedCount() {
-        return this.reloadCount > 0;
+    public boolean hasNoRefreshCount() {
+        return this.refreshCount <= 0;
     }
 
     public void decreaseReloadCount() {
-        if (this.reloadCount > 0) {
-            --this.reloadCount;
+        if (this.refreshCount > 0) {
+            --this.refreshCount;
         }
     }
 
-    public void resetReloadCount() {
-        this.reloadCount = INIT_RELOAD_COUNT;
+    public void resetRefreshCount() {
+        this.refreshCount = INIT_REFRESH_COUNT;
     }
 }

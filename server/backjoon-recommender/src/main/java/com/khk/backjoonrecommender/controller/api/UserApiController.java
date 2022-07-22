@@ -4,7 +4,7 @@ import com.khk.backjoonrecommender.controller.dto.request.RivalSearchRequestDto;
 import com.khk.backjoonrecommender.controller.dto.request.UserRegisterRequestDto;
 import com.khk.backjoonrecommender.controller.dto.response.*;
 import com.khk.backjoonrecommender.service.UserService;
-import com.khk.backjoonrecommender.service.impl.RivalService;
+import com.khk.backjoonrecommender.service.RivalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
