@@ -1,5 +1,4 @@
-import React, { useEffect, useState, useSyncExternalStore } from "react";
-import * as Default from "../../../Default";
+import React, { useEffect, useState } from "react";
 import * as Styled from "./Styled"
 import { DifficultyFilter, FilterElement } from "../../community/Community";
 import Header from "../../../Components/Header";
@@ -253,9 +252,9 @@ const Recommend = () => {
             return;
         }
 
-        axios.defaults.headers.common['Authorization'] = localStorage.getItem("Authorization");
         axios.get("http://localhost:8080/api/v1/recommendation/today", {
             headers: {
+                "Authorization": localStorage.getItem("Authorization"),
                 "Content-type": 'application/json; charset=UTF-8'
             }
         })
@@ -263,7 +262,12 @@ const Recommend = () => {
                 const recommendedTmp = res.data.data;
                 setRecommended(recommendedTmp);
                 if (!recommendedTmp || recommendedTmp.length == 0) {
-                    axios.get("http://localhost:8080/api/v1/recommendation").then(res => {
+                    axios.get("http://localhost:8080/api/v1/recommendation", {
+                        headers: {
+                            "Authorization": localStorage.getItem("Authorization"),
+                            "Content-type": 'application/json; charset=UTF-8'
+                        }
+                    }).then(res => {
                         console.log("recommend: ", res);
                         refresh();
                     }).catch((e) => console.log("recommend err: ", e))
@@ -358,11 +362,11 @@ const Recommend = () => {
                 alert("refresh 불가능");
                 return;
             }
-
+            refresh();
+            // 되긴 하는데 엄청 느림
         }).catch(e => {
             console.log("recommendation again err: ", e);
         })
-        refresh();
     }
 
     const AddQuestionButton = () => {
@@ -463,14 +467,12 @@ const Recommend = () => {
                     <Button typo={"Refresh"} onClick={recommendationAgain} />
                 </div>
                 <div>
-                    {
-                        // true
-                        recommended && !recommended.map(data => data.isSolved).includes("SOLVING")
-                            ?
-                            <Styled.AdditionalQuestionForm>
-                                <AddQuestionButton>+</AddQuestionButton>
-                            </Styled.AdditionalQuestionForm>
-                            : null}
+                    {recommended && !recommended.map(data => data.isSolved).includes("SOLVING")
+                        ?
+                        <Styled.AdditionalQuestionForm>
+                            <AddQuestionButton>+</AddQuestionButton>
+                        </Styled.AdditionalQuestionForm>
+                        : null}
                 </div>
             </Styled.Container>
         </div>
