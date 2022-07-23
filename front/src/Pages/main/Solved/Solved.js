@@ -1,23 +1,22 @@
 import "../../../default.css";
 import * as Styled from './Styled';
 import Header from "../../../Components/Header";
-import Pagination from "../../../Components/Pagination";
 import { useState, useEffect } from 'react';
 import axios from "axios";
-
-const pages = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-
 
 const QuestionDate = ({ date }) => {
     return (
         <Styled.QuestionElement>
-            {date}
+            {date == "2022-06-25" ? "회원가입 전" : date}
         </Styled.QuestionElement>
     )
 }
 
 const QuestionInfo = ({ id, title, level }) => {
-    return (<div style={{ display: "flex" }}>
+    return (<div style={{ display: "flex" }}
+        onClick={() => {
+            window.open(`https://www.acmicpc.net/problem/${id}`, "_blank");
+        }}>
         <Styled.QuestionElement style={{
             width: "60px"
         }}>
@@ -41,6 +40,8 @@ const Solved = () => {
 
     const [questionList, setQuestionList] = useState([]);
     const [unSolvedQuestionList, setUnSolvedQuestionList] = useState([]);
+    const [pages, setPages] = useState([]);
+    const [checked, setChecked] = useState(0);
 
     useEffect(() => {
 
@@ -57,9 +58,21 @@ const Solved = () => {
                     "Authorization": localStorage.getItem("Authorization")
                 }
             }).then(res => {
-                console.log("get user's solved list: ", res);
-                setQuestionList(res.data.data);
-                console.log("question list: ", questionList);
+                const solvedData = res.data.data;
+                setQuestionList(solvedData);
+                setPages([...Array(parseInt(solvedData.length / 12) + 1).keys()].map((page, index) => {
+                    if (index == checked) {
+                        console.log("checked: ", checked);
+                        return (
+                            <Pagination number={page + 1} checked={true} />
+                        )
+                    }
+                    else {
+                        return (
+                            <Pagination number={page + 1} checked={false} />
+                        )
+                    }
+                }))
             }).catch(e => console.log("err: ", e));
         }).catch(e => console.log("err: ", e));
 
@@ -69,7 +82,44 @@ const Solved = () => {
                 setUnSolvedQuestionList(res.data.data);
             }).catch(e => console.log("err: ", e));
 
-    }, [])
+    }, [checked])
+    // checked 값이 바뀔 때마다 필터 클릭이 훨씬 느리게 됨
+
+    const Pagination = ({ number, checked }) => {
+        const clickPage = () => {
+            setChecked(number - 1)
+        }
+
+        const [onMouseOver, setMouseOver] = useState(false)
+        const getMouseOver = () => {
+            setMouseOver(true)
+        }
+        const getMouseOut = () => {
+            setMouseOver(false)
+        }
+
+        return (
+            <div style={{
+                width: "30px",
+                height: "30px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                background: checked || onMouseOver ? "#0083e8" : "#fff",
+                boxSizing: "border-box",
+                borderRight: "solid 1px #0083e8",
+                color: checked || onMouseOver ? "#fff" : "#0083e8",
+                fontWeight: checked || onMouseOver ? 600 : 400,
+                cursor: "pointer",
+                transition: "all 0.1s ease-out"
+            }}
+                onClick={clickPage}
+                onMouseOver={getMouseOver}
+                onMouseOut={getMouseOut}>
+                {number}
+            </div>
+        )
+    }
 
     return (
         <div>
@@ -91,7 +141,7 @@ const Solved = () => {
                             푼 문제가 없습니다.
                         </div>
                         : null}
-                    {questionList && questionList.map(q =>
+                    {questionList && questionList.slice(checked * 12, (checked + 1) * 12).map(q =>
                         <Styled.Question>
                             <QuestionDate date={q.solvedDate.substring(0, 10)} />
                             <QuestionInfo
@@ -100,6 +150,11 @@ const Solved = () => {
                                 level={q.problem.level} />
                         </Styled.Question>
                     )}
+                    {pages.length > 0 ?
+                        <Styled.PaginationContainer>
+                            {pages}
+                        </Styled.PaginationContainer>
+                        : null}
                 </Styled.QuestionContainer>
                 <Styled.QuestionUnSolvedContainer>
                     <Styled.QuestionLabelContainer>
