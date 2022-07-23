@@ -13,14 +13,11 @@ const MyPage = () => {
     const tags = [];
 
     const [data, setData] = useState(null);
-    const [baekjoonID, setBaekjoonId] = useState("")
-    const [newPw, setNewPw] = useState("")
+    const [newPw, setNewPw] = useState("");
+    const [baekjoonID, setBaekjoonId] = useState("");
 
     const handleInputNewPw = (e) => {
         setNewPw(e.target.value)
-    }
-    const handleInputId = (e) => {
-        setBaekjoonId(e.target.value)
     }
 
     useEffect(() => {
@@ -47,9 +44,8 @@ const MyPage = () => {
         })
     }, [])
 
-    const tryConfirm = (e) => {
+    const tryConfirm = () => {
 
-        e.preventDefault();
         for (let i = 0; i < 31; i++) {
             if (document.querySelector(`#my-page-${i}`).checked) {
                 levels.push(i);
@@ -108,6 +104,7 @@ const MyPage = () => {
                 console.log("res: ", res);
             }).catch(e => {
                 console.log("err: ", e);
+                alert(e.response.data.message);
             })
     }
 
@@ -120,10 +117,6 @@ const MyPage = () => {
                     <Community.InfoSubContainer>
                         <Community.InfoLabel>PW</Community.InfoLabel>
                         <Community.Input placeholder="새로운 pw" onChange={handleInputNewPw} />
-                    </Community.InfoSubContainer>
-                    <Community.InfoSubContainer>
-                        <Community.InfoLabel>Baekjoon ID</Community.InfoLabel>
-                        <Community.ShortInput placeholder="새로운 Baekjoon ID" value={baekjoonID} onChange={handleInputId} />
                     </Community.InfoSubContainer>
                 </Community.InfoContainer>
                 <Community.InfoContainer>
