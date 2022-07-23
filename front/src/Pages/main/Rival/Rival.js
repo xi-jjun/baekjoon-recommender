@@ -2,101 +2,80 @@ import "../../../default.css";
 import * as Default from "../../../Default";
 import * as Styled from "./Styled";
 import Header from "../../../Components/Header";
-import Pagination from "../../../Components/Pagination";
 import { useEffect, useState } from "react";
-import CanvasJSReact from "../../../assets/canvasjs.react";
 import axios from "axios";
-const CanvasJSChart = CanvasJSReact.CanvasJSChart;
-
-const options = {
-    toolTip: { shared: true },
-    axisY: { suffix: "%" },
-    data: [{
-        type: "stackedBar100",
-        color: "#0000ff",
-        name: "ME",
-        showInLegend: true,
-        indexLabel: "{y}",
-        indexLabelFontColor: "white",
-        yValueFormatString: "#,###'%'",
-        dataPoints: [{ label: "Solved", y: 21 }]
-    },
-    {
-        type: "stackedBar100",
-        color: "#ff0000",
-        name: "Rival",
-        showInLegend: true,
-        indexLabel: "{y}",
-        indexLabelFontColor: "white",
-        yValueFormatString: "#,###'%'",
-        dataPoints: [{ label: "Solved", y: 79 }]
-    }]
-}
-
-const pages = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-
-// const RivalGraph = ({ options }) => {
-//     return (
-//         <CanvasJSChart options={options} />
-//     )
-// }
-
-const RivalComponent = ({ numb, name, rank, rivalId }) => {
-    const [rivalClicked, rivalOnClick] = useState(false)
-    const clickRival = () => {
-        rivalOnClick(prev => !prev)
-    }
-
-    console.log("rival id: ", rivalId);
-
-    const rivalRegister = () => {
-        axios.post(`http://localhost:8080/api/v1/user/rivals/${rivalId}`)
-            .then(res => {
-                console.log("rival registered: ", res);
-            }).catch(e => console.log("err: ", e))
-    }
-
-    return (
-        <div>
-            <Styled.Rival style={{
-                background: rivalClicked ? "#d5d5d5" : "#fff"
-            }}
-                onClick={clickRival}>
-                <Styled.RivalElementContainer>
-                    <Styled.RivalNumb>{numb}</Styled.RivalNumb>
-                    <Styled.RivalElement style={{ width: "300px" }}>{name}</Styled.RivalElement>
-                    <Styled.RivalElement>{rank}</Styled.RivalElement>
-                </Styled.RivalElementContainer>
-                <Default.SelectBoxArrow className={rivalClicked ? "rotate" : ""}
-                    src="https://icon-library.com/images/dropdown-arrow-icon/dropdown-arrow-icon-16.jpg" />
-            </Styled.Rival>
-            {rivalClicked ?
-                <div>
-                    {/* <RivalGraph options={options} /> */}
-                    <Styled.RivalDivider />
-                    <Styled.RivalDropDown onClick={rivalRegister}>라이벌 등록</Styled.RivalDropDown>
-                </div>
-                : null}
-        </div>
-    )
-}
 
 const Rival = () => {
 
     const [rivalList, setRivalList] = useState([])
-    const [searchResult, setSearchResult] = useState({});
+    const [searchResult, setSearchResult] = useState();
     const [searchInput, setSearchInput] = useState("");
     const handleSearchInput = (e) => {
         setSearchInput(e.target.value);
+    }
+
+    const RivalComponent = ({ numb, name, rivalId, registered }) => {
+        const [rivalClicked, rivalOnClick] = useState(false)
+        const clickRival = () => {
+            rivalOnClick(prev => !prev)
+        }
+
+        console.log("rival id: ", rivalId);
+
+        const rivalRegister = () => {
+            axios.post(`http://localhost:8080/api/v1/user/rivals/${rivalId}`)
+                .then(() => {
+                    alert("rival registered");
+                    window.location.reload();
+                }).catch(e => console.log("err: ", e))
+        }
+
+        const rivalDelete = () => {
+            axios.delete(`http://localhost:8080/api/v1/user/rivals/${rivalId}`)
+                .then(() => {
+                    alert("rival deleted");
+                    window.location.reload();
+                }).catch(e => console.log("err: ", e))
+        }
+
+        return (
+            <div>
+                <Styled.Rival style={{
+                    background: rivalClicked ? "#d5d5d5" : "#fff"
+                }}
+                    onClick={clickRival}>
+                    <Styled.RivalElementContainer>
+                        <Styled.RivalNumb>{numb}</Styled.RivalNumb>
+                        <Styled.RivalElement style={{ width: "300px" }}>{name}</Styled.RivalElement>
+                    </Styled.RivalElementContainer>
+                    <Default.SelectBoxArrow className={rivalClicked ? "rotate" : ""}
+                        src="https://icon-library.com/images/dropdown-arrow-icon/dropdown-arrow-icon-16.jpg" />
+                </Styled.Rival>
+                {rivalClicked ?
+                    (registered ?
+                        <div>
+                            <Styled.RivalDivider />
+                            <Styled.RivalDropDown onClick={rivalDelete}>라이벌 삭제</Styled.RivalDropDown>
+                        </div>
+                        : <div>
+                            <Styled.RivalDivider />
+                            <Styled.RivalDropDown onClick={rivalRegister}>라이벌 등록</Styled.RivalDropDown>
+                        </div>)
+                    : null}
+            </div>
+        )
     }
 
     const clickSearch = () => {
         axios.defaults.headers.common['Authorization'] = localStorage.getItem("Authorization")
         axios.post("http://localhost:8080/api/v1/user/rivals", { username: searchInput })
             .then(res => {
-                setSearchResult(res.data.data)
+                setSearchResult(res.data.data);
+                console.log(searchResult);
+            }).catch(e => {
+                console.log("err: ", e);
+                alert(e.response.data.message);
             })
-            .catch(e => console.log("err: ", e))
     }
 
     useEffect(() => {
@@ -118,7 +97,7 @@ const Rival = () => {
             <Styled.Container>
                 <Styled.RivalContainer>
                     <Styled.RivalDivider />
-                    {searchResult == {} && rivalList.length == 0 ?
+                    {(!searchResult || !searchResult.id) && rivalList.length == 0 ?
                         <div>
                             <div style={{
                                 width: "100%",
@@ -133,24 +112,19 @@ const Rival = () => {
                         </div>
                         : null
                     }
-                    {searchResult == {} && rivalList.map((rival, index) => {
+                    {(!searchResult || !searchResult.id) && rivalList.map((rival, index) =>
                         <div>
-                            <RivalComponent numb={index + 1} name="라이벌" rank="silver2" />
+                            <RivalComponent numb={index + 1} name={rival.username} rivalId={rival.id} registered={true} />
                             <Styled.RivalDivider />
-                        </div>
-                    })}
-                    {searchResult != {} ?
+                        </div>)
+                    }
+                    {searchResult && searchResult.id && searchResult.username ?
                         <div>
-                            <RivalComponent numb={1} name={searchResult.username} rank="silver2" rivalId={searchResult.id} />
+                            <RivalComponent numb={1} name={searchResult.username} rivalId={searchResult.id} registered={false} />
                             <Styled.RivalDivider />
                         </div>
                         : null
                     }
-                    {rivalList.length > 10 ?
-                        <Styled.PaginationContainer>
-                            {pages.map(page => <Pagination number={page} />)}
-                        </Styled.PaginationContainer>
-                        : null}
                 </Styled.RivalContainer>
                 <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "15px" }}>
                     <input style={{
@@ -158,7 +132,7 @@ const Rival = () => {
                         border: "none", borderBottom: "solid 1px #666"
                     }} placeholder="search"
                         onChange={handleSearchInput} />
-                    <img onClick={clickSearch} style={{ width: "20px", height: "20px", marginTop: "5px" }} src="https://cdn-icons-png.flaticon.com/512/61/61088.png" />
+                    <img onClick={clickSearch} style={{ width: "20px", height: "20px", marginTop: "5px", cursor: "pointer" }} src="https://cdn-icons-png.flaticon.com/512/61/61088.png" />
                 </div>
             </Styled.Container>
         </div >
