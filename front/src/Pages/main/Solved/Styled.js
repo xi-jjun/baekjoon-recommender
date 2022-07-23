@@ -10,6 +10,7 @@ padding: 30px;
 
 export const QuestionContainer = styled.div`
 width: 800px;
+max-height: 800px;
 display: flex;
 flex-direction: column;
 box-sizing: border-box;
@@ -41,7 +42,8 @@ width: 100%;
 height: 44px;
 display: flex;
 align-items: center;
-border-bottom: solid 1px #e5e5e5
+border-bottom: solid 1px #e5e5e5;
+cursor: pointer;
 `
 
 export const QuestionElement = styled.div`

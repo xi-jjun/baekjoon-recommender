@@ -1,8 +1,7 @@
 import Button from "../../../Components/Button";
-import * as Default from "../../../Default";
 import * as Community from '../Community';
 import * as Styled from './Styled';
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
