@@ -2,7 +2,6 @@ import Header from "../../../Components/Header";
 import * as Default from "../../../Default";
 import * as Community from "../Community";
 import * as Styled from "./Styled";
-import Toggle from "../../../Components/Toggle";
 import Button from "../../../Components/Button";
 import { useEffect, useState } from "react";
 import axios from "axios";

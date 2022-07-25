@@ -1,7 +1,6 @@
 import * as Community from "../Community";
 import * as Styled from "./Styled";
 import Button from "../../../Components/Button";
-import Toggle from "../../../Components/Toggle";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
