@@ -7,6 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @AllArgsConstructor
@@ -25,24 +29,20 @@ public class Setting {
     @Enumerated(value = EnumType.STRING)
     private Option option;
 
-    private String sun;
-    private String mon;
-    private String tue;
-    private String wed;
-    private String thu;
-    private String fri;
-    private String sat;
+    public Set<Integer> getUserRecommendationLevels() {
+        String[] levelArr = levels.split(",");
+        return Arrays.stream(levelArr)
+                .map(Integer::parseInt)
+                .collect(Collectors.toSet());
+    }
+
+    public Set<String> getUserRecommendationTags() {
+        String[] tagArr = tags.split(",");
+        return new HashSet<>(Arrays.asList(tagArr));
+    }
 
     public void updateSettingInfo(SettingRequestDto settingRequestDTO) {
         this.levels = settingRequestDTO.getLevels();
         this.tags = settingRequestDTO.getTags();
-        this.option = settingRequestDTO.getOption();
-        this.sun = settingRequestDTO.getSun();
-        this.mon = settingRequestDTO.getMon();
-        this.tue = settingRequestDTO.getTue();
-        this.wed = settingRequestDTO.getWed();
-        this.thu = settingRequestDTO.getThu();
-        this.fri = settingRequestDTO.getFri();
-        this.sat = settingRequestDTO.getSat();
     }
 }

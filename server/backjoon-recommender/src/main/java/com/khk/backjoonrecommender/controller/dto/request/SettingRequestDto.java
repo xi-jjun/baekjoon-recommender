@@ -19,21 +19,14 @@ public class SettingRequestDto {
 	private Option option;
 	@NotBlank
 	private String levels;
+	@NotBlank
 	private String tags;
-	private String sun;
-	private String mon;
-	private String tue;
-	private String wed;
-	private String thu;
-	private String fri;
-	private String sat;
 
 	public Setting toEntity() {
 		return Setting.builder()
 				.option(option)
 				.levels(levels)
 				.tags(tags)
-				.sun(sun).mon(mon).tue(tue).wed(wed).thu(thu).fri(fri).sat(sat)
 				.build();
 	}
 }

@@ -1,7 +1,7 @@
 package com.khk.backjoonrecommender.repository;
 
 import com.khk.backjoonrecommender.entity.Problem;
-import com.khk.backjoonrecommender.entity.SolveType;
+import com.khk.backjoonrecommender.entity.SolvingStatus;
 import com.khk.backjoonrecommender.entity.TriedProblem;
 import com.khk.backjoonrecommender.entity.User;
 import org.junit.jupiter.api.BeforeAll;
@@ -40,8 +40,6 @@ class TriedProblemRepositoryTest {
 					.id(1000L + i)
 					.title("problem title no."+i)
 					.level(10+i)
-					.tags("math")
-					.problemUrl("url")
 					.build();
 
 			problemRepository.save(problem);
@@ -69,14 +67,14 @@ class TriedProblemRepositoryTest {
 				.problem(problem)
 				.user(solver)
 				.solvedDate(LocalDateTime.now())
-				.isSolved(SolveType.PASS)
+				.solvingStatus(SolvingStatus.PASS)
 				.build();
 
 		TriedProblem triedProblem2 = TriedProblem.builder()
 				.problem(problem2)
 				.user(solver)
 				.solvedDate(LocalDateTime.now())
-				.isSolved(SolveType.PASS)
+				.solvingStatus(SolvingStatus.PASS)
 				.build();
 
 		triedProblemRepository.save(triedProblem);

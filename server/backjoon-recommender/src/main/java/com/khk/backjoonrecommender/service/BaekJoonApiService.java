@@ -1,12 +1,8 @@
 package com.khk.backjoonrecommender.service;
 
-import com.khk.backjoonrecommender.entity.Problem;
-import com.khk.backjoonrecommender.service.BaekJoonApiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -28,18 +24,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class BaekJoonApiService {
+	private final JSONParsingService jsonParsingService;
+
 	private static final String BASIC_BAEKJOON_PROBLEM_LIST_URL = "https://www.acmicpc.net/problemset/";
 	private static final String PROBLEM_LIST_CLASS = "list_problem_id";
 	private static final String NEXT_PAGE_ID = "next_page";
-	private static final String BASIC_DETAIL_PROBLEM_URL = "https://www.acmicpc.net/problem/";
-
-	private static final String TITLE = "titleKo";
-	private static final String LEVEL = "level";
-	private static final String TAGS = "tags";
-	private static final String TAG_KEY = "key";
-	private static final String PROBLEM_INFO_API = "https://solved.ac/api/v3/problem/show?problemId=";
-
 	private static final String USER_SOLVED_PROBLEM_LIST_URL = "https://www.acmicpc.net/user/";
+	private static final String BULK_PROBLEMS_INFO_API = "https://solved.ac/api/v3/problem/lookup?problemIds=";
 
 	public List<Long> getAllProblemIdListFromBaekJoon() throws IOException {
 		List<Long> problemIdList = new ArrayList<>();
@@ -55,41 +46,10 @@ public class BaekJoonApiService {
 			}
 			hasNext = document.getElementById(NEXT_PAGE_ID);
 			++pageNumber;
-			if (pageNumber == 3) break; // 일단 2페이지(총 200문제) 분량만 테스트로 저장하기 했습니다
+
 		} while (hasNext != null);
 
 		return problemIdList;
-	}
-
-	public Problem getProblemByProblemId(Long problemId) throws IOException, ParseException {
-		JSONObject problemObj = getProblemInfoFromSolvedAPI(problemId);
-
-		String title = problemObj.get(TITLE).toString();
-		int level = Integer.parseInt(problemObj.get(LEVEL).toString());
-
-		String tags = getTags(problemObj);
-
-		Problem problem = Problem.builder()
-				.id(problemId)
-				.title(title)
-				.level(level)
-				.tags(tags)
-				.problemUrl(BASIC_DETAIL_PROBLEM_URL + problemId)
-				.build();
-
-		return problem;
-	}
-
-	private String getTags(JSONObject problemObj) {
-		List<String> tagArray = new ArrayList<>();
-		JSONArray tagObjects = (JSONArray) problemObj.get(TAGS);
-		for (Object tagObject : tagObjects) {
-			JSONObject jsonTagObject = (JSONObject) tagObject;
-			String problemType = jsonTagObject.get(TAG_KEY).toString();
-			tagArray.add(problemType);
-		}
-
-		return String.join(",", tagArray);
 	}
 
 	public List<Long> getSolvedProblemIdListByBaekJoonId(String baekJoonId) throws IOException {
@@ -107,26 +67,38 @@ public class BaekJoonApiService {
 				.collect(Collectors.toList());
 	}
 
-	private JSONObject getProblemInfoFromSolvedAPI(Long problemId) throws IOException, ParseException {
-		URL url = new URL(PROBLEM_INFO_API + problemId);
+	public JSONArray getBulkProblemsInfoFromSolvedApi(List<Long> ids) throws IOException, ParseException {
+		List<String> idList = longToStringList(ids);
+		String problemIds = String.join(",", idList);
+		URL url = new URL(BULK_PROBLEMS_INFO_API + problemIds);
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-		connection.setRequestMethod("GET");
 		int responseCode = connection.getResponseCode();
 
+		if (responseCode == HttpURLConnection.HTTP_OK) {
+			StringBuilder response = getResponseFromUrlConnection(connection);
+			JSONArray problemsJsonArrayInfo = jsonParsingService.stringToJSONArray(response.toString());
+			return problemsJsonArrayInfo;
+		}
+
+		throw new IllegalStateException("solved api error"); // 예외처리 필요 error handler 에 추가 하고 싶다.
+	}
+
+	private StringBuilder getResponseFromUrlConnection(HttpURLConnection connection) throws IOException {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-		String input;
 		StringBuilder response = new StringBuilder();
+		String input;
 		while ((input = reader.readLine()) != null) {
 			response.append(input);
 		}
 		reader.close();
 
-		return stringToJson(response.toString());
+		return response;
 	}
 
-	private JSONObject stringToJson(String response) throws ParseException {
-		JSONParser parser = new JSONParser();
-		return (JSONObject) parser.parse(response);
+	private List<String> longToStringList(List<Long> list) {
+		return list.stream()
+				.map(String::valueOf)
+				.collect(Collectors.toList());
 	}
 }

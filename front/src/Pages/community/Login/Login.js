@@ -1,8 +1,7 @@
 import Button from "../../../Components/Button";
-import * as Default from "../../../Default";
 import * as Community from '../Community';
 import * as Styled from './Styled';
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -26,14 +25,16 @@ const Login = () => {
             password: pw,
         };
 
-        if (id == "admin" && pw == "1234") {
+        const adminInfo = require("../../admin/adminInfo.json");
+
+        if (id == adminInfo.admin && pw == adminInfo.password) {
             axios.post("http://localhost:8080/login", data)
                 .then((res) => {
                     localStorage.setItem('Authorization', res.headers.authorization);
                     console.log("admin login success");
                     console.log("res data: ", res.data);
-                    localStorage.setItem("hiddenQuestion", "[]");
                     navigate("/admin", { replace: true });
+                    return;
                 }).catch((e) => {
                     console.log("err: ", e);
                     alert("login failed");
@@ -46,6 +47,7 @@ const Login = () => {
                     console.log("login success");
                     console.log("res data: ", res.data);
                     navigate("/", { replace: true });
+                    return;
                 }).catch((e) => {
                     console.log("err: ", e);
                     alert("login failed");

@@ -29,12 +29,13 @@ cursor: pointer;
 `
 
 export const RivalElementContainer = styled.div`
+width: 100%;
 display: flex;
 align-items: center;
 `
 
 export const RivalNumb = styled.div`
-width: 40px;
+min-width: 40px;
 height: 40px;
 display: flex;
 justify-content: center;
@@ -42,12 +43,13 @@ align-items: center;
 `
 
 export const RivalElement = styled.div`
-min-width: 110px;
+min-width: 100%;
 height: 40px;
 display: flex;
+justify-content: center;
 align-items: center;
 box-sizing: border-box;
-padding: 0 10px;
+padding: 0 40px 0 10px;
 font-size: 16px;
 `
 
@@ -58,7 +60,8 @@ display: flex;
 flex-direction: column;
 justify-content: center;
 box-sizing: border-box;
-padding: 0 10px;
+padding: 0 35px;
+cursor: pointer;
 `
 
 export const PaginationContainer = styled.div`

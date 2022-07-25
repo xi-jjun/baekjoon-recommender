@@ -1,30 +1,29 @@
 package com.khk.backjoonrecommender.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.util.List;
 
-@Getter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
+@Getter
 @Entity
-public class Problem {
+public class Tag {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Id
-    private Long id;
+	private String tagName;
 
-    private String title;
-    private int level;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "problem")
-    private List<ProblemTag> problemTags;
+	@OneToMany(mappedBy = "tag")
+	private List<ProblemTag> problemTags;
 }

@@ -13,3 +13,7 @@ spring:
     url: ${rds.url}
     username: ${rds.username}
     password: ${rds.password}
+
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
