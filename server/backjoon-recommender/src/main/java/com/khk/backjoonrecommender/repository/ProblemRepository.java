@@ -5,6 +5,7 @@ import com.khk.backjoonrecommender.entity.SolvingStatus;
 import com.khk.backjoonrecommender.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
 import java.util.List;
@@ -18,10 +19,10 @@ public interface ProblemRepository extends JpaRepository<Problem, Long> {
 			"WHERE pt.problem.level IN :levels " +
 			"AND pt.tag.tagName IN :tags " +
 			"AND pt.problem.id NOT IN :solved")
-	List<Problem> findDistinctProblemListByLevelInAndTagInAndSolvedNotIn(Set<Integer> levels, Set<String> tags, Set<Long> solved);
+	List<Problem> findDistinctProblemListByLevelInAndTagInAndSolvedNotIn(@Param("levels") Set<Integer> levels, @Param("tags") Set<String> tags, @Param("solved") Set<Long> solved);
 
 	@Query("SELECT tp.problem.id FROM TriedProblem tp WHERE tp.user = :user AND tp.solvingStatus = :solvingStatus")
-	List<Long> findProblemsIdByUserAndSolvingStatus(User user, SolvingStatus solvingStatus);
+	List<Long> findProblemsIdByUserAndSolvingStatus(@Param("user") User user, @Param("solvingStatus") SolvingStatus solvingStatus);
 
 	List<Problem> findProblemsByIdIn(Collection<Long> ids);
 }
