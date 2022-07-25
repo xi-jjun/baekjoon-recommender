@@ -62,7 +62,7 @@ public class RivalService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username);
         Optional<User> optionalUser = userRepository.findById(rivalId);
-        List<Rival> rivals = rivalRepository.findSelectedUserById(rivalId);
+        Rival selectedUser = rivalRepository.findSelectedUserById(rivalId);
 
         if (optionalUser.isEmpty()) {
             throw new UserNotFoundException();
@@ -72,7 +72,7 @@ public class RivalService {
             throw new CannotAddRivalOneSelfException();
         }
 
-        if (rivals.size() >= 1) {
+        if (selectedUser != null) {
             throw new AlreadyRegisteredException();
         }
 
@@ -84,7 +84,8 @@ public class RivalService {
 
     @Transactional
     public BasicResponseDto<?> deleteRival(Long rivalId) {
-        rivalRepository.deleteById(rivalId);
+        Rival findRival = rivalRepository.findSelectedUserById(rivalId);
+        rivalRepository.delete(findRival);
         return new BasicResponseDto<>(200, "RIVAL DELETE", null);
     }
 }

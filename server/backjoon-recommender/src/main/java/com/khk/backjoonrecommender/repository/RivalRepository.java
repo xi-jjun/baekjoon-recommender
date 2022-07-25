@@ -13,5 +13,5 @@ public interface RivalRepository extends JpaRepository<Rival, Long> {
     List<Rival> findAllBySelectingUser(User selectingUser);
 
     @Query("SELECT s FROM Rival s WHERE s.selectedUser.id = :id")
-    List<Rival> findSelectedUserById(@Param("id") Long id);
+    Rival findSelectedUserById(@Param("id") Long id);
 }
