@@ -19,7 +19,7 @@ import java.util.List;
 @Entity
 public class User {
     @Transient
-    private static final int INIT_REFRESH_COUNT = 3;
+    private static final int INIT_REFRESH_COUNT = 20;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
