@@ -20,9 +20,9 @@ public interface TriedProblemRepository extends JpaRepository<TriedProblem, Long
 	 * @return problem list
 	 */
 	@Query("SELECT tp FROM TriedProblem tp WHERE tp.user = :user AND tp.recommendedDate = :recommendedDate")
-	List<TriedProblem> findTriedProblemsByUserAndRecommendedDate(User user, LocalDate recommendedDate);
+	List<TriedProblem> findByUserAndRecommendedDate(User user, LocalDate recommendedDate);
 
-	Optional<TriedProblem> findTriedProblemByUserAndProblem(User user, Problem problem);
+	Optional<TriedProblem> findByUserAndProblem(User user, Problem problem);
 
-	List<TriedProblem> findTriedProblemsByUserAndSolvingStatus(User user, SolvingStatus solvingStatus);
+	List<TriedProblem> findByUserAndSolvingStatus(User user, SolvingStatus solvingStatus);
 }

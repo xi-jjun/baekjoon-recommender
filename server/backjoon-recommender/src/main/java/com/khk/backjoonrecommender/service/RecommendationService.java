@@ -95,7 +95,7 @@ public class RecommendationService {
 	public BasicResponseDto<List<RecommendProblemResponseDto>> getTodayRecommendedProblemListByUser(Authentication authentication) {
 		User loginUser = getLoginUser(authentication);
 
-		List<TriedProblem> recommendedToday = triedProblemRepository.findTriedProblemsByUserAndRecommendedDate(loginUser, LocalDate.now());
+		List<TriedProblem> recommendedToday = triedProblemRepository.findByUserAndRecommendedDate(loginUser, LocalDate.now());
 		List<RecommendProblemResponseDto> todayRecommendedList = recommendedToday.stream()
 				.map(RecommendProblemResponseDto::new)
 				.collect(Collectors.toList());
@@ -158,7 +158,7 @@ public class RecommendationService {
 		}
 
 		if (solvedProblemIdList.contains(problemId)) { // 백준에서 푼 문제 번호 중에 현재 problem id 가 있다면,
-			Optional<TriedProblem> triedProblem = triedProblemRepository.findTriedProblemByUserAndProblem(loginUser, problem.get());
+			Optional<TriedProblem> triedProblem = triedProblemRepository.findByUserAndProblem(loginUser, problem.get());
 			if (triedProblem.isPresent()) {
 				TriedProblem solvedProblem = triedProblem.get();
 				solvedProblem.updateSolvedStatus(SolvingStatus.PASS);
@@ -209,7 +209,7 @@ public class RecommendationService {
 	}
 
 	private void deleteLastRecommendedProblem(User loginUser) {
-		List<TriedProblem> recommendedToday = triedProblemRepository.findTriedProblemsByUserAndRecommendedDate(loginUser, LocalDate.now());
+		List<TriedProblem> recommendedToday = triedProblemRepository.findByUserAndRecommendedDate(loginUser, LocalDate.now());
 		Optional<TriedProblem> notSolvedProblemToday = getNotSolvedProblemAndRecommendedToday(recommendedToday);
 
 		notSolvedProblemToday.ifPresent(triedProblemRepository::delete);

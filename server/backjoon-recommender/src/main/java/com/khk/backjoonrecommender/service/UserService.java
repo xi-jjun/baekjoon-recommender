@@ -135,7 +135,7 @@ public class UserService {
 		log.info("get solved problem list user id = {}", userId);
 		if (findResult.isPresent()) {
 			User user = findResult.get();
-			List<TriedProblem> solvedProblems = triedProblemRepository.findTriedProblemsByUserAndSolvingStatus(user, SolvingStatus.PASS);
+			List<TriedProblem> solvedProblems = triedProblemRepository.findByUserAndSolvingStatus(user, SolvingStatus.PASS);
 			List<SolvedProblemListResponseDto> response = solvedProblems.stream()
 					.map(SolvedProblemListResponseDto::new)
 					.collect(Collectors.toList());
