@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 public class Setting {
 
     @Id
+    @Column(name = "setting_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -27,6 +28,7 @@ public class Setting {
     private String tags;
 
     @Enumerated(value = EnumType.STRING)
+    @Column(name = "user_option")
     private Option option;
 
     public Set<Integer> getUserRecommendationLevels() {

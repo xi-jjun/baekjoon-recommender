@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -19,9 +20,12 @@ import java.util.List;
 public class Problem {
 
     @Id
+    @Column(name = "problem_id")
     private Long id;
 
     private String title;
+
+    @Column(name = "problem_lv")
     private int level;
 
     @JsonIgnore

@@ -16,13 +16,16 @@ import java.time.LocalDateTime;
 @Entity
 public class TriedProblem {
 	@Id
+	@Column(name = "tried_problem_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
 	private User user;
 
 	@ManyToOne(targetEntity = Problem.class, fetch = FetchType.LAZY)
+	@JoinColumn(name = "problem_id")
 	private Problem problem;
 
 	@Enumerated(EnumType.STRING)

@@ -17,9 +17,11 @@ public class Rival {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "selecting_user_id")
     private User selectingUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "selected_user_id")
     private User selectedUser;
 
     @Builder
