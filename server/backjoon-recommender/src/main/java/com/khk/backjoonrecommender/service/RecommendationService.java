@@ -41,6 +41,7 @@ public class RecommendationService {
 
 	@Transactional
 	public BasicResponseDto<?> recommendProblem(Authentication authentication) {
+		log.info("recommendation start");
 		User loginUser = getLoginUser(authentication);
 
 		Option userOption = userSetting.getOption();
@@ -58,6 +59,8 @@ public class RecommendationService {
 		result.setCode(200);
 		result.setMessage("success to recommend baek joon problem");
 		result.setData(new RecommendProblemResponseDto(todayRecommended));
+
+		log.info("recommendation end");
 
 		return result;
 	}
