@@ -68,7 +68,7 @@
     </div>
 
     <div>
-      <h3>POST - /api/v1/system/problem-list DB에 백준 최신 문제 저장하기</h3>
+      <h3>POST - /api/v1/system/latest-problems DB에 백준 최신 문제 저장하기</h3>
       <button id="migration" v-on:click="updateProblemList" class="mt-0 btn btn-secondary">백준문제 최신사항 반영</button>
     </div>
 
@@ -159,8 +159,8 @@ export default {
         method: 'post',
         url: 'http://localhost:8080/login',
         data: {
-          username: 'admin', // admin 계정 id,pw를 내가 이렇게 설정함. setting 도 대충 설정.
-          password: '1234' // server/backjoon-recommender/src/main/java/com/khk/backjoonrecommender/service/impl/BasicUserService.java 에 가면 볼 수 있음.
+          username: 'accountAdmin_9001', // admin 계정 id,pw를 내가 이렇게 설정함. setting 도 대충 설정.
+          password: 'f#dd1Zc!LdsdMmN$' // server/backjoon-recommender/src/main/java/com/khk/backjoonrecommender/service/impl/BasicUserService.java 에 가면 볼 수 있음.
         }
       }).then(function (response) {
         // console.log(response.headers.authorization);
@@ -286,7 +286,7 @@ export default {
 
       axios({
         method: 'PATCH',
-        url: 'http://localhost:8080/api/v1/system/problem-list',
+        url: 'http://localhost:8080/api/v1/system/latest-problems',
         headers: headers
       }).then(function (response) {
         console.log(response);
