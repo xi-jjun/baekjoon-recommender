@@ -9,6 +9,15 @@ group = 'com.khk'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
+jar {
+	enabled = false
+}
+
+bootJar {
+	archivesBaseName = 'app'
+	archiveFileName = 'app.jar'
+}
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
@@ -34,7 +43,7 @@ dependencies {
 	implementation group: 'com.auth0', name: 'java-jwt', version: '3.19.1'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
-	runtimeOnly 'org.postgresql:postgresql'
+	implementation 'mysql:mysql-connector-java'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.batch:spring-batch-test'
