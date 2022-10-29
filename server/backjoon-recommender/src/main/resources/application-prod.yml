@@ -4,12 +4,12 @@ spring:
       on-profile: prod
 
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     hibernate:
       ddl-auto: validate
 
   datasource:
-    driver-class-name: org.postgresql.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${rds.url}
     username: ${rds.username}
     password: ${rds.password}
