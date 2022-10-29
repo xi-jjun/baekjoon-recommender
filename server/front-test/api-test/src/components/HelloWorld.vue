@@ -159,8 +159,8 @@ export default {
         method: 'post',
         url: 'http://localhost:8080/login',
         data: {
-          username: 'accountAdmin_9001', // admin 계정 id,pw를 내가 이렇게 설정함. setting 도 대충 설정.
-          password: 'f#dd1Zc!LdsdMmN$' // server/backjoon-recommender/src/main/java/com/khk/backjoonrecommender/service/impl/BasicUserService.java 에 가면 볼 수 있음.
+          username: 'admin', // admin 계정 id,pw를 내가 이렇게 설정함. setting 도 대충 설정.
+          password: '1234' // server/backjoon-recommender/src/main/java/com/khk/backjoonrecommender/service/impl/BasicUserService.java 에 가면 볼 수 있음.
         }
       }).then(function (response) {
         // console.log(response.headers.authorization);
