@@ -52,8 +52,9 @@ const Solved = () => {
   const [checked, setChecked] = useState(0);
 
   useEffect(() => {
+    // .get("http://localhost:8080/api/v1/user", {
     axios
-      .get("http://localhost:8080/api/v1/user", {
+      .get(process.env.REACT_APP_BASE_URL + "/api/v1/user", {
         headers: {
           "Content-type": "application/json; charset=UTF-8",
           Authorization: localStorage.getItem("Authorization"),
@@ -62,8 +63,9 @@ const Solved = () => {
       .then((res) => {
         const userId = res.data.data.userId;
         console.log("userid: ", userId);
+        // .get(`http://localhost:8080/api/v1/user/${userId}/solved`, {
         axios
-          .get(`http://localhost:8080/api/v1/user/${userId}/solved`, {
+          .get(process.env.REACT_APP_BASE_URL + `/api/v1/user/${userId}/solved`, {
             headers: {
               Authorization: localStorage.getItem("Authorization"),
             },
@@ -78,8 +80,9 @@ const Solved = () => {
 
     axios.defaults.headers.common["Authorization"] =
       localStorage.getItem("Authorization");
+      // .get("http://localhost:8080/api/v1/recommendation/today")
     axios
-      .get("http://localhost:8080/api/v1/recommendation/today")
+      .get(process.env.REACT_APP_BASE_URL + "/api/v1/recommendation/today")
       .then((res) => {
         setUnSolvedQuestionList(res.data.data);
       })

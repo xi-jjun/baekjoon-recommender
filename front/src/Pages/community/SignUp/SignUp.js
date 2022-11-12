@@ -56,10 +56,11 @@ function SignUp() {
 
     console.log(signUpRequestDTO);
 
+    // .post("http://localhost:8080/api/v1/user", signUpRequestDTO)
     axios
-      .post("http://localhost:8080/api/v1/user", signUpRequestDTO)
+      .post(process.env.REACT_APP_BASE_URL + "/api/v1/user", signUpRequestDTO)
       .then((res) => {
-        console.log("data: ", res.data);
+        // console.log("data: ", res.data);
         console.log("sign up success");
         toMain();
       })

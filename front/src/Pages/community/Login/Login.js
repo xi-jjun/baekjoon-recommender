@@ -25,34 +25,49 @@ const Login = () => {
             password: pw,
         };
 
-        const adminInfo = require("../../admin/adminInfo.json");
+        // const adminInfo = require("../../admin/adminInfo.json");
+        console.log("TEST");
 
-        if (id == adminInfo.admin && pw == adminInfo.password) {
-            axios.post("http://localhost:8080/login", data)
-                .then((res) => {
-                    localStorage.setItem('Authorization', res.headers.authorization);
-                    console.log("admin login success");
-                    console.log("res data: ", res.data);
-                    navigate("/admin", { replace: true });
-                    return;
-                }).catch((e) => {
-                    console.log("err: ", e);
-                    alert("login failed");
-                })
-        }
-        else {
-            axios.post("http://localhost:8080/login", data)
-                .then((res) => {
-                    localStorage.setItem('Authorization', res.headers.authorization);
-                    console.log("login success");
-                    console.log("res data: ", res.data);
-                    navigate("/", { replace: true });
-                    return;
-                }).catch((e) => {
-                    console.log("err: ", e);
-                    alert("login failed");
-                })
-        }
+        axios.post(process.env.REACT_APP_BASE_URL + "/login", data)
+            .then((res) => {
+                localStorage.setItem('Authorization', res.headers.authorization);
+                console.log("login success");
+                // console.log("res data: ", res.data);
+                navigate("/", { replace: true });
+                return;
+            }).catch((e) => {
+                console.log("err: ", e);
+                alert("login failed");
+            })
+
+        // if (id == adminInfo.admin && pw == adminInfo.password) {
+        //     // axios.post("http://localhost:8080/login", data)
+        //     axios.post(process.env.REACT_APP_BASE_URL + "/login", data)
+        //         .then((res) => {
+        //             localStorage.setItem('Authorization', res.headers.authorization);
+        //             console.log("admin login success");
+        //             console.log("res data: ", res.data);
+        //             navigate("/admin", { replace: true });
+        //             return;
+        //         }).catch((e) => {
+        //             console.log("err: ", e);
+        //             alert("login failed");
+        //         })
+        // }
+        // else {
+        //     // axios.post("http://localhost:8080/login", data)
+        //     axios.post(process.env.REACT_APP_BASE_URL + "/login", data)
+        //         .then((res) => {
+        //             localStorage.setItem('Authorization', res.headers.authorization);
+        //             console.log("login success");
+        //             console.log("res data: ", res.data);
+        //             navigate("/", { replace: true });
+        //             return;
+        //         }).catch((e) => {
+        //             console.log("err: ", e);
+        //             alert("login failed");
+        //         })
+        // }
     }
 
     return (

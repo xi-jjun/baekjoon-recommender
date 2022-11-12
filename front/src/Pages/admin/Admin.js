@@ -12,7 +12,8 @@ const Admin = () => {
 
     const resetAllUsersReloadCount = () => {
         axios.defaults.headers.common['Authorization'] = localStorage.getItem("Authorization")
-        axios.patch("http://localhost:8080/api/v1/system/refresh-count")
+        // axios.patch("http://localhost:8080/api/v1/system/refresh-count")
+        axios.patch(process.env.REACT_APP_BASE_URL + "/api/v1/system/refresh-count")
             .then(res => {
                 console.log("res: ", res);
             }).catch(e => {
@@ -23,7 +24,8 @@ const Admin = () => {
     const reloadCountReset = () => {
         console.log("user id: ", userId);
         axios.defaults.headers.common['Authorization'] = localStorage.getItem("Authorization")
-        axios.patch(`http://localhost:8080/api/v1/system/${userId}/refresh-count`)
+        // axios.patch(`http://localhost:8080/api/v1/system/${userId}/refresh-count`)
+        axios.patch(process.env.REACT_APP_BASE_URL + `/api/v1/system/${userId}/refresh-count`)
             .then(res => {
                 console.log("res: ", res);
             }).catch(e => {
@@ -33,7 +35,8 @@ const Admin = () => {
 
     const updateProblemList = () => {
         axios.defaults.headers.common['Authorization'] = localStorage.getItem("Authorization")
-        axios.patch('http://localhost:8080/api/v1/system/latest-problem')
+        // axios.patch('http://localhost:8080/api/v1/system/latest-problem')
+        axios.patch(process.env.REACT_APP_BASE_URL + '/api/v1/system/latest-problem')
             .then(res => {
                 console.log("res: ", res);
             }).catch(e => {

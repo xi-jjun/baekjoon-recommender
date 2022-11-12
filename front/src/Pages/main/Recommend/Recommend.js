@@ -252,7 +252,8 @@ const Recommend = () => {
             return;
         }
 
-        axios.get("http://localhost:8080/api/v1/recommendation/today", {
+        // axios.get("http://localhost:8080/api/v1/recommendation/today", {
+        axios.get(process.env.REACT_APP_BASE_URL + "/api/v1/recommendation/today", {
             headers: {
                 "Authorization": localStorage.getItem("Authorization"),
                 "Content-type": 'application/json; charset=UTF-8'
@@ -262,7 +263,8 @@ const Recommend = () => {
                 const recommendedTmp = res.data.data;
                 setRecommended(recommendedTmp);
                 if (!recommendedTmp || recommendedTmp.length == 0) {
-                    axios.get("http://localhost:8080/api/v1/recommendation", {
+                    // axios.get("http://localhost:8080/api/v1/recommendation", {
+                    axios.get(process.env.REACT_APP_BASE_URL + "/api/v1/recommendation", {
                         headers: {
                             "Authorization": localStorage.getItem("Authorization"),
                             "Content-type": 'application/json; charset=UTF-8'
@@ -275,7 +277,8 @@ const Recommend = () => {
             })
             .then(() => {
                 recommended && recommended.map(data => {
-                    axios.post("http://localhost:8080/api/v1/recommendation", { problemId: data.problem.id })
+                    // axios.post("http://localhost:8080/api/v1/recommendation", { problemId: data.problem.id })
+                    axios.post(process.env.REACT_APP_BASE_URL + "/api/v1/recommendation", { problemId: data.problem.id })
                         .then(res => console.log("is solved : ", res))
                         .catch(e => {
                             console.log("err: ", e);
@@ -332,7 +335,8 @@ const Recommend = () => {
             })
         }
         else {
-            axios.get("http://localhost:8080/api/v1/user", {
+            // axios.get("http://localhost:8080/api/v1/user", {
+            axios.get(process.env.REACT_APP_BASE_URL + "/api/v1/user", {
                 headers: {
                     "Authorization": localStorage.getItem("Authorization"),
                     "Content-type": 'application/json; charset=UTF-8',
@@ -343,7 +347,8 @@ const Recommend = () => {
         }
 
         axios.defaults.headers.common['Authorization'] = localStorage.getItem("Authorization");
-        axios.post("http://localhost:8080/api/v1/recommendation/additional", settingRequestDTO)
+        // axios.post("http://localhost:8080/api/v1/recommendation/additional", settingRequestDTO)
+        axios.post(process.env.REACT_APP_BASE_URL + "/api/v1/recommendation/additional", settingRequestDTO)
             .then(res => {
                 recommended.push(res.data.data);
             }).catch(e => console.log("err: ", e));
@@ -351,7 +356,8 @@ const Recommend = () => {
     }
 
     const recommendationAgain = () => {
-        axios.get("http://localhost:8080/api/v1/recommendation/refresh", {
+        // axios.get("http://localhost:8080/api/v1/recommendation/refresh", {
+        axios.get(process.env.REACT_APP_BASE_URL + "/api/v1/recommendation/refresh", {
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
                 "Authorization": localStorage.getItem("Authorization")

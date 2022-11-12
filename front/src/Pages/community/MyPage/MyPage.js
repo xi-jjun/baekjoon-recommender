@@ -19,8 +19,9 @@ const MyPage = () => {
   };
 
   useEffect(() => {
+    // .get("http://localhost:8080/api/v1/user", {
     axios
-      .get("http://localhost:8080/api/v1/user", {
+      .get(process.env.REACT_APP_BASE_URL + "/api/v1/user", {
         headers: {
           "Content-type": "application/x-www-form-urlencoded; charset=UTF-8;",
           Authorization: localStorage.getItem("Authorization"),
@@ -30,7 +31,7 @@ const MyPage = () => {
         const newData = res.data.data;
         setBaekjoonId(newData.baekJoonId);
         setData(newData);
-        console.log(newData);
+        // console.log(newData);
         const levels = newData.levels.split(",");
         const dailyTags = newData.dailyTags.split(",");
         for (let l of levels) {
@@ -67,11 +68,12 @@ const MyPage = () => {
       tags: tags.join(),
     };
 
-    console.log("sign up request: ", signUpRequestDTO);
+    // console.log("sign up request: ", signUpRequestDTO);
     axios.defaults.headers.common["Authorization"] =
       localStorage.getItem("Authorization");
+      // .patch("http://localhost:8080/api/v1/user", signUpRequestDTO)
     axios
-      .patch("http://localhost:8080/api/v1/user", signUpRequestDTO)
+      .patch(process.env.REACT_APP_BASE_URL + "/api/v1/user", signUpRequestDTO)
       .then((res) => {
         console.log("res: ", res);
       })
