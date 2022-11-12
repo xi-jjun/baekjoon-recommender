@@ -23,3 +23,6 @@ yarn-debug.log*
 yarn-error.log*
 
 /src/Pages/admin/adminInfo.json
+
+.env.production
+.env.development
