@@ -46,7 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.addFilter(jwtAuthenticationFilter())
 				.addFilter(new JwtAuthorizationFilter(authenticationManager(), userRepository, jwtProperties))
 				.authorizeRequests()
-				.antMatchers("/login", "/logout").permitAll()
+				.antMatchers("/login", "/logout", "/health-check").permitAll()
 				.antMatchers("/api/v1/system/**").hasAuthority("ADMIN")
 				.anyRequest().authenticated();
 	}
